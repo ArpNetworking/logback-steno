@@ -1,0 +1,14 @@
+*.class
+target
+*.iml
+.idea
+.project
+.checkstyle
+.classpath
+.settings
+pom.xml.versionsBackup
+
+# Package Files #
+*.jar
+*.war
+*.ear

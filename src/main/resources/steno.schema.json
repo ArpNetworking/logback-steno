@@ -1,0 +1,87 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+
+    "title": "Steno Log Container",
+    "description": "generic log container format",
+    "type":"object",
+
+    "properties":{
+        "time": {
+            "type":"string",
+            "format": "date-time"
+        },
+        "name":  {
+            "type":"string"
+        },
+        "level":  {
+            "type":"string",
+            "pattern": "^(debug|info|warn|crit|fatal|unknown)$"
+        },
+        "data": {
+            "type":"object",
+            "properties": {
+            },
+            "additionalProperties": true
+        },
+        "exception": {
+            "type":"object",
+            "properties": {
+                "type":  {
+                    "type":"string"
+                },
+                "message":  {
+                    "type":"string"
+                },
+                "backtrace":  {
+                    "type":"array",
+                    "items":{
+                        "type": "string"
+                    }
+                },
+                "data":  {
+                    "type":"object",
+                    "properties": {
+                    },
+                    "additionalProperties": true
+                }
+            },
+            "required": ["type", "message"],
+            "additionalProperties": false
+        },
+        "context": {
+            "type":"object",
+            "properties": {
+                "file":  {
+                    "type":"string"
+                },
+                "line":  {
+                    "type":"string"
+                },
+                "method":  {
+                    "type":"string"
+                },
+                "class":  {
+                    "type":"string"
+                },
+                "namespace":  {
+                    "type":"string"
+                },
+                "threadId":  {
+                    "type":"string"
+                },
+                "processId":  {
+                    "type":"string"
+                },
+                "host":  {
+                    "type":"string"
+                }
+            },
+            "additionalProperties": false
+        },
+        "id":  {
+            "type":"string"
+        }
+    },
+    "required": ["time", "name", "level"],
+    "additionalProperties": false
+}
