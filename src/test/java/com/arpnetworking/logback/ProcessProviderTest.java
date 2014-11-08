@@ -15,28 +15,20 @@
  */
 package com.arpnetworking.logback;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-
 import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * Tests for <code>StenoMarker</code>.
+ * Tests for <code>ProcessProvider</code>.
  *
  * @author Ville Koskela (vkoskela at groupon dot com)
  */
-public class StenoMarkerTest {
+public class ProcessProviderTest {
 
-    @Test(expected = InvocationTargetException.class)
-    public void testPrivateConstructor() throws Exception {
-        try {
-            final Constructor<StenoMarker> constructor = StenoMarker.class.getDeclaredConstructor();
-            constructor.setAccessible(true);
-            constructor.newInstance();
-        } catch (final InvocationTargetException ite) {
-            Assert.assertTrue(ite.getTargetException() instanceof UnsupportedOperationException);
-            throw ite;
-        }
+    @Test
+    public void testDefaulProcessProvider() {
+        final String process = ProcessProvider.DEFAULT.get();
+        Assert.assertNotNull(process);
+        Assert.assertFalse(process.isEmpty());
     }
 }

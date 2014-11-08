@@ -26,8 +26,62 @@ import org.slf4j.helpers.BasicMarkerFactory;
  */
 public final class StenoMarker {
     private static final String STENO_ARRAY_MARKER_NAME = "com.arpnetworking.logback.stenoMarker.array";
+    private static final String STENO_ARRAY_JSON_MARKER_NAME = "com.arpnetworking.logback.stenoMarker.array.json";
+    private static final String STENO_MAP_MARKER_NAME = "com.arpnetworking.logback.stenoMarker.map";
+    private static final String STENO_MAP_JSON_MARKER_NAME = "com.arpnetworking.logback.stenoMarker.map.json";
+    private static final String STENO_OBJECT_MARKER_NAME = "com.arpnetworking.logback.stenoMarker.object";
+    private static final String STENO_OBJECT_JSON_MARKER_NAME = "com.arpnetworking.logback.stenoMarker.object.json";
     private static final String STENO_JSON_MARKER_NAME = "com.arpnetworking.logback.stenoMarker.json";
+
+    /**
+     * Log event payload is an array of keys and and array of values.
+     *
+     * @since 1.0.0
+     */
     public static final Marker ARRAY_MARKER = new BasicMarkerFactory().getMarker(STENO_ARRAY_MARKER_NAME);
+
+    /**
+     * Log event payload is an array of keys and and array of json encoded values.
+     *
+     * @since 1.0.4
+     */
+    public static final Marker ARRAY_JSON_MARKER = new BasicMarkerFactory().getMarker(STENO_ARRAY_JSON_MARKER_NAME);
+
+    /**
+     * Log event payload is a key to value map.
+     *
+     * @since 1.0.4
+     */
+    public static final Marker MAP_MARKER = new BasicMarkerFactory().getMarker(STENO_MAP_MARKER_NAME);
+
+    /**
+     * Log event payload is a key to json encoded value map.
+     *
+     * @since 1.0.4
+     */
+    public static final Marker MAP_JSON_MARKER = new BasicMarkerFactory().getMarker(STENO_MAP_JSON_MARKER_NAME);
+
+    /**
+     * Log event payload is an object to be serialized.
+     *
+     * @since 1.1.0
+     */
+    public static final Marker OBJECT_MARKER = new BasicMarkerFactory().getMarker(STENO_OBJECT_MARKER_NAME);
+
+    /**
+     * Log event payload is a serialized object.
+     *
+     * @since 1.1.0
+     */
+    public static final Marker OBJECT_JSON_MARKER = new BasicMarkerFactory().getMarker(STENO_OBJECT_JSON_MARKER_NAME);
+
+    /**
+     * Log event payload is a json encoded value.
+     *
+     * @since 1.0.0
+     * @deprecated This functionality is now provided in more generically by other markers (as of 1.1.0).
+     */
+    @Deprecated
     public static final Marker JSON_MARKER = new BasicMarkerFactory().getMarker(STENO_JSON_MARKER_NAME);
 
     private StenoMarker() {

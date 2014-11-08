@@ -33,6 +33,8 @@ import org.mockito.Mockito;
 import org.slf4j.Marker;
 
 /**
+ * Tests for <code>LoggingEventWrapper</code>.
+ *
  * @author Ville Koskela (vkoskela at groupon dot com)
  */
 public class LoggingEventWrapperTest {

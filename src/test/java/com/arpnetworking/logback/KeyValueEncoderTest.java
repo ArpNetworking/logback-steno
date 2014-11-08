@@ -19,6 +19,8 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
@@ -28,6 +30,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
+ * Tests for <code>KeyValueEncoder</code>.
+ *
  * @author Gil Markham (gil at groupon dot com)
  */
 public class KeyValueEncoderTest {
@@ -70,6 +74,185 @@ public class KeyValueEncoderTest {
         assertEquals("[01 Jan 1970 00:00:00.000] thread - name=\"logEvent\", key1=\"1234\", key2=\"foo\"\n", logOutput);
     }
 
+    @Test
+    public void testEncodeArrayJson() throws Exception {
+        final LoggingEvent event = new LoggingEvent();
+        event.setLevel(Level.INFO);
+        event.setMarker(StenoMarker.ARRAY_JSON_MARKER);
+        event.setMessage("logEvent");
+        event.setThreadName("thread");
+        event.setTimeStamp(0);
+        event.setLoggerContextRemoteView(context.getLoggerContextRemoteView());
+        final Object[] argArray = new Object[2];
+        argArray[0] = new String[] {"key1", "key2"};
+        argArray[1] = new String[] {"{\"foo\":\"bar\"}", "[\"foo\":\"bar\"]"};
+        event.setArgumentArray(argArray);
+        encoder.doEncode(event);
+        final String logOutput = baos.toString(StandardCharsets.UTF_8.name());
+        assertEquals("[01 Jan 1970 00:00:00.000] thread - name=\"logEvent\", key1=\"{\\\"foo\\\":\\\"bar\\\"}\", key2=\"[\\\"foo\\\":\\\"bar\\\"]\"\n", logOutput);
+    }
+
+    @Test
+    public void testEncodeArrayJsonNullValues() throws Exception {
+        final LoggingEvent event = new LoggingEvent();
+        event.setLevel(Level.INFO);
+        event.setMarker(StenoMarker.ARRAY_JSON_MARKER);
+        event.setMessage("logEvent");
+        event.setThreadName("thread");
+        event.setTimeStamp(0);
+        event.setLoggerContextRemoteView(context.getLoggerContextRemoteView());
+        final Object[] argArray = new Object[2];
+        argArray[0] = new String[] {"key1", "key2"};
+        argArray[1] = null;
+        event.setArgumentArray(argArray);
+        encoder.doEncode(event);
+        final String logOutput = baos.toString(StandardCharsets.UTF_8.name());
+        assertEquals("[01 Jan 1970 00:00:00.000] thread - name=\"logEvent\", key1=\"{}\", key2=\"{}\"\n", logOutput);
+    }
+
+    @Test
+    public void testEncodeMap() throws Exception {
+        final LoggingEvent event = new LoggingEvent();
+        event.setLevel(Level.INFO);
+        event.setMarker(StenoMarker.MAP_MARKER);
+        event.setMessage("logEvent");
+        event.setThreadName("thread");
+        event.setTimeStamp(0);
+        event.setLoggerContextRemoteView(context.getLoggerContextRemoteView());
+        final Map<String, Object> map = new LinkedHashMap<>();
+        map.put("key1", Integer.valueOf(1234));
+        map.put("key2", "foo");
+        final Object[] argArray = new Object[1];
+        argArray[0] = map;
+        event.setArgumentArray(argArray);
+        encoder.doEncode(event);
+        final String logOutput = baos.toString(StandardCharsets.UTF_8.name());
+        assertEquals("[01 Jan 1970 00:00:00.000] thread - name=\"logEvent\", key1=\"1234\", key2=\"foo\"\n", logOutput);
+    }
+
+    @Test
+    public void testEncodeMapNullMap() throws Exception {
+        final LoggingEvent event = new LoggingEvent();
+        event.setLevel(Level.INFO);
+        event.setMarker(StenoMarker.MAP_MARKER);
+        event.setMessage("logEvent");
+        event.setThreadName("thread");
+        event.setTimeStamp(0);
+        event.setLoggerContextRemoteView(context.getLoggerContextRemoteView());
+        final Object[] argArray = new Object[1];
+        argArray[0] = null;
+        event.setArgumentArray(argArray);
+        encoder.doEncode(event);
+        final String logOutput = baos.toString(StandardCharsets.UTF_8.name());
+        assertEquals("[01 Jan 1970 00:00:00.000] thread - name=\"logEvent\"\n", logOutput);
+    }
+
+    @Test
+    public void testEncodeMapJson() throws Exception {
+        final LoggingEvent event = new LoggingEvent();
+        event.setLevel(Level.INFO);
+        event.setMarker(StenoMarker.MAP_JSON_MARKER);
+        event.setMessage("logEvent");
+        event.setThreadName("thread");
+        event.setTimeStamp(0);
+        event.setLoggerContextRemoteView(context.getLoggerContextRemoteView());
+        final Map<String, Object> map = new LinkedHashMap<>();
+        map.put("key1", "{\"foo\":\"bar\"}");
+        map.put("key2", "[\"foo\":\"bar\"]");
+        final Object[] argArray = new Object[1];
+        argArray[0] = map;
+        event.setArgumentArray(argArray);
+        encoder.doEncode(event);
+        final String logOutput = baos.toString(StandardCharsets.UTF_8.name());
+        assertEquals("[01 Jan 1970 00:00:00.000] thread - name=\"logEvent\", key1=\"{\\\"foo\\\":\\\"bar\\\"}\", key2=\"[\\\"foo\\\":\\\"bar\\\"]\"\n", logOutput);
+    }
+
+    @Test
+    public void testEncodeMapJsonNullMap() throws Exception {
+        final LoggingEvent event = new LoggingEvent();
+        event.setLevel(Level.INFO);
+        event.setMarker(StenoMarker.MAP_JSON_MARKER);
+        event.setMessage("logEvent");
+        event.setThreadName("thread");
+        event.setTimeStamp(0);
+        event.setLoggerContextRemoteView(context.getLoggerContextRemoteView());
+        final Object[] argArray = new Object[1];
+        argArray[0] = null;
+        event.setArgumentArray(argArray);
+        encoder.doEncode(event);
+        final String logOutput = baos.toString(StandardCharsets.UTF_8.name());
+        assertEquals("[01 Jan 1970 00:00:00.000] thread - name=\"logEvent\"\n", logOutput);
+    }
+
+    @Test
+    public void testEncodeObject() throws Exception {
+        final LoggingEvent event = new LoggingEvent();
+        event.setLevel(Level.INFO);
+        event.setMarker(StenoMarker.OBJECT_MARKER);
+        event.setMessage("logEvent");
+        event.setThreadName("thread");
+        event.setTimeStamp(0);
+        event.setLoggerContextRemoteView(context.getLoggerContextRemoteView());
+        final Object[] argArray = new Object[1];
+        argArray[0] = new Widget("foo");
+        event.setArgumentArray(argArray);
+        encoder.doEncode(event);
+        final String logOutput = baos.toString(StandardCharsets.UTF_8.name());
+        assertEquals("[01 Jan 1970 00:00:00.000] thread - name=\"logEvent\", data=\"Value=foo\"\n", logOutput);
+    }
+
+    @Test
+    public void testEncodeObjectNull() throws Exception {
+        final LoggingEvent event = new LoggingEvent();
+        event.setLevel(Level.INFO);
+        event.setMarker(StenoMarker.OBJECT_MARKER);
+        event.setMessage("logEvent");
+        event.setThreadName("thread");
+        event.setTimeStamp(0);
+        event.setLoggerContextRemoteView(context.getLoggerContextRemoteView());
+        final Object[] argArray = new Object[1];
+        argArray[0] = null;
+        event.setArgumentArray(argArray);
+        encoder.doEncode(event);
+        final String logOutput = baos.toString(StandardCharsets.UTF_8.name());
+        assertEquals("[01 Jan 1970 00:00:00.000] thread - name=\"logEvent\", data=\"null\"\n", logOutput);
+    }
+
+    @Test
+    public void testEncodeObjectJson() throws Exception {
+        final LoggingEvent event = new LoggingEvent();
+        event.setLevel(Level.INFO);
+        event.setMarker(StenoMarker.OBJECT_JSON_MARKER);
+        event.setMessage("logEvent");
+        event.setThreadName("thread");
+        event.setTimeStamp(0);
+        event.setLoggerContextRemoteView(context.getLoggerContextRemoteView());
+        final Object[] argArray = new Object[1];
+        argArray[0] = "{\"key\":\"value\"}";
+        event.setArgumentArray(argArray);
+        encoder.doEncode(event);
+        final String logOutput = baos.toString(StandardCharsets.UTF_8.name());
+        assertEquals("[01 Jan 1970 00:00:00.000] thread - name=\"logEvent\", data=\"{\\\"key\\\":\\\"value\\\"}\"\n", logOutput);
+    }
+
+    @Test
+    public void testEncodeObjectJsonNull() throws Exception {
+        final LoggingEvent event = new LoggingEvent();
+        event.setLevel(Level.INFO);
+        event.setMarker(StenoMarker.OBJECT_JSON_MARKER);
+        event.setMessage("logEvent");
+        event.setThreadName("thread");
+        event.setTimeStamp(0);
+        event.setLoggerContextRemoteView(context.getLoggerContextRemoteView());
+        final Object[] argArray = new Object[1];
+        argArray[0] = null;
+        event.setArgumentArray(argArray);
+        encoder.doEncode(event);
+        final String logOutput = baos.toString(StandardCharsets.UTF_8.name());
+        assertEquals("[01 Jan 1970 00:00:00.000] thread - name=\"logEvent\", data=\"null\"\n", logOutput);
+    }
+
+    @SuppressWarnings("deprecation")
     @Test
     public void testEncodeJson() throws Exception {
         final LoggingEvent event = new LoggingEvent();
@@ -140,6 +323,7 @@ public class KeyValueEncoderTest {
         assertEquals("[01 Jan 1970 00:00:00.000] thread - name=\"logEvent\"\n", logOutput);
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void testEncodeJsonNullValues() throws Exception {
         final LoggingEvent event = new LoggingEvent();

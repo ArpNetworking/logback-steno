@@ -16,6 +16,7 @@
 package com.arpnetworking.logback;
 
 import java.io.StringWriter;
+import java.util.Map;
 
 import ch.qos.logback.classic.spi.ILoggingEvent;
 
@@ -26,6 +27,7 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
  * @author Gil Markham (gil at groupon dot com)
  * @since 1.0.0
  */
+@SuppressWarnings("deprecation")
 public class KeyValueEncoder extends BaseLoggingEncoder {
 
     /**
@@ -46,6 +48,106 @@ public class KeyValueEncoder extends BaseLoggingEncoder {
     /**
      * {@inheritDoc}
      */
+    @Override
+    protected String buildArrayJsonMessage(
+            final ILoggingEvent event,
+            final String eventName,
+            final String[] keys,
+            final String[] jsonValues) {
+
+        final Object[] escapedJsonValues = jsonValues == null ? null : escapeStringValues(jsonValues);
+        return buildArrayMessage(event, eventName, keys, escapedJsonValues);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected String buildMapMessage(
+            final ILoggingEvent event,
+            final String eventName,
+            final Map<String, ? extends Object> map) {
+
+        final String[] keys = map == null ? null : new String[map.size()];
+        final Object[] values = map == null ? null : new Object[map.size()];
+        if (map != null) {
+            int index = 0;
+            for (final Map.Entry<String, ? extends Object> entry : map.entrySet()) {
+                keys[index] = entry.getKey();
+                values[index] = entry.getValue();
+                ++index;
+            }
+        }
+
+        return buildArrayMessage(
+            event,
+            eventName,
+            keys,
+            values);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected String buildMapJsonMessage(
+            final ILoggingEvent event,
+            final String eventName,
+            final Map<String, String> map) {
+
+        final String[] keys = map == null ? null : new String[map.size()];
+        final Object[] values = map == null ? null : new Object[map.size()];
+        if (map != null) {
+            int index = 0;
+            for (final Map.Entry<String, ? extends Object> entry : map.entrySet()) {
+                keys[index] = entry.getKey();
+                values[index] = entry.getValue();
+                ++index;
+            }
+        }
+
+        return buildArrayMessage(
+                event,
+                eventName,
+                keys,
+                values == null ? null : escapeStringValues(values));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected String buildObjectMessage(
+            final ILoggingEvent event,
+            final String eventName,
+            final Object data) {
+
+        return buildObjectJsonMessage(
+                event,
+                eventName,
+                data == null ? null : data.toString());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected String buildObjectJsonMessage(
+            final ILoggingEvent event,
+            final String eventName,
+            final String jsonData) {
+
+        return buildArrayMessage(
+                event,
+                eventName,
+                new String[] {"data"},
+                escapeStringValues(new Object[] {jsonData}));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("deprecation")
     @Override
     protected String buildJsonMessage(
             final ILoggingEvent event,

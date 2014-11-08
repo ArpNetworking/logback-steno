@@ -1,0 +1,11 @@
+{
+    "nullValue": null,
+    "string": "<REDACTED>",
+    "intValue": "<REDACTED>",
+    "floatValue": 1.0,
+    "stringArrayValue": "<REDACTED>",
+    "booleanValue": "<REDACTED>",
+    "objectMap": {
+        "foo": "bar"
+    }
+}

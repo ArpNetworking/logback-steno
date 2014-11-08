@@ -15,28 +15,29 @@
  */
 package com.arpnetworking.logback;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
+import java.security.SecureRandom;
+import java.util.UUID;
 
+import com.google.common.base.Charsets;
 import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * Tests for <code>StenoMarker</code>.
+ * Tests for <code>SecureRandomProvider</code>.
  *
  * @author Ville Koskela (vkoskela at groupon dot com)
  */
-public class StenoMarkerTest {
+public class SecureRandomProviderTest {
 
-    @Test(expected = InvocationTargetException.class)
-    public void testPrivateConstructor() throws Exception {
-        try {
-            final Constructor<StenoMarker> constructor = StenoMarker.class.getDeclaredConstructor();
-            constructor.setAccessible(true);
-            constructor.newInstance();
-        } catch (final InvocationTargetException ite) {
-            Assert.assertTrue(ite.getTargetException() instanceof UnsupportedOperationException);
-            throw ite;
-        }
+    @Test
+    public void testDefaulSecureRandomProvider() {
+        final SecureRandom secureRandom = SecureRandomProvider.DEFAULT.get();
+        Assert.assertNotNull(secureRandom);
+    }
+
+    @Test
+    public void testDefaulSecureRandomProviderWithSeed() {
+        final SecureRandom secureRandom = SecureRandomProvider.DEFAULT.get(UUID.randomUUID().toString().getBytes(Charsets.UTF_8));
+        Assert.assertNotNull(secureRandom);
     }
 }

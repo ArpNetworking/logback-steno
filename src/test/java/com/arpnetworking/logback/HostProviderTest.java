@@ -15,28 +15,23 @@
  */
 package com.arpnetworking.logback;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
+
+import java.net.UnknownHostException;
 
 import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * Tests for <code>StenoMarker</code>.
+ * Tests for <code>HostProvider</code>.
  *
  * @author Ville Koskela (vkoskela at groupon dot com)
  */
-public class StenoMarkerTest {
+public class HostProviderTest {
 
-    @Test(expected = InvocationTargetException.class)
-    public void testPrivateConstructor() throws Exception {
-        try {
-            final Constructor<StenoMarker> constructor = StenoMarker.class.getDeclaredConstructor();
-            constructor.setAccessible(true);
-            constructor.newInstance();
-        } catch (final InvocationTargetException ite) {
-            Assert.assertTrue(ite.getTargetException() instanceof UnsupportedOperationException);
-            throw ite;
-        }
+    @Test
+    public void testDefaulHostProvider() throws UnknownHostException {
+        final String hostName = HostProvider.DEFAULT.get();
+        Assert.assertNotNull(hostName);
+        Assert.assertFalse(hostName.isEmpty());
     }
 }

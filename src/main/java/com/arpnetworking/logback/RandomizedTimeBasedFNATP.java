@@ -15,7 +15,6 @@
  */
 package com.arpnetworking.logback;
 
-import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
@@ -38,25 +37,37 @@ import ch.qos.logback.core.rolling.DefaultTimeBasedFileNamingAndTriggeringPolicy
 @NoAutoStart
 public class RandomizedTimeBasedFNATP<E> extends DefaultTimeBasedFileNamingAndTriggeringPolicy<E> {
     private static final int DEFAULT_MAX_OFFSET = 3600000; // 1 hour
+
+    private final double randomNumber;
     private int randomOffsetInMillis;
     private int maxOffsetInMillis = DEFAULT_MAX_OFFSET;
+
+    /**
+     * Public constructor.
+     */
+    public RandomizedTimeBasedFNATP() {
+        this(SecureRandomProvider.DEFAULT, HostProvider.DEFAULT);
+    }
+
+    /*package private*/ RandomizedTimeBasedFNATP(
+            final SecureRandomProvider secureRandomProvider,
+            final HostProvider hostProvider) {
+
+        SecureRandom random;
+        try {
+            final String seed = hostProvider.get();
+            random = secureRandomProvider.get(seed.getBytes(StandardCharsets.UTF_8));
+        } catch (final UnknownHostException uhe) {
+            random = secureRandomProvider.get();
+        }
+        this.randomNumber = random.nextDouble();
+    }
 
     /**
      * {@inheritDoc}
      */
     @Override
     public void start() {
-        SecureRandom random;
-        try {
-            final String seed = InetAddress.getLocalHost().getHostName();
-            random = new SecureRandom(seed.getBytes(StandardCharsets.UTF_8));
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-            // This shouldn't happen, not sure if it's okay to log from within a component of the logging library
-            random = new SecureRandom();
-        }
-
-        this.randomOffsetInMillis = random.nextInt(this.maxOffsetInMillis);
         super.start();
     }
 
@@ -76,6 +87,7 @@ public class RandomizedTimeBasedFNATP<E> extends DefaultTimeBasedFileNamingAndTr
      */
     public void setMaxOffsetInMillis(final int maxOffsetInMillis) {
         this.maxOffsetInMillis = maxOffsetInMillis;
+        this.randomOffsetInMillis = (int) (this.randomNumber * this.maxOffsetInMillis);
     }
 
     /**

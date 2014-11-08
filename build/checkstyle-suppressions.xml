@@ -23,6 +23,7 @@
     <suppress files=".*Test.java" checks="MagicNumberCheck"/>
     <suppress files=".*Test.java" checks="Javadoc"/>
     <suppress files=".*Test.java" checks="Regexp"/>
+    <suppress files="Widget.java" checks="Regexp"/>
     <suppress checks="MagicNumberCheck"
               files="Tests.java"/>
     <suppress checks="MagicNumberCheck"

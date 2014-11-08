@@ -45,7 +45,7 @@
                     "additionalProperties": true
                 }
             },
-            "required": ["type", "message"],
+            "required": ["type", "message", "backtrace"],
             "additionalProperties": false
         },
         "context": {
