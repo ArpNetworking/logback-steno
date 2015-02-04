@@ -15,11 +15,10 @@
  */
 package com.arpnetworking.logback;
 
-
-import java.net.UnknownHostException;
-
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.net.UnknownHostException;
 
 /**
  * Tests for <code>HostProvider</code>.

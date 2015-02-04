@@ -1,10 +1,21 @@
+/**
+ * Copyright 2014 Groupon.com
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.arpnetworking.logback.jackson;
 
-import java.io.InputStream;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-
+import com.arpnetworking.logback.annotations.LogRedact;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -14,6 +25,7 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.BeanPropertyWriter;
 import com.fasterxml.jackson.databind.ser.PropertyWriter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
+import com.google.common.io.Resources;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,173 +34,185 @@ import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
-import com.arpnetworking.logback.annotations.LogRedact;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
+/**
+ * Tests for <code>RedactionFilter</code>.
+ *
+ * @author Gil Markham (gil at groupon dot com)
+ */
 public class RedactionFilterTest {
-    private static final String CLASS_NAME = RedactionFilterTest.class.getSimpleName();
-
-    private ObjectMapper objectMapper;
-    private RedactedBean redactedBean;
-    private NonRedactedBean nonRedactedBean;
 
     @Before
-    public void setup() {
-        objectMapper = new ObjectMapper();
-        objectMapper.setAnnotationIntrospector(new FilterForcingAnnotationIntrospector());
-        Map<String, Object> filterMap = new HashMap<>();
+    public void setUp() {
+        _objectMapper = new ObjectMapper();
+        _objectMapper.setAnnotationIntrospector(new FilterForcingAnnotationIntrospector());
+        final Map<String, Object> filterMap = new HashMap<>();
         filterMap.put(RedactionFilter.REDACTION_FILTER_ID, new RedactionFilter(false));
-        objectMapper.setFilters(new SimpleFilterProvider(filterMap));
+        _objectMapper.setFilters(new SimpleFilterProvider(filterMap));
 
-        Map<String, Object> beanMap = new HashMap<>();
+        final Map<String, Object> beanMap = new HashMap<>();
         beanMap.put("foo", "bar");
-        redactedBean = new RedactedBean("string", 1234, 1.0f, new String[] {"string1", "string2"}, true, beanMap);
-        nonRedactedBean = new NonRedactedBean("string", 1234, 1.0f, new String[] {"string1", "string2"}, true, beanMap);
+        _redactedBean = new RedactedBean("string", 1234, 1.0f, new String[] {"string1", "string2"}, true, beanMap);
+        _nonRedactedBean = new NonRedactedBean("string", 1234, 1.0f, new String[] {"string1", "string2"}, true, beanMap);
     }
 
     @Test
     public void testNonRedactedBean() throws Exception {
-        JsonNode actualTree = objectMapper.valueToTree(nonRedactedBean);
-        JsonNode expectedTree;
-        try (InputStream resourceStream = this.getClass().getResourceAsStream(CLASS_NAME + ".testNonRedactedBean.json")) {
-            expectedTree = objectMapper.readTree(resourceStream);
-        }
+        final JsonNode actualTree = _objectMapper.valueToTree(_nonRedactedBean);
+        final JsonNode expectedTree = readTree("testNonRedactedBean.json");
         Assert.assertEquals(expectedTree, actualTree);
     }
 
     @Test
     public void testRedactedBean() throws Exception {
-        JsonNode actualTree = objectMapper.valueToTree(redactedBean);
-        JsonNode expectedTree;
-        try (InputStream resourceStream = this.getClass().getResourceAsStream(CLASS_NAME + ".testRedactedBean.json")) {
-            expectedTree = objectMapper.readTree(resourceStream);
-        }
+        final JsonNode actualTree = _objectMapper.valueToTree(_redactedBean);
+        final JsonNode expectedTree = readTree("testRedactedBean.json");
         Assert.assertEquals(expectedTree, actualTree);
     }
 
     @Test
     public void testRedactedWithNull() throws Exception {
         // Override the filter to be configured with allowing nulls
-        Map<String, Object> filterMap = new HashMap<>();
+        final Map<String, Object> filterMap = new HashMap<>();
         filterMap.put(RedactionFilter.REDACTION_FILTER_ID, new RedactionFilter(true));
-        objectMapper.setFilters(new SimpleFilterProvider(filterMap));
-        JsonNode actualTree = objectMapper.valueToTree(redactedBean);
-        JsonNode expectedTree;
-        try (InputStream resourceStream = this.getClass().getResourceAsStream(CLASS_NAME + ".testRedactedWithNull.json")) {
-            expectedTree = objectMapper.readTree(resourceStream);
-        }
+        _objectMapper.setFilters(new SimpleFilterProvider(filterMap));
+        final JsonNode actualTree = _objectMapper.valueToTree(_redactedBean);
+        final JsonNode expectedTree = readTree("testRedactedWithNull.json");
         Assert.assertEquals(expectedTree, actualTree);
     }
 
+    /**
+     * @deprecated Provided for test compatibility with deprecated method in Jackson.
+     */
     @Test
     @Deprecated
     public void testDeprecatedSerializeAsFieldWithNull() throws Exception {
-        RedactionFilter mockFilter = Mockito.mock(RedactionFilter.class);
-        Mockito.doAnswer(new SerializeAsFieldAnswer(new RedactionFilter(true))).when(mockFilter).serializeAsField(Matchers.any(), Matchers.any(JsonGenerator.class),
-                Matchers.any(SerializerProvider.class),
-                Matchers.any(PropertyWriter.class));
+        final RedactionFilter mockFilter = Mockito.mock(RedactionFilter.class);
+        Mockito.doAnswer(new SerializeAsFieldAnswer(new RedactionFilter(true)))
+                .when(mockFilter).serializeAsField(
+                        Matchers.any(),
+                        Matchers.any(JsonGenerator.class),
+                        Matchers.any(SerializerProvider.class),
+                        Matchers.any(PropertyWriter.class));
 
-        Map<String, Object> filterMap = new HashMap<>();
+        final Map<String, Object> filterMap = new HashMap<>();
         filterMap.put(RedactionFilter.REDACTION_FILTER_ID, mockFilter);
-        objectMapper.setFilters(new SimpleFilterProvider(filterMap));
-        JsonNode actualTree = objectMapper.valueToTree(redactedBean);
-        JsonNode expectedTree;
-        try (InputStream resourceStream = this.getClass().getResourceAsStream(CLASS_NAME + ".testDeprecatedSerializeAsFieldWithNull.json")) {
-            expectedTree = objectMapper.readTree(resourceStream);
-        }
+        _objectMapper.setFilters(new SimpleFilterProvider(filterMap));
+        final JsonNode actualTree = _objectMapper.valueToTree(_redactedBean);
+        final JsonNode expectedTree = readTree("testDeprecatedSerializeAsFieldWithNull.json");
         Assert.assertEquals(expectedTree, actualTree);
     }
 
+    /**
+     * @deprecated Provided for test compatibility with deprecated method in Jackson.
+     */
     @Test
     @Deprecated
     public void testDeprecatedSerializeAsFieldWithoutNull() throws Exception {
-        RedactionFilter mockFilter = Mockito.mock(RedactionFilter.class);
-        Mockito.doAnswer(new SerializeAsFieldAnswer(new RedactionFilter(false))).when(mockFilter).serializeAsField(Matchers.any(), Matchers.any(JsonGenerator.class),
-                Matchers.any(SerializerProvider.class),
-                Matchers.any(PropertyWriter.class));
+        final RedactionFilter mockFilter = Mockito.mock(RedactionFilter.class);
+        Mockito.doAnswer(new SerializeAsFieldAnswer(new RedactionFilter(false)))
+                .when(mockFilter).serializeAsField(
+                        Matchers.any(),
+                        Matchers.any(JsonGenerator.class),
+                        Matchers.any(SerializerProvider.class),
+                        Matchers.any(PropertyWriter.class));
 
-        Map<String, Object> filterMap = new HashMap<>();
+        final Map<String, Object> filterMap = new HashMap<>();
         filterMap.put(RedactionFilter.REDACTION_FILTER_ID, mockFilter);
-        objectMapper.setFilters(new SimpleFilterProvider(filterMap));
-        JsonNode actualTree = objectMapper.valueToTree(redactedBean);
-        JsonNode expectedTree;
-        try (InputStream resourceStream = this.getClass().getResourceAsStream(CLASS_NAME + ".testDeprecatedSerializeAsFieldWithoutNull.json")) {
-            expectedTree = objectMapper.readTree(resourceStream);
-        }
+        _objectMapper.setFilters(new SimpleFilterProvider(filterMap));
+        final JsonNode actualTree = _objectMapper.valueToTree(_redactedBean);
+        final JsonNode expectedTree = readTree("testDeprecatedSerializeAsFieldWithoutNull.json");
         Assert.assertEquals(expectedTree, actualTree);
     }
 
-    public static class NonRedactedBean {
-        private String nullValue = null;
-        private final String stringValue;
-        private final Integer intValue;
-        private final float floatValue;
-        private final String[] stringArrayValue;
-        private final boolean booleanValue;
-        private final Map<String, Object> objectMap;
-
-
-
-        public NonRedactedBean(String stringValue, Integer intValue, float floatValue,
-                String[] stringArrayValue, boolean booleanValue, Map<String, Object> objectMap) {
-            this.stringValue = stringValue;
-            this.intValue = intValue;
-            this.floatValue = floatValue;
-            this.stringArrayValue = Arrays.copyOf(stringArrayValue, stringArrayValue.length);
-            this.booleanValue = booleanValue;
-            this.objectMap = objectMap;
-        }
-
-        public void setNullValue(String nullValue) {
-            this.nullValue = nullValue;
-        }
-
-        public String getNullValue() {
-            return nullValue;
-        }
-
-        public String getStringValue() {
-            return stringValue;
-        }
-
-        public Integer getIntValue() {
-            return intValue;
-        }
-
-        public float getFloatValue() {
-            return floatValue;
-        }
-
-        public String[] getStringArrayValue() {
-            return Arrays.copyOf(stringArrayValue, stringArrayValue.length);
-        }
-
-        public boolean isBooleanValue() {
-            return booleanValue;
-        }
-
-        public Map<String, Object> getObjectMap() {
-            return objectMap;
+    private JsonNode readTree(final String resourceSuffix) {
+        try {
+            return _objectMapper.readTree(Resources.getResource("com/arpnetworking/logback/jackson/" + CLASS_NAME + "." + resourceSuffix));
+        } catch (final IOException e) {
+            Assert.fail("Failed with exception: " + e);
+            return null;
         }
     }
 
-    public static class RedactedBean {
-        @LogRedact
-        private final String nullValue = null;
-        private final String stringValue;
-        @LogRedact
-        private final Integer intValue;
-        private final float floatValue;
-        @LogRedact
-        private final String[] stringArrayValue;
-        private final boolean booleanValue;
-        private final Map<String, Object> objectMap;
+    private ObjectMapper _objectMapper;
+    private RedactedBean _redactedBean;
+    private NonRedactedBean _nonRedactedBean;
 
-        @LogRedact
-        @JsonIgnore
-        private String ignoredField = "ignore";
+    private static final String CLASS_NAME = RedactionFilterTest.class.getSimpleName();
 
-        public RedactedBean(String stringValue, Integer intValue, float floatValue,
-                String[] stringArrayValue, boolean booleanValue, Map<String, Object> objectMap) {
+    private static class NonRedactedBean {
+
+        public NonRedactedBean(
+                final String stringValue,
+                final Integer intValue,
+                final float floatValue,
+                final String[] stringArrayValue,
+                final boolean booleanValue,
+                final Map<String, Object> objectMap) {
+            _stringValue = stringValue;
+            _intValue = intValue;
+            _floatValue = floatValue;
+            _stringArrayValue = Arrays.copyOf(stringArrayValue, stringArrayValue.length);
+            _booleanValue = booleanValue;
+            _objectMap = objectMap;
+        }
+
+        public void setNullValue(final String nullValue) {
+            _nullValue = nullValue;
+        }
+
+        public String getNullValue() {
+            return _nullValue;
+        }
+
+        public String getStringValue() {
+            return _stringValue;
+        }
+
+        public Integer getIntValue() {
+            return _intValue;
+        }
+
+        public float getFloatValue() {
+            return _floatValue;
+        }
+
+        public String[] getStringArrayValue() {
+            return Arrays.copyOf(_stringArrayValue, _stringArrayValue.length);
+        }
+
+        public boolean isBooleanValue() {
+            return _booleanValue;
+        }
+
+        public Map<String, Object> getObjectMap() {
+            return _objectMap;
+        }
+
+        private String _nullValue = null;
+        private final String _stringValue;
+        private final Integer _intValue;
+        private final float _floatValue;
+        private final String[] _stringArrayValue;
+        private final boolean _booleanValue;
+        private final Map<String, Object> _objectMap;
+    }
+
+    // CHECKSTYLE.OFF: MemberName - Testing field annotations requires same name as getter.
+    // CHECKSTYLE.OFF: HiddenField - Testing field annotations requires same name as getter.
+    private static class RedactedBean {
+
+        public RedactedBean(
+                final String stringValue,
+                final Integer intValue,
+                final float floatValue,
+                final String[] stringArrayValue,
+                final boolean booleanValue,
+                final Map<String, Object> objectMap) {
             this.stringValue = stringValue;
             this.intValue = intValue;
             this.floatValue = floatValue;
@@ -228,36 +252,58 @@ public class RedactionFilterTest {
             return objectMap;
         }
 
-        public void setIgnoredField(String ignoredField) {
+        public void setIgnoredField(final String ignoredField) {
             this.ignoredField = ignoredField;
         }
 
         public String getIgnoredField() {
             return ignoredField;
         }
-    }
 
+        @LogRedact
+        private final String nullValue = null;
+        private final String stringValue;
+        @LogRedact
+        private final Integer intValue;
+        private final float floatValue;
+        @LogRedact
+        private final String[] stringArrayValue;
+        private final boolean booleanValue;
+        private final Map<String, Object> objectMap;
+        @LogRedact
+        @JsonIgnore
+        private String ignoredField = "ignore";
+    }
+    // CHECKSTYLE.ON: HiddenField
+    // CHECKSTYLE.ON: MemberName
+
+    /**
+     * @deprecated Provided for test compatibility with deprecated method in Jackson.
+     */
     @Deprecated
     private static class SerializeAsFieldAnswer implements Answer<Void> {
-        private final RedactionFilter redactionFilter;
 
-        public SerializeAsFieldAnswer(RedactionFilter redactionFilter) {
-            this.redactionFilter = redactionFilter;
+        public SerializeAsFieldAnswer(final RedactionFilter redactionFilter) {
+            _redactionFilter = redactionFilter;
         }
 
+        // CHECKSTYLE.OFF: IllegalThrows - Declared on external interface.
         @Override
-        public Void answer(InvocationOnMock invocation) throws Throwable {
+        public Void answer(final InvocationOnMock invocation) throws Throwable {
+            // CHECKSTYLE.ON: IllegalThrows
             if (invocation.getArguments()[3] instanceof BeanPropertyWriter) {
-                redactionFilter.serializeAsField(invocation.getArguments()[0], (JsonGenerator) invocation.getArguments()[1],
+                _redactionFilter.serializeAsField(invocation.getArguments()[0], (JsonGenerator) invocation.getArguments()[1],
                         (SerializerProvider) invocation.getArguments()[2], (BeanPropertyWriter) invocation.getArguments()[3]);
             } else {
-                redactionFilter.serializeAsField(invocation.getArguments()[0],
+                _redactionFilter.serializeAsField(invocation.getArguments()[0],
                         (JsonGenerator) invocation.getArguments()[1],
                         (SerializerProvider) invocation.getArguments()[2],
                         (PropertyWriter) invocation.getArguments()[3]);
             }
             return null;
         }
+
+        private final RedactionFilter _redactionFilter;
     }
 }
 

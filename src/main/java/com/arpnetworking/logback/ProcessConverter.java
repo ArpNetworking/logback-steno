@@ -15,10 +15,10 @@
  */
 package com.arpnetworking.logback;
 
-import java.util.concurrent.atomic.AtomicReference;
-
 import ch.qos.logback.classic.pattern.ClassicConverter;
 import ch.qos.logback.classic.spi.ILoggingEvent;
+
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Generate the process id for a logging event. This implementation uses the current process id and therefore will not
@@ -28,9 +28,6 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
  * @since 1.1.0
  */
 public class ProcessConverter extends ClassicConverter {
-
-    private final ProcessProvider provider;
-    private final AtomicReference<String> processId = new AtomicReference<>();
 
     /**
      * Public constructor.
@@ -45,20 +42,23 @@ public class ProcessConverter extends ClassicConverter {
     @Override
     public String convert(final ILoggingEvent event) {
         try {
-            String result = this.processId.get();
+            String result = _processId.get();
             if (result == null) {
-                result = provider.get();
-                this.processId.set(result);
+                result = _provider.get();
+                _processId.set(result);
             }
             return result;
-            // CS.OFF: IllegalCatch
-        } catch (Throwable t) {
-            // CS.ON: IllegalCatch
+            // CHECKSTYLE.OFF: IllegalCatch - Prevent all failures
+        } catch (final Throwable t) {
+            // CHECKSTYLE.ON: IllegalCatch
             return "<UNKNOWN>";
         }
     }
 
     /*package private*/ ProcessConverter(final ProcessProvider provider) {
-        this.provider = provider;
+        _provider = provider;
     }
+
+    private final ProcessProvider _provider;
+    private final AtomicReference<String> _processId = new AtomicReference<>();
 }

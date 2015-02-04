@@ -35,28 +35,28 @@ import java.util.regex.Pattern;
     String get();
 
     /**
+     * Default instance of <code>ProcessProvider</code>.
+     */
+    ProcessProvider DEFAULT = new DefaultProcessProvider(Pattern.compile("^([\\d]+)@.*$"));
+
+    /**
      * Default implementation of <code>ProcessProvider</code> using <code>ManagementFactory</code>.
      */
     /*package private*/ static final class DefaultProcessProvider implements ProcessProvider {
 
-        private final Pattern pattern;
-
         public DefaultProcessProvider(final Pattern pattern) {
-            this.pattern = pattern;
+            _pattern = pattern;
         }
 
         public String get() {
             final String processId = ManagementFactory.getRuntimeMXBean().getName();
-            final Matcher matcher = pattern.matcher(processId);
+            final Matcher matcher = _pattern.matcher(processId);
             if (matcher.matches()) {
                 return matcher.group(1);
             }
             return processId;
         }
-    }
 
-    /**
-     * Default instance of <code>ProcessProvider</code>.
-     */
-    ProcessProvider DEFAULT = new DefaultProcessProvider(Pattern.compile("^([\\d]+)@.*$"));
+        private final Pattern _pattern;
+    }
 }

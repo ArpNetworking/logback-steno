@@ -41,6 +41,11 @@ import java.security.SecureRandom;
     SecureRandom get(final byte[] seed);
 
     /**
+     * Default instance of <code>SecureRandomProvider</code>.
+     */
+    SecureRandomProvider DEFAULT = new DefaultSecureRandomProvider();
+
+    /**
      * Default implementation of <code>SecureRandomProvider</code>.
      */
     /*package private*/ static final class DefaultSecureRandomProvider implements SecureRandomProvider {
@@ -53,9 +58,4 @@ import java.security.SecureRandom;
             return new SecureRandom(seed);
         }
     }
-
-    /**
-     * Default instance of <code>SecureRandomProvider</code>.
-     */
-    SecureRandomProvider DEFAULT = new DefaultSecureRandomProvider();
 }

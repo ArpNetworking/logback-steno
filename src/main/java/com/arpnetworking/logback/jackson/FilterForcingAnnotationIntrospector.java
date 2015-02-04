@@ -26,10 +26,13 @@ import com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector;
  */
 public class FilterForcingAnnotationIntrospector extends JacksonAnnotationIntrospector {
 
-    private static final long serialVersionUID = 7623002162557264578L;
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public Object findFilterId(Annotated a) {
+    public Object findFilterId(final Annotated annotated) {
         return RedactionFilter.REDACTION_FILTER_ID;
     }
+
+    private static final long serialVersionUID = 7623002162557264578L;
 }

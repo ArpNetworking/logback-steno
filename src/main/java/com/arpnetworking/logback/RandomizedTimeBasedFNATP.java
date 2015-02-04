@@ -15,32 +15,29 @@
  */
 package com.arpnetworking.logback;
 
+import ch.qos.logback.core.joran.spi.NoAutoStart;
+import ch.qos.logback.core.rolling.DefaultTimeBasedFileNamingAndTriggeringPolicy;
+
 import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
-
-import ch.qos.logback.core.joran.spi.NoAutoStart;
-import ch.qos.logback.core.rolling.DefaultTimeBasedFileNamingAndTriggeringPolicy;
 
 /**
  * An alternative triggering policy that adds a random offset (calculated once on startup) to the rolling time of a
  * TimeBasedRollingPolicy.  This allows each node in a cluster of servers to have randomized rolling times so that
  * any performance impact associated by log rolling doesn't hit all nodes at the same time.
- * <p/>
+ * <br>
  * The default maximum offset is 1 hour.  If you have a rolling period lower than an hour then this value will need
  * to be modified.  If the rolling period is hourly then there is the possibility that the first log roll will
  * occur up to 2 hours after startup.
+ *
+ * @param <E> The event type.
  *
  * @author Gil Markham (gil at groupon dot com)
  * @since 1.0.0
  */
 @NoAutoStart
 public class RandomizedTimeBasedFNATP<E> extends DefaultTimeBasedFileNamingAndTriggeringPolicy<E> {
-    private static final int DEFAULT_MAX_OFFSET = 3600000; // 1 hour
-
-    private final double randomNumber;
-    private int randomOffsetInMillis;
-    private int maxOffsetInMillis = DEFAULT_MAX_OFFSET;
 
     /**
      * Public constructor.
@@ -60,7 +57,7 @@ public class RandomizedTimeBasedFNATP<E> extends DefaultTimeBasedFileNamingAndTr
         } catch (final UnknownHostException uhe) {
             random = secureRandomProvider.get();
         }
-        this.randomNumber = random.nextDouble();
+        _randomNumber = random.nextDouble();
     }
 
     /**
@@ -77,7 +74,7 @@ public class RandomizedTimeBasedFNATP<E> extends DefaultTimeBasedFileNamingAndTr
      * @return max offset in milliseconds
      */
     public int getMaxOffsetInMillis() {
-        return this.maxOffsetInMillis;
+        return _maxOffsetInMillis;
     }
 
     /**
@@ -86,8 +83,8 @@ public class RandomizedTimeBasedFNATP<E> extends DefaultTimeBasedFileNamingAndTr
      * @param maxOffsetInMillis - maximum allowed offset in milliseconds
      */
     public void setMaxOffsetInMillis(final int maxOffsetInMillis) {
-        this.maxOffsetInMillis = maxOffsetInMillis;
-        this.randomOffsetInMillis = (int) (this.randomNumber * this.maxOffsetInMillis);
+        _maxOffsetInMillis = maxOffsetInMillis;
+        _randomOffsetInMillis = (int) (_randomNumber * _maxOffsetInMillis);
     }
 
     /**
@@ -95,6 +92,12 @@ public class RandomizedTimeBasedFNATP<E> extends DefaultTimeBasedFileNamingAndTr
      */
     @Override
     protected void computeNextCheck() {
-        nextCheck = rc.getNextTriggeringMillis(dateInCurrentPeriod) + this.randomOffsetInMillis;
+        nextCheck = rc.getNextTriggeringMillis(dateInCurrentPeriod) + _randomOffsetInMillis;
     }
+
+    private final double _randomNumber;
+    private int _randomOffsetInMillis;
+    private int _maxOffsetInMillis = DEFAULT_MAX_OFFSET;
+
+    private static final int DEFAULT_MAX_OFFSET = 3600000; // 1 hour
 }

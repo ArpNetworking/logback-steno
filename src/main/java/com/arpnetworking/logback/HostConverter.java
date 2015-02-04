@@ -15,10 +15,10 @@
  */
 package com.arpnetworking.logback;
 
-import java.util.concurrent.atomic.AtomicReference;
-
 import ch.qos.logback.classic.pattern.ClassicConverter;
 import ch.qos.logback.classic.spi.ILoggingEvent;
+
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Generate the host name for a logging event. This implementation uses the local host name and therefore will not
@@ -28,9 +28,6 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
  * @since 1.1.0
  */
 public class HostConverter extends ClassicConverter {
-
-    private final HostProvider provider;
-    private final AtomicReference<String> hostName = new AtomicReference<>();
 
     /**
      * Public constructor.
@@ -45,20 +42,23 @@ public class HostConverter extends ClassicConverter {
     @Override
     public String convert(final ILoggingEvent event) {
         try {
-            String result = this.hostName.get();
+            String result = this._hostName.get();
             if (result == null) {
-                result = provider.get();
-                this.hostName.set(result);
+                result = _provider.get();
+                this._hostName.set(result);
             }
             return result;
-            // CS.OFF: IllegalCatch
+            // CHECKSTYLE.OFF: IllegalCatch - Prevent all failures
         } catch (final Throwable t) {
-            // CS.ON: IllegalCatch
+            // CHECKSTYLE.ON: IllegalCatch
             return "<UNKNOWN>";
         }
     }
 
     /*package private*/ HostConverter(final HostProvider provider) {
-        this.provider = provider;
+        this._provider = provider;
     }
+
+    private final HostProvider _provider;
+    private final AtomicReference<String> _hostName = new AtomicReference<>();
 }

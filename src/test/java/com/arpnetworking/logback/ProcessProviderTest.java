@@ -26,7 +26,7 @@ import org.junit.Test;
 public class ProcessProviderTest {
 
     @Test
-    public void testDefaulProcessProvider() {
+    public void testDefaultProcessProvider() {
         final String process = ProcessProvider.DEFAULT.get();
         Assert.assertNotNull(process);
         Assert.assertFalse(process.isEmpty());

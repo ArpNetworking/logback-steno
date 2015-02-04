@@ -15,9 +15,6 @@
  */
 package com.arpnetworking.logback;
 
-import java.util.Arrays;
-import java.util.Map;
-
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.IThrowableProxy;
@@ -26,6 +23,9 @@ import ch.qos.logback.classic.spi.LoggingEvent;
 import org.slf4j.Marker;
 import org.slf4j.helpers.MessageFormatter;
 
+import java.util.Arrays;
+import java.util.Map;
+
 /**
  * Logback LoggingEvent wrapper for overriding the message and argumentArray.
  *
@@ -33,10 +33,6 @@ import org.slf4j.helpers.MessageFormatter;
  * @since 1.0.0
  */
 public class LoggingEventWrapper extends LoggingEvent {
-    private final ILoggingEvent wrappedEvent;
-    private final String message;
-    private final Object[] argumentArray;
-    private transient String formattedMessage;
 
     /**
      * Public constructor.
@@ -46,9 +42,9 @@ public class LoggingEventWrapper extends LoggingEvent {
      * @param argumentArray The array of arguments for the message.
      */
     public LoggingEventWrapper(final ILoggingEvent event, final String message, final Object[] argumentArray) {
-        this.wrappedEvent = event;
-        this.message = message;
-        this.argumentArray = argumentArray == null ? null : Arrays.copyOf(argumentArray, argumentArray.length);
+        _wrappedEvent = event;
+        _message = message;
+        _argumentArray = argumentArray == null ? null : Arrays.copyOf(argumentArray, argumentArray.length);
     }
 
     /**
@@ -56,7 +52,7 @@ public class LoggingEventWrapper extends LoggingEvent {
      */
     @Override
     public String getThreadName() {
-        return wrappedEvent.getThreadName();
+        return _wrappedEvent.getThreadName();
     }
 
     /**
@@ -64,7 +60,7 @@ public class LoggingEventWrapper extends LoggingEvent {
      */
     @Override
     public Level getLevel() {
-        return wrappedEvent.getLevel();
+        return _wrappedEvent.getLevel();
     }
 
     /**
@@ -72,7 +68,7 @@ public class LoggingEventWrapper extends LoggingEvent {
      */
     @Override
     public String getMessage() {
-        return message;
+        return _message;
     }
 
     /**
@@ -80,7 +76,7 @@ public class LoggingEventWrapper extends LoggingEvent {
      */
     @Override
     public Object[] getArgumentArray() {
-        return argumentArray == null ? null : Arrays.copyOf(argumentArray, argumentArray.length);
+        return _argumentArray == null ? null : Arrays.copyOf(_argumentArray, _argumentArray.length);
     }
 
     /**
@@ -88,7 +84,7 @@ public class LoggingEventWrapper extends LoggingEvent {
      */
     @Override
     public String getLoggerName() {
-        return wrappedEvent.getLoggerName();
+        return _wrappedEvent.getLoggerName();
     }
 
     /**
@@ -96,7 +92,7 @@ public class LoggingEventWrapper extends LoggingEvent {
      */
     @Override
     public LoggerContextVO getLoggerContextVO() {
-        return wrappedEvent.getLoggerContextVO();
+        return _wrappedEvent.getLoggerContextVO();
     }
 
     /**
@@ -104,7 +100,7 @@ public class LoggingEventWrapper extends LoggingEvent {
      */
     @Override
     public IThrowableProxy getThrowableProxy() {
-        return wrappedEvent.getThrowableProxy();
+        return _wrappedEvent.getThrowableProxy();
     }
 
     /**
@@ -112,7 +108,7 @@ public class LoggingEventWrapper extends LoggingEvent {
      */
     @Override
     public StackTraceElement[] getCallerData() {
-        return wrappedEvent.getCallerData();
+        return _wrappedEvent.getCallerData();
     }
 
     /**
@@ -120,7 +116,7 @@ public class LoggingEventWrapper extends LoggingEvent {
      */
     @Override
     public boolean hasCallerData() {
-        return wrappedEvent.hasCallerData();
+        return _wrappedEvent.hasCallerData();
     }
 
     /**
@@ -128,7 +124,7 @@ public class LoggingEventWrapper extends LoggingEvent {
      */
     @Override
     public Marker getMarker() {
-        return wrappedEvent.getMarker();
+        return _wrappedEvent.getMarker();
     }
 
     /**
@@ -136,7 +132,7 @@ public class LoggingEventWrapper extends LoggingEvent {
      */
     @Override
     public Map<String, String> getMDCPropertyMap() {
-        return wrappedEvent.getMDCPropertyMap();
+        return _wrappedEvent.getMDCPropertyMap();
     }
 
     /**
@@ -145,7 +141,7 @@ public class LoggingEventWrapper extends LoggingEvent {
     @Override
     @SuppressWarnings("deprecation")
     public Map<String, String> getMdc() {
-        return wrappedEvent.getMdc();
+        return _wrappedEvent.getMdc();
     }
 
     /**
@@ -153,7 +149,7 @@ public class LoggingEventWrapper extends LoggingEvent {
      */
     @Override
     public long getTimeStamp() {
-        return wrappedEvent.getTimeStamp();
+        return _wrappedEvent.getTimeStamp();
     }
 
     /**
@@ -161,7 +157,7 @@ public class LoggingEventWrapper extends LoggingEvent {
      */
     @Override
     public void prepareForDeferredProcessing() {
-        wrappedEvent.prepareForDeferredProcessing();
+        _wrappedEvent.prepareForDeferredProcessing();
     }
 
     /**
@@ -172,15 +168,20 @@ public class LoggingEventWrapper extends LoggingEvent {
      * @return The formatted message.
      */
     public String getFormattedMessage() {
-        if (formattedMessage != null) {
-            return formattedMessage;
+        if (_formattedMessage != null) {
+            return _formattedMessage;
         }
-        if (argumentArray != null) {
-            formattedMessage = MessageFormatter.arrayFormat(message, argumentArray).getMessage();
+        if (_argumentArray != null) {
+            _formattedMessage = MessageFormatter.arrayFormat(_message, _argumentArray).getMessage();
         } else {
-            formattedMessage = message;
+            _formattedMessage = _message;
         }
 
-        return formattedMessage;
+        return _formattedMessage;
     }
+
+    private final ILoggingEvent _wrappedEvent;
+    private final String _message;
+    private final Object[] _argumentArray;
+    private transient String _formattedMessage;
 }

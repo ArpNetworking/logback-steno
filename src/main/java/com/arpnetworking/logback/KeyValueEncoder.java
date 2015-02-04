@@ -15,10 +15,11 @@
  */
 package com.arpnetworking.logback;
 
-import java.io.StringWriter;
-import java.util.Map;
-
 import ch.qos.logback.classic.spi.ILoggingEvent;
+
+import java.io.StringWriter;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Encoder to take a Steno log event {@link com.arpnetworking.logback.StenoMarker} and convert it to an
@@ -27,7 +28,6 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
  * @author Gil Markham (gil at groupon dot com)
  * @since 1.0.0
  */
-@SuppressWarnings("deprecation")
 public class KeyValueEncoder extends BaseLoggingEncoder {
 
     /**
@@ -147,19 +147,63 @@ public class KeyValueEncoder extends BaseLoggingEncoder {
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("deprecation")
     @Override
-    protected String buildJsonMessage(
+    protected String buildListsMessage(
             final ILoggingEvent event,
             final String eventName,
-            final String jsonKey,
-            final String json) {
+            final List<String> dataKeys,
+            final List<Object> dataValues,
+            final List<String> contextKeys,
+            final List<Object> contextValues) {
 
-        final String[] keys = new String[]{jsonKey};
-        final Object[] values = escapeStringValues(new Object[]{json});
-        final String formatString = buildFormatString(eventName, keys);
-        final LoggingEventWrapper eventWrapper = new LoggingEventWrapper(event, formatString, values);
-        return layout.doLayout(eventWrapper);
+        final int dataKeysSize = dataKeys == null ? 0 : dataKeys.size();
+        final int contextKeysSize = contextKeys == null ? 0 : contextKeys.size();
+        final int dataValuesSize = dataValues == null ? 0 : dataValues.size();
+        final int contextValuesSize = contextValues == null ? 0 : contextValues.size();
+
+        final int size = dataKeysSize + contextKeysSize;
+
+        final String[] keys = new String[size];
+        final Object[] values = new Object[size];
+
+        int index = 0;
+        if (contextKeys != null) {
+            for (final String key : contextKeys) {
+                keys[index++] = key;
+            }
+        }
+        if (dataKeys != null) {
+            for (final String key : dataKeys) {
+                keys[index++] = key;
+            }
+        }
+        index = 0;
+        int valueCount = 0;
+        for (int i = 0; i < contextKeysSize; ++i) {
+            if (valueCount < contextValuesSize) {
+                values[index] = contextValues.get(i);
+            } else {
+                values[index] = null;
+            }
+            ++index;
+            ++valueCount;
+        }
+        valueCount = 0;
+        for (int i = 0; i < dataKeysSize; ++i) {
+            if (valueCount < dataValuesSize) {
+                values[index] = dataValues.get(i);
+            } else {
+                values[index] = null;
+            }
+            ++index;
+            ++valueCount;
+        }
+
+        return buildArrayMessage(
+                event,
+                eventName,
+                keys,
+                escapeStringValues(values));
     }
 
     /**

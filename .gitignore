@@ -7,6 +7,7 @@ target
 .classpath
 .settings
 pom.xml.versionsBackup
+.DS_Store
 
 # Package Files #
 *.jar

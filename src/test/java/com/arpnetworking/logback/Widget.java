@@ -28,11 +28,11 @@ package com.arpnetworking.logback;
      * @param value The value of the widget.
      */
     public Widget(final String value) {
-        this.value = value;
+        _value = value;
     }
 
     public String getValue() {
-        return value;
+        return _value;
     }
 
     /**
@@ -40,8 +40,8 @@ package com.arpnetworking.logback;
      */
     @Override
     public String toString() {
-        return "Value=" + value;
+        return "Value=" + _value;
     }
 
-    private final String value;
+    private final String _value;
 }

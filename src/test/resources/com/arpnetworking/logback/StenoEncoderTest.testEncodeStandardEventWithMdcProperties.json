@@ -1,0 +1,1 @@
+{"time":"2011-11-11T11:11:11.000Z","name":"log","level":"debug","data":{"message":"logEvent - foo = bar"},"context":{"host":"<HOST>","processId":"<PROCESS_ID>","threadId":"<THREAD_ID>","MDC_KEY":"MDC_VALUE"},"id":"<ID>"}

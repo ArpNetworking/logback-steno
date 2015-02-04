@@ -15,29 +15,13 @@
  */
 package com.arpnetworking.logback;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.Writer;
-import java.lang.management.ManagementFactory;
-import java.math.BigInteger;
-import java.net.InetAddress;
-import java.nio.charset.StandardCharsets;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.IThrowableProxy;
 import ch.qos.logback.classic.spi.LoggingEvent;
 import ch.qos.logback.classic.spi.ThrowableProxy;
+import com.arpnetworking.logback.annotations.LogRedact;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -48,15 +32,30 @@ import com.github.fge.jsonschema.core.report.ProcessingReport;
 import com.github.fge.jsonschema.main.JsonSchemaFactory;
 import com.github.fge.jsonschema.main.JsonValidator;
 import com.google.common.base.Throwables;
+import com.google.common.collect.ImmutableList;
+import com.google.common.io.Resources;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 
-import com.arpnetworking.logback.annotations.LogRedact;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.Writer;
+import java.lang.management.ManagementFactory;
+import java.math.BigInteger;
+import java.net.InetAddress;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Tests for <code>StenoEncoder</code>.
@@ -64,59 +63,19 @@ import com.arpnetworking.logback.annotations.LogRedact;
  * @author Gil Markham (gil at groupon dot com)
  */
 public class StenoEncoderTest {
-    private StenoEncoder encoder;
-    private ByteArrayOutputStream baos;
-    private LoggerContext context;
-
-    private static final JsonValidator VALIDATOR = JsonSchemaFactory.byDefault().getValidator();
-    private static final JsonNode STENO_SCHEMA;
-
-    private static final String HOST_NAME;
-    private static final String PROCESS_ID;
-
-    static {
-        final Pattern processIdPattern = Pattern.compile("^([\\d]+)@.*$");
-        String processId;
-        try {
-            processId = ManagementFactory.getRuntimeMXBean().getName();
-            final Matcher matcher = processIdPattern.matcher(processId);
-            if (matcher.matches()) {
-                processId = matcher.group(1);
-            }
-        } catch (final Throwable t) {
-            processId = "<UNKNOWN>";
-        }
-        PROCESS_ID = processId;
-
-        String hostName;
-        try {
-            hostName = InetAddress.getLocalHost().getHostName();
-        } catch (final Throwable t) {
-            hostName = "<UNKNOWN>";
-        }
-        HOST_NAME = hostName;
-        
-        JsonNode jsonNode = null;
-        try {
-            jsonNode = JsonLoader.fromResource("/steno.schema.json");
-        } catch (final IOException e) {
-            Throwables.propagate(e);
-        }
-        STENO_SCHEMA = jsonNode;
-    }
 
     @Before
-    public void setup() throws Exception {
-        context = new LoggerContext();
-        context.start();
-        baos = new ByteArrayOutputStream();
-        encoder = new StenoEncoder();
-        encoder.setRedactEnabled(false);
-        encoder.setRedactNull(true);
-        encoder.setImmediateFlush(true);
-        encoder.init(baos);
-        encoder.setContext(context);
-        encoder.start();
+    public void setUp() throws Exception {
+        _context = new LoggerContext();
+        _context.start();
+        _baos = new ByteArrayOutputStream();
+        _encoder = new StenoEncoder();
+        _encoder.setRedactEnabled(false);
+        _encoder.setRedactNull(true);
+        _encoder.setImmediateFlush(true);
+        _encoder.init(_baos);
+        _encoder.setContext(_context);
+        _encoder.start();
     }
 
     @Test
@@ -125,17 +84,15 @@ public class StenoEncoderTest {
         event.setLevel(Level.INFO);
         event.setMarker(StenoMarker.ARRAY_MARKER);
         event.setMessage("logEvent");
-        event.setThreadName("thread");
-        event.setLoggerContextRemoteView(context.getLoggerContextRemoteView());
+        event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         event.setTimeStamp(0);
         final Object[] argArray = new Object[2];
         argArray[0] = new String[]{"key1", "key2"};
         argArray[1] = new Object[]{Integer.valueOf(1234), "foo"};
         event.setArgumentArray(argArray);
-        encoder.doEncode(event);
-        final String logOutput = baos.toString(StandardCharsets.UTF_8.name())
-                .replaceAll("\"id\":\"[^\"]+\"", "\"id\":\"ID\"");
-        assertEquals("{\"time\":\"1970-01-01T00:00:00.000Z\",\"name\":\"logEvent\",\"level\":\"info\",\"data\":{\"key1\":1234,\"key2\":\"foo\"},\"context\":{\"host\":\"" + HOST_NAME + "\",\"processId\":\"" + PROCESS_ID + "\",\"threadId\":\"thread\"},\"id\":\"ID\"}\n", logOutput);
+        _encoder.doEncode(event);
+        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        assertOutput("StenoEncoderTest.testEncodeArray.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
 
@@ -145,19 +102,16 @@ public class StenoEncoderTest {
         event.setLevel(Level.INFO);
         event.setMarker(StenoMarker.ARRAY_MARKER);
         event.setMessage("logEvent");
-        event.setThreadName("thread");
-        event.setLoggerContextRemoteView(context.getLoggerContextRemoteView());
+        event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         event.setTimeStamp(0);
         event.setThrowableProxy(new ThrowableProxy(new NullPointerException("npe!")));
         final Object[] argArray = new Object[2];
         argArray[0] = new String[]{};
         argArray[1] = new Object[]{};
         event.setArgumentArray(argArray);
-        encoder.doEncode(event);
-        final String logOutput = baos.toString(StandardCharsets.UTF_8.name())
-                .replaceAll("\"id\":\"[^\"]+\"", "\"id\":\"ID\"")
-                .replaceFirst("\"backtrace\":\\[[^\\]]+\\]", "\"backtrace\":[]");
-        assertEquals("{\"time\":\"1970-01-01T00:00:00.000Z\",\"name\":\"logEvent\",\"level\":\"info\",\"data\":{},\"exception\":{\"type\":\"java.lang.NullPointerException\",\"message\":\"npe!\",\"backtrace\":[],\"data\":{\"suppressed\":[]}},\"context\":{\"host\":\"" + HOST_NAME + "\",\"processId\":\"" + PROCESS_ID + "\",\"threadId\":\"thread\"},\"id\":\"ID\"}\n", logOutput);
+        _encoder.doEncode(event);
+        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        assertOutput("StenoEncoderTest.testEncodeArrayWithException.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
 
@@ -167,19 +121,16 @@ public class StenoEncoderTest {
         event.setLevel(Level.INFO);
         event.setMarker(StenoMarker.ARRAY_MARKER);
         event.setMessage("logEvent");
-        event.setThreadName("thread");
-        event.setLoggerContextRemoteView(context.getLoggerContextRemoteView());
+        event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         event.setTimeStamp(0);
         event.setThrowableProxy(new ThrowableProxy(new UnsupportedOperationException("uoe!", new NullPointerException("npe!"))));
         final Object[] argArray = new Object[2];
         argArray[0] = new String[]{};
         argArray[1] = new Object[]{};
         event.setArgumentArray(argArray);
-        encoder.doEncode(event);
-        final String logOutput = baos.toString(StandardCharsets.UTF_8.name())
-                .replaceAll("\"id\":\"[^\"]+\"", "\"id\":\"ID\"")
-                .replaceAll("\"backtrace\":\\[[^\\]]+\\]", "\"backtrace\":[]");
-        assertEquals("{\"time\":\"1970-01-01T00:00:00.000Z\",\"name\":\"logEvent\",\"level\":\"info\",\"data\":{},\"exception\":{\"type\":\"java.lang.UnsupportedOperationException\",\"message\":\"uoe!\",\"backtrace\":[],\"data\":{\"suppressed\":[],\"cause\":{\"type\":\"java.lang.NullPointerException\",\"message\":\"npe!\",\"backtrace\":[],\"data\":{\"suppressed\":[]}}}},\"context\":{\"host\":\"" + HOST_NAME + "\",\"processId\":\"" + PROCESS_ID + "\",\"threadId\":\"thread\"},\"id\":\"ID\"}\n", logOutput);
+        _encoder.doEncode(event);
+        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        assertOutput("StenoEncoderTest.testEncodeArrayWithCausedException.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
 
@@ -189,8 +140,7 @@ public class StenoEncoderTest {
         event.setLevel(Level.INFO);
         event.setMarker(StenoMarker.ARRAY_MARKER);
         event.setMessage("logEvent");
-        event.setThreadName("thread");
-        event.setLoggerContextRemoteView(context.getLoggerContextRemoteView());
+        event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         event.setTimeStamp(0);
         final Throwable throwable = new NullPointerException("npe!");
         throwable.addSuppressed(new UnsupportedOperationException("uoe!"));
@@ -199,27 +149,24 @@ public class StenoEncoderTest {
         argArray[0] = new String[]{};
         argArray[1] = new Object[]{};
         event.setArgumentArray(argArray);
-        encoder.doEncode(event);
-        final String logOutput = baos.toString(StandardCharsets.UTF_8.name())
-                .replaceAll("\"id\":\"[^\"]+\"", "\"id\":\"ID\"")
-                .replaceAll("\"backtrace\":\\[[^\\]]+\\]", "\"backtrace\":[]");
-        assertEquals("{\"time\":\"1970-01-01T00:00:00.000Z\",\"name\":\"logEvent\",\"level\":\"info\",\"data\":{},\"exception\":{\"type\":\"java.lang.NullPointerException\",\"message\":\"npe!\",\"backtrace\":[],\"data\":{\"suppressed\":[{\"type\":\"java.lang.UnsupportedOperationException\",\"message\":\"uoe!\",\"backtrace\":[],\"data\":{\"suppressed\":[]}}]}},\"context\":{\"host\":\"" + HOST_NAME + "\",\"processId\":\"" + PROCESS_ID + "\",\"threadId\":\"thread\"},\"id\":\"ID\"}\n", logOutput);
+        _encoder.doEncode(event);
+        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        assertOutput("StenoEncoderTest.testEncodeArrayWithSuppressedException.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
 
     @Test
-    @edu.umd.cs.findbugs.annotations.SuppressWarnings(value = "SIC_INNER_SHOULD_BE_STATIC_ANON")
+    @SuppressFBWarnings(value = "SIC_INNER_SHOULD_BE_STATIC_ANON")
     public void testEncodeArrayWithNullSuppressedException() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
         event.setMarker(StenoMarker.ARRAY_MARKER);
         event.setMessage("logEvent");
-        event.setThreadName("thread");
-        event.setLoggerContextRemoteView(context.getLoggerContextRemoteView());
+        event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         event.setTimeStamp(0);
         event.setThrowableProxy(new ThrowableProxy(new NullPointerException("npe!")) {
             @Override
-            @edu.umd.cs.findbugs.annotations.SuppressWarnings(value = "PZLA_PREFER_ZERO_LENGTH_ARRAYS")
+            @SuppressFBWarnings(value = "PZLA_PREFER_ZERO_LENGTH_ARRAYS")
             public IThrowableProxy[] getSuppressed() {
                 return null;
             }
@@ -228,11 +175,9 @@ public class StenoEncoderTest {
         argArray[0] = new String[]{};
         argArray[1] = new Object[]{};
         event.setArgumentArray(argArray);
-        encoder.doEncode(event);
-        final String logOutput = baos.toString(StandardCharsets.UTF_8.name())
-                .replaceAll("\"id\":\"[^\"]+\"", "\"id\":\"ID\"")
-                .replaceFirst("\"backtrace\":\\[[^\\]]+\\]", "\"backtrace\":[]");
-        assertEquals("{\"time\":\"1970-01-01T00:00:00.000Z\",\"name\":\"logEvent\",\"level\":\"info\",\"data\":{},\"exception\":{\"type\":\"java.lang.NullPointerException\",\"message\":\"npe!\",\"backtrace\":[],\"data\":{}},\"context\":{\"host\":\"" + HOST_NAME + "\",\"processId\":\"" + PROCESS_ID + "\",\"threadId\":\"thread\"},\"id\":\"ID\"}\n", logOutput);
+        _encoder.doEncode(event);
+        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        assertOutput("StenoEncoderTest.testEncodeArrayWithNullSuppressedException.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
 
@@ -242,19 +187,17 @@ public class StenoEncoderTest {
         event.setLevel(Level.INFO);
         event.setMarker(StenoMarker.ARRAY_MARKER);
         event.setMessage("logEvent");
-        event.setThreadName("thread");
-        event.setLoggerContextRemoteView(context.getLoggerContextRemoteView());
+        event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         event.setTimeStamp(0);
-        final DateTime now = new DateTime(DateTimeZone.UTC);
+        final DateTime date = new DateTime(1415737981000L);
         final Object[] argArray = new Object[2];
         argArray[0] = new String[]{"key1", "redacted"};
-        argArray[1] = new Object[]{now, new Redacted("string", 1L)};
+        argArray[1] = new Object[]{date, new Redacted("string", 1L)};
         event.setArgumentArray(argArray);
-        encoder.setRedactEnabled(true);
-        encoder.doEncode(event);
-        final String logOutput = baos.toString(StandardCharsets.UTF_8.name())
-                .replaceAll("\"id\":\"[^\"]+\"", "\"id\":\"ID\"");
-        assertEquals("{\"time\":\"1970-01-01T00:00:00.000Z\",\"name\":\"logEvent\",\"level\":\"info\",\"data\":{\"key1\":\"" + now.toString() + "\",\"redacted\":{\"stringValue\":\"<REDACTED>\",\"nullValue\":\"<REDACTED>\",\"longValue\":\"<REDACTED>\"}},\"context\":{\"host\":\"" + HOST_NAME + "\",\"processId\":\"" + PROCESS_ID + "\",\"threadId\":\"thread\"},\"id\":\"ID\"}\n", logOutput);
+        _encoder.setRedactEnabled(true);
+        _encoder.doEncode(event);
+        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        assertOutput("StenoEncoderTest.testEncodeArrayComplexValue.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
 
@@ -264,17 +207,15 @@ public class StenoEncoderTest {
         event.setLevel(Level.INFO);
         event.setMarker(StenoMarker.ARRAY_MARKER);
         event.setMessage("logEvent");
-        event.setThreadName("thread");
-        event.setLoggerContextRemoteView(context.getLoggerContextRemoteView());
+        event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         event.setTimeStamp(0);
         final Object[] argArray = new Object[2];
         argArray[0] = new String[]{"key1", "key2"};
         argArray[1] = null;
         event.setArgumentArray(argArray);
-        encoder.doEncode(event);
-        final String logOutput = baos.toString(StandardCharsets.UTF_8.name())
-                .replaceAll("\"id\":\"[^\"]+\"", "\"id\":\"ID\"");
-        assertEquals("{\"time\":\"1970-01-01T00:00:00.000Z\",\"name\":\"logEvent\",\"level\":\"info\",\"data\":{\"key1\":null,\"key2\":null},\"context\":{\"host\":\"" + HOST_NAME + "\",\"processId\":\"" + PROCESS_ID + "\",\"threadId\":\"thread\"},\"id\":\"ID\"}\n", logOutput);
+        _encoder.doEncode(event);
+        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        assertOutput("StenoEncoderTest.testEncodeArrayNullValues.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
 
@@ -284,17 +225,15 @@ public class StenoEncoderTest {
         event.setLevel(Level.INFO);
         event.setMarker(StenoMarker.ARRAY_MARKER);
         event.setMessage("logEvent");
-        event.setThreadName("thread");
-        event.setLoggerContextRemoteView(context.getLoggerContextRemoteView());
+        event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         event.setTimeStamp(0);
         final Object[] argArray = new Object[2];
         argArray[0] = null;
         argArray[1] = new Object[]{Integer.valueOf(1234), "foo"};
         event.setArgumentArray(argArray);
-        encoder.doEncode(event);
-        final String logOutput = baos.toString(StandardCharsets.UTF_8.name())
-                .replaceAll("\"id\":\"[^\"]+\"", "\"id\":\"ID\"");
-        assertEquals("{\"time\":\"1970-01-01T00:00:00.000Z\",\"name\":\"logEvent\",\"level\":\"info\",\"data\":{},\"context\":{\"host\":\"" + HOST_NAME + "\",\"processId\":\"" + PROCESS_ID + "\",\"threadId\":\"thread\"},\"id\":\"ID\"}\n", logOutput);
+        _encoder.doEncode(event);
+        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        assertOutput("StenoEncoderTest.testEncodeArrayNullKeys.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
 
@@ -304,8 +243,7 @@ public class StenoEncoderTest {
         event.setLevel(Level.INFO);
         event.setMarker(StenoMarker.ARRAY_MARKER);
         event.setMessage("logEvent");
-        event.setThreadName("thread");
-        event.setLoggerContextRemoteView(context.getLoggerContextRemoteView());
+        event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         event.setTimeStamp(0);
         final Object[] argArray = new Object[2];
         argArray[0] = new String[]{"key1", "key2"};
@@ -314,11 +252,11 @@ public class StenoEncoderTest {
         final ObjectMapper objectMapper = Mockito.mock(ObjectMapper.class);
         final JsonFactory jsonFactory = Mockito.mock(JsonFactory.class);
         Mockito.doThrow(new IOException("Mock Failure")).when(jsonFactory).createGenerator(Mockito.any(Writer.class));
-        encoder = new StenoEncoder(jsonFactory, objectMapper);
-        encoder.init(baos);
-        encoder.doEncode(event);
-        final String logOutput = baos.toString(StandardCharsets.UTF_8.name());
-        assertEquals("Unknown exception: Mock Failure", logOutput);
+        _encoder = new StenoEncoder(jsonFactory, objectMapper);
+        _encoder.init(_baos);
+        _encoder.doEncode(event);
+        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        Assert.assertEquals("Unknown exception: Mock Failure", logOutput);
     }
 
     @Test
@@ -327,17 +265,15 @@ public class StenoEncoderTest {
         event.setLevel(Level.INFO);
         event.setMarker(StenoMarker.ARRAY_JSON_MARKER);
         event.setMessage("logEvent");
-        event.setThreadName("thread");
-        event.setLoggerContextRemoteView(context.getLoggerContextRemoteView());
+        event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         event.setTimeStamp(0);
         final Object[] argArray = new Object[2];
         argArray[0] = new String[]{"key1", "key2"};
         argArray[1] = new String[]{"{\"foo\":\"bar\"}", "[\"foo\",\"bar\"]"};
         event.setArgumentArray(argArray);
-        encoder.doEncode(event);
-        final String logOutput = baos.toString(StandardCharsets.UTF_8.name())
-                .replaceAll("\"id\":\"[^\"]+\"", "\"id\":\"ID\"");
-        assertEquals("{\"time\":\"1970-01-01T00:00:00.000Z\",\"name\":\"logEvent\",\"level\":\"info\",\"data\":{\"key1\":{\"foo\":\"bar\"},\"key2\":[\"foo\",\"bar\"]},\"context\":{\"host\":\"" + HOST_NAME + "\",\"processId\":\"" + PROCESS_ID + "\",\"threadId\":\"thread\"},\"id\":\"ID\"}\n", logOutput);
+        _encoder.doEncode(event);
+        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        assertOutput("StenoEncoderTest.testEncodeArrayJson.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
 
@@ -347,17 +283,15 @@ public class StenoEncoderTest {
         event.setLevel(Level.INFO);
         event.setMarker(StenoMarker.ARRAY_JSON_MARKER);
         event.setMessage("logEvent");
-        event.setThreadName("thread");
-        event.setLoggerContextRemoteView(context.getLoggerContextRemoteView());
+        event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         event.setTimeStamp(0);
         final Object[] argArray = new Object[2];
         argArray[0] = new String[]{"key1", "key2"};
         argArray[1] = null;
         event.setArgumentArray(argArray);
-        encoder.doEncode(event);
-        final String logOutput = baos.toString(StandardCharsets.UTF_8.name())
-                .replaceAll("\"id\":\"[^\"]+\"", "\"id\":\"ID\"");
-        assertEquals("{\"time\":\"1970-01-01T00:00:00.000Z\",\"name\":\"logEvent\",\"level\":\"info\",\"data\":{\"key1\":null,\"key2\":null},\"context\":{\"host\":\"" + HOST_NAME + "\",\"processId\":\"" + PROCESS_ID + "\",\"threadId\":\"thread\"},\"id\":\"ID\"}\n", logOutput);
+        _encoder.doEncode(event);
+        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        assertOutput("StenoEncoderTest.testEncodeArrayJsonNullValues.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
 
@@ -367,17 +301,15 @@ public class StenoEncoderTest {
         event.setLevel(Level.INFO);
         event.setMarker(StenoMarker.ARRAY_JSON_MARKER);
         event.setMessage("logEvent");
-        event.setThreadName("thread");
-        event.setLoggerContextRemoteView(context.getLoggerContextRemoteView());
+        event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         event.setTimeStamp(0);
         final Object[] argArray = new Object[2];
         argArray[0] = null;
         argArray[1] = new String[]{"{\"foo\":\"bar\"}", "[\"foo\",\"bar\"]"};
         event.setArgumentArray(argArray);
-        encoder.doEncode(event);
-        final String logOutput = baos.toString(StandardCharsets.UTF_8.name())
-                .replaceAll("\"id\":\"[^\"]+\"", "\"id\":\"ID\"");
-        assertEquals("{\"time\":\"1970-01-01T00:00:00.000Z\",\"name\":\"logEvent\",\"level\":\"info\",\"data\":{},\"context\":{\"host\":\"" + HOST_NAME + "\",\"processId\":\"" + PROCESS_ID + "\",\"threadId\":\"thread\"},\"id\":\"ID\"}\n", logOutput);
+        _encoder.doEncode(event);
+        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        assertOutput("StenoEncoderTest.testEncodeArrayJsonNullKeys.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
 
@@ -387,8 +319,7 @@ public class StenoEncoderTest {
         event.setLevel(Level.INFO);
         event.setMarker(StenoMarker.ARRAY_JSON_MARKER);
         event.setMessage("logEvent");
-        event.setThreadName("thread");
-        event.setLoggerContextRemoteView(context.getLoggerContextRemoteView());
+        event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         event.setTimeStamp(0);
         final Object[] argArray = new Object[2];
         argArray[0] = new String[]{"key1", "key2"};
@@ -397,11 +328,11 @@ public class StenoEncoderTest {
         final ObjectMapper objectMapper = Mockito.mock(ObjectMapper.class);
         final JsonFactory jsonFactory = Mockito.mock(JsonFactory.class);
         Mockito.doThrow(new IOException("Mock Failure")).when(jsonFactory).createGenerator(Mockito.any(Writer.class));
-        encoder = new StenoEncoder(jsonFactory, objectMapper);
-        encoder.init(baos);
-        encoder.doEncode(event);
-        final String logOutput = baos.toString(StandardCharsets.UTF_8.name());
-        assertEquals("Unknown exception: Mock Failure", logOutput);
+        _encoder = new StenoEncoder(jsonFactory, objectMapper);
+        _encoder.init(_baos);
+        _encoder.doEncode(event);
+        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        Assert.assertEquals("Unknown exception: Mock Failure", logOutput);
     }
 
     @Test
@@ -410,8 +341,7 @@ public class StenoEncoderTest {
         event.setLevel(Level.INFO);
         event.setMarker(StenoMarker.MAP_MARKER);
         event.setMessage("logEvent");
-        event.setThreadName("thread");
-        event.setLoggerContextRemoteView(context.getLoggerContextRemoteView());
+        event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         event.setTimeStamp(0);
         final Map<String, Object> map = new LinkedHashMap<>();
         map.put("key1", Integer.valueOf(1234));
@@ -419,10 +349,9 @@ public class StenoEncoderTest {
         final Object[] argArray = new Object[1];
         argArray[0] = map;
         event.setArgumentArray(argArray);
-        encoder.doEncode(event);
-        final String logOutput = baos.toString(StandardCharsets.UTF_8.name())
-                .replaceAll("\"id\":\"[^\"]+\"", "\"id\":\"ID\"");
-        assertEquals("{\"time\":\"1970-01-01T00:00:00.000Z\",\"name\":\"logEvent\",\"level\":\"info\",\"data\":{\"key1\":1234,\"key2\":\"foo\"},\"context\":{\"host\":\"" + HOST_NAME + "\",\"processId\":\"" + PROCESS_ID + "\",\"threadId\":\"thread\"},\"id\":\"ID\"}\n", logOutput);
+        _encoder.doEncode(event);
+        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        assertOutput("StenoEncoderTest.testEncodeMap.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
 
@@ -432,19 +361,17 @@ public class StenoEncoderTest {
         event.setLevel(Level.INFO);
         event.setMarker(StenoMarker.MAP_MARKER);
         event.setMessage("logEvent");
-        event.setThreadName("thread");
-        event.setLoggerContextRemoteView(context.getLoggerContextRemoteView());
+        event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         event.setTimeStamp(0);
-        final DateTime now = new DateTime(DateTimeZone.UTC);
+        final DateTime date = new DateTime(1415737981000L);
         final Map<String, Object> map = new LinkedHashMap<>();
-        map.put("key1", now);
+        map.put("key1", date);
         final Object[] argArray = new Object[1];
         argArray[0] = map;
         event.setArgumentArray(argArray);
-        encoder.doEncode(event);
-        final String logOutput = baos.toString(StandardCharsets.UTF_8.name())
-                .replaceAll("\"id\":\"[^\"]+\"", "\"id\":\"ID\"");
-        assertEquals("{\"time\":\"1970-01-01T00:00:00.000Z\",\"name\":\"logEvent\",\"level\":\"info\",\"data\":{\"key1\":\"" + now.toString() + "\"},\"context\":{\"host\":\"" + HOST_NAME + "\",\"processId\":\"" + PROCESS_ID + "\",\"threadId\":\"thread\"},\"id\":\"ID\"}\n", logOutput);
+        _encoder.doEncode(event);
+        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        assertOutput("StenoEncoderTest.testEncodeMapComplexValue.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
 
@@ -454,8 +381,7 @@ public class StenoEncoderTest {
         event.setLevel(Level.INFO);
         event.setMarker(StenoMarker.MAP_MARKER);
         event.setMessage("logEvent");
-        event.setThreadName("thread");
-        event.setLoggerContextRemoteView(context.getLoggerContextRemoteView());
+        event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         event.setTimeStamp(0);
         final Map<String, Object> map = new LinkedHashMap<>();
         map.put("key1", null);
@@ -463,10 +389,9 @@ public class StenoEncoderTest {
         final Object[] argArray = new Object[1];
         argArray[0] = map;
         event.setArgumentArray(argArray);
-        encoder.doEncode(event);
-        final String logOutput = baos.toString(StandardCharsets.UTF_8.name())
-                .replaceAll("\"id\":\"[^\"]+\"", "\"id\":\"ID\"");
-        assertEquals("{\"time\":\"1970-01-01T00:00:00.000Z\",\"name\":\"logEvent\",\"level\":\"info\",\"data\":{\"key1\":null,\"key2\":null},\"context\":{\"host\":\"" + HOST_NAME + "\",\"processId\":\"" + PROCESS_ID + "\",\"threadId\":\"thread\"},\"id\":\"ID\"}\n", logOutput);
+        _encoder.doEncode(event);
+        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        assertOutput("StenoEncoderTest.testEncodeMapNullValues.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
 
@@ -476,16 +401,14 @@ public class StenoEncoderTest {
         event.setLevel(Level.INFO);
         event.setMarker(StenoMarker.MAP_MARKER);
         event.setMessage("logEvent");
-        event.setThreadName("thread");
-        event.setLoggerContextRemoteView(context.getLoggerContextRemoteView());
+        event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         event.setTimeStamp(0);
         final Object[] argArray = new Object[1];
         argArray[0] = null;
         event.setArgumentArray(argArray);
-        encoder.doEncode(event);
-        final String logOutput = baos.toString(StandardCharsets.UTF_8.name())
-                .replaceAll("\"id\":\"[^\"]+\"", "\"id\":\"ID\"");
-        assertEquals("{\"time\":\"1970-01-01T00:00:00.000Z\",\"name\":\"logEvent\",\"level\":\"info\",\"data\":{},\"context\":{\"host\":\"" + HOST_NAME + "\",\"processId\":\"" + PROCESS_ID + "\",\"threadId\":\"thread\"},\"id\":\"ID\"}\n", logOutput);
+        _encoder.doEncode(event);
+        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        assertOutput("StenoEncoderTest.testEncodeMapNullMap.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
 
@@ -495,8 +418,7 @@ public class StenoEncoderTest {
         event.setLevel(Level.INFO);
         event.setMarker(StenoMarker.MAP_MARKER);
         event.setMessage("logEvent");
-        event.setThreadName("thread");
-        event.setLoggerContextRemoteView(context.getLoggerContextRemoteView());
+        event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         event.setTimeStamp(0);
         final Map<String, Object> map = new LinkedHashMap<>();
         map.put("key1", Integer.valueOf(1234));
@@ -507,11 +429,11 @@ public class StenoEncoderTest {
         final ObjectMapper objectMapper = Mockito.mock(ObjectMapper.class);
         final JsonFactory jsonFactory = Mockito.mock(JsonFactory.class);
         Mockito.doThrow(new IOException("Mock Failure")).when(jsonFactory).createGenerator(Mockito.any(Writer.class));
-        encoder = new StenoEncoder(jsonFactory, objectMapper);
-        encoder.init(baos);
-        encoder.doEncode(event);
-        final String logOutput = baos.toString(StandardCharsets.UTF_8.name());
-        assertEquals("Unknown exception: Mock Failure", logOutput);
+        _encoder = new StenoEncoder(jsonFactory, objectMapper);
+        _encoder.init(_baos);
+        _encoder.doEncode(event);
+        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        Assert.assertEquals("Unknown exception: Mock Failure", logOutput);
     }
 
     @Test
@@ -520,8 +442,7 @@ public class StenoEncoderTest {
         event.setLevel(Level.INFO);
         event.setMarker(StenoMarker.MAP_JSON_MARKER);
         event.setMessage("logEvent");
-        event.setThreadName("thread");
-        event.setLoggerContextRemoteView(context.getLoggerContextRemoteView());
+        event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         event.setTimeStamp(0);
         final Map<String, Object> map = new LinkedHashMap<>();
         map.put("key1", "{\"foo\":\"bar\"}");
@@ -529,10 +450,9 @@ public class StenoEncoderTest {
         final Object[] argArray = new Object[1];
         argArray[0] = map;
         event.setArgumentArray(argArray);
-        encoder.doEncode(event);
-        final String logOutput = baos.toString(StandardCharsets.UTF_8.name())
-                .replaceAll("\"id\":\"[^\"]+\"", "\"id\":\"ID\"");
-        assertEquals("{\"time\":\"1970-01-01T00:00:00.000Z\",\"name\":\"logEvent\",\"level\":\"info\",\"data\":{\"key1\":{\"foo\":\"bar\"},\"key2\":[\"foo\",\"bar\"]},\"context\":{\"host\":\"" + HOST_NAME + "\",\"processId\":\"" + PROCESS_ID + "\",\"threadId\":\"thread\"},\"id\":\"ID\"}\n", logOutput);
+        _encoder.doEncode(event);
+        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        assertOutput("StenoEncoderTest.testEncodeMapJson.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
 
@@ -542,8 +462,7 @@ public class StenoEncoderTest {
         event.setLevel(Level.INFO);
         event.setMarker(StenoMarker.MAP_JSON_MARKER);
         event.setMessage("logEvent");
-        event.setThreadName("thread");
-        event.setLoggerContextRemoteView(context.getLoggerContextRemoteView());
+        event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         event.setTimeStamp(0);
         final Map<String, Object> map = new LinkedHashMap<>();
         map.put("key1", null);
@@ -551,10 +470,9 @@ public class StenoEncoderTest {
         final Object[] argArray = new Object[1];
         argArray[0] = map;
         event.setArgumentArray(argArray);
-        encoder.doEncode(event);
-        final String logOutput = baos.toString(StandardCharsets.UTF_8.name())
-                .replaceAll("\"id\":\"[^\"]+\"", "\"id\":\"ID\"");
-        assertEquals("{\"time\":\"1970-01-01T00:00:00.000Z\",\"name\":\"logEvent\",\"level\":\"info\",\"data\":{\"key1\":null,\"key2\":null},\"context\":{\"host\":\"" + HOST_NAME + "\",\"processId\":\"" + PROCESS_ID + "\",\"threadId\":\"thread\"},\"id\":\"ID\"}\n", logOutput);
+        _encoder.doEncode(event);
+        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        assertOutput("StenoEncoderTest.testEncodeMapJsonNullValues.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
 
@@ -564,16 +482,14 @@ public class StenoEncoderTest {
         event.setLevel(Level.INFO);
         event.setMarker(StenoMarker.MAP_JSON_MARKER);
         event.setMessage("logEvent");
-        event.setThreadName("thread");
-        event.setLoggerContextRemoteView(context.getLoggerContextRemoteView());
+        event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         event.setTimeStamp(0);
         final Object[] argArray = new Object[1];
         argArray[0] = null;
         event.setArgumentArray(argArray);
-        encoder.doEncode(event);
-        final String logOutput = baos.toString(StandardCharsets.UTF_8.name())
-                .replaceAll("\"id\":\"[^\"]+\"", "\"id\":\"ID\"");
-        assertEquals("{\"time\":\"1970-01-01T00:00:00.000Z\",\"name\":\"logEvent\",\"level\":\"info\",\"data\":{},\"context\":{\"host\":\"" + HOST_NAME + "\",\"processId\":\"" + PROCESS_ID + "\",\"threadId\":\"thread\"},\"id\":\"ID\"}\n", logOutput);
+        _encoder.doEncode(event);
+        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        assertOutput("StenoEncoderTest.testEncodeMapJsonNullMap.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
 
@@ -583,8 +499,7 @@ public class StenoEncoderTest {
         event.setLevel(Level.INFO);
         event.setMarker(StenoMarker.MAP_JSON_MARKER);
         event.setMessage("logEvent");
-        event.setThreadName("thread");
-        event.setLoggerContextRemoteView(context.getLoggerContextRemoteView());
+        event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         event.setTimeStamp(0);
         final Map<String, Object> map = new LinkedHashMap<>();
         map.put("key1", "{\"foo\":\"bar\"}");
@@ -595,11 +510,11 @@ public class StenoEncoderTest {
         final ObjectMapper objectMapper = Mockito.mock(ObjectMapper.class);
         final JsonFactory jsonFactory = Mockito.mock(JsonFactory.class);
         Mockito.doThrow(new IOException("Mock Failure")).when(jsonFactory).createGenerator(Mockito.any(Writer.class));
-        encoder = new StenoEncoder(jsonFactory, objectMapper);
-        encoder.init(baos);
-        encoder.doEncode(event);
-        final String logOutput = baos.toString(StandardCharsets.UTF_8.name());
-        assertEquals("Unknown exception: Mock Failure", logOutput);
+        _encoder = new StenoEncoder(jsonFactory, objectMapper);
+        _encoder.init(_baos);
+        _encoder.doEncode(event);
+        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        Assert.assertEquals("Unknown exception: Mock Failure", logOutput);
     }
 
     @Test
@@ -608,16 +523,14 @@ public class StenoEncoderTest {
         event.setLevel(Level.INFO);
         event.setMarker(StenoMarker.OBJECT_MARKER);
         event.setMessage("logEvent");
-        event.setThreadName("thread");
         event.setTimeStamp(0);
-        event.setLoggerContextRemoteView(context.getLoggerContextRemoteView());
+        event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         final Object[] argArray = new Object[1];
         argArray[0] = new Widget("foo");
         event.setArgumentArray(argArray);
-        encoder.doEncode(event);
-        final String logOutput = baos.toString(StandardCharsets.UTF_8.name())
-                .replaceAll("\"id\":\"[^\"]+\"", "\"id\":\"ID\"");
-        assertEquals("{\"time\":\"1970-01-01T00:00:00.000Z\",\"name\":\"logEvent\",\"level\":\"info\",\"data\":{\"value\":\"foo\"},\"context\":{\"host\":\"" + HOST_NAME + "\",\"processId\":\"" + PROCESS_ID + "\",\"threadId\":\"thread\"},\"id\":\"ID\"}\n", logOutput);
+        _encoder.doEncode(event);
+        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        assertOutput("StenoEncoderTest.testEncodeObject.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
 
@@ -627,21 +540,20 @@ public class StenoEncoderTest {
         event.setLevel(Level.INFO);
         event.setMarker(StenoMarker.OBJECT_MARKER);
         event.setMessage("logEvent");
-        event.setThreadName("thread");
         event.setTimeStamp(0);
-        event.setLoggerContextRemoteView(context.getLoggerContextRemoteView());
+        event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         final Object[] argArray = new Object[1];
         argArray[0] = new Widget("foo");
         event.setArgumentArray(argArray);
         final ObjectMapper objectMapper = Mockito.mock(ObjectMapper.class);
         Mockito.doThrow(new JsonGenerationException("Mock Failure")).when(objectMapper).writeValueAsString(Mockito.any(Object.class));
         final JsonFactory jsonFactory = Mockito.mock(JsonFactory.class);
-        encoder = new StenoEncoder(jsonFactory, objectMapper);
-        encoder.init(baos);
-        encoder.doEncode(event);
-        final String logOutput = baos.toString(StandardCharsets.UTF_8.name());
+        _encoder = new StenoEncoder(jsonFactory, objectMapper);
+        _encoder.init(_baos);
+        _encoder.doEncode(event);
+        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
         final String expected = "Unknown exception: Mock Failure";
-        assertEquals(expected, logOutput);
+        Assert.assertEquals(expected, logOutput);
     }
 
     @Test
@@ -650,16 +562,14 @@ public class StenoEncoderTest {
         event.setLevel(Level.INFO);
         event.setMarker(StenoMarker.OBJECT_MARKER);
         event.setMessage("logEvent");
-        event.setThreadName("thread");
         event.setTimeStamp(0);
-        event.setLoggerContextRemoteView(context.getLoggerContextRemoteView());
+        event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         final Object[] argArray = new Object[1];
         argArray[0] = null;
         event.setArgumentArray(argArray);
-        encoder.doEncode(event);
-        final String logOutput = baos.toString(StandardCharsets.UTF_8.name())
-                .replaceAll("\"id\":\"[^\"]+\"", "\"id\":\"ID\"");
-        assertEquals("{\"time\":\"1970-01-01T00:00:00.000Z\",\"name\":\"logEvent\",\"level\":\"info\",\"data\":{},\"context\":{\"host\":\"" + HOST_NAME + "\",\"processId\":\"" + PROCESS_ID + "\",\"threadId\":\"thread\"},\"id\":\"ID\"}\n", logOutput);
+        _encoder.doEncode(event);
+        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        assertOutput("StenoEncoderTest.testEncodeObjectNull.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
 
@@ -669,16 +579,14 @@ public class StenoEncoderTest {
         event.setLevel(Level.INFO);
         event.setMarker(StenoMarker.OBJECT_JSON_MARKER);
         event.setMessage("logEvent");
-        event.setThreadName("thread");
         event.setTimeStamp(0);
-        event.setLoggerContextRemoteView(context.getLoggerContextRemoteView());
+        event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         final Object[] argArray = new Object[1];
         argArray[0] = "{\"key\":\"value\"}";
         event.setArgumentArray(argArray);
-        encoder.doEncode(event);
-        final String logOutput = baos.toString(StandardCharsets.UTF_8.name())
-                .replaceAll("\"id\":\"[^\"]+\"", "\"id\":\"ID\"");
-        assertEquals("{\"time\":\"1970-01-01T00:00:00.000Z\",\"name\":\"logEvent\",\"level\":\"info\",\"data\":{\"key\":\"value\"},\"context\":{\"host\":\"" + HOST_NAME + "\",\"processId\":\"" + PROCESS_ID + "\",\"threadId\":\"thread\"},\"id\":\"ID\"}\n", logOutput);
+        _encoder.doEncode(event);
+        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        assertOutput("StenoEncoderTest.testEncodeObjectJson.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
 
@@ -688,21 +596,20 @@ public class StenoEncoderTest {
         event.setLevel(Level.INFO);
         event.setMarker(StenoMarker.OBJECT_JSON_MARKER);
         event.setMessage("logEvent");
-        event.setThreadName("thread");
         event.setTimeStamp(0);
-        event.setLoggerContextRemoteView(context.getLoggerContextRemoteView());
+        event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         final Object[] argArray = new Object[1];
         argArray[0] = "{\"key\":\"value\"}";
         event.setArgumentArray(argArray);
         final ObjectMapper objectMapper = Mockito.mock(ObjectMapper.class);
         final JsonFactory jsonFactory = Mockito.mock(JsonFactory.class);
         Mockito.doThrow(new IOException("Mock Failure")).when(jsonFactory).createGenerator(Mockito.any(Writer.class));
-        encoder = new StenoEncoder(jsonFactory, objectMapper);
-        encoder.init(baos);
-        encoder.doEncode(event);
-        final String logOutput = baos.toString(StandardCharsets.UTF_8.name());
+        _encoder = new StenoEncoder(jsonFactory, objectMapper);
+        _encoder.init(_baos);
+        _encoder.doEncode(event);
+        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
         final String expected = "Unknown exception: Mock Failure";
-        assertEquals(expected, logOutput);
+        Assert.assertEquals(expected, logOutput);
     }
 
     @Test
@@ -711,66 +618,161 @@ public class StenoEncoderTest {
         event.setLevel(Level.INFO);
         event.setMarker(StenoMarker.OBJECT_JSON_MARKER);
         event.setMessage("logEvent");
-        event.setThreadName("thread");
         event.setTimeStamp(0);
-        event.setLoggerContextRemoteView(context.getLoggerContextRemoteView());
+        event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         final Object[] argArray = new Object[1];
         argArray[0] = null;
         event.setArgumentArray(argArray);
-        encoder.doEncode(event);
-        final String logOutput = baos.toString(StandardCharsets.UTF_8.name())
-                .replaceAll("\"id\":\"[^\"]+\"", "\"id\":\"ID\"");
-        assertEquals("{\"time\":\"1970-01-01T00:00:00.000Z\",\"name\":\"logEvent\",\"level\":\"info\",\"data\":{},\"context\":{\"host\":\"" + HOST_NAME + "\",\"processId\":\"" + PROCESS_ID + "\",\"threadId\":\"thread\"},\"id\":\"ID\"}\n", logOutput);
+        _encoder.doEncode(event);
+        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        assertOutput("StenoEncoderTest.testEncodeObjectJsonNull.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
 
-    @SuppressWarnings("deprecation")
     @Test
-    public void testEncodeJson() throws Exception {
+    public void testEncodeLists() throws Exception {
         final LoggingEvent event = new LoggingEvent();
-        final DateTime eventTime = DateTime.parse("2011-11-11T11:11:11.000Z");
-        event.setLevel(Level.TRACE);
-        event.setMarker(StenoMarker.JSON_MARKER);
+        event.setLevel(Level.INFO);
+        event.setMarker(StenoMarker.LISTS_MARKER);
         event.setMessage("logEvent");
-        event.setThreadName("thread");
-        event.setLoggerContextRemoteView(context.getLoggerContextRemoteView());
-        event.setTimeStamp(eventTime.getMillis());
-        final Object[] argArray = new Object[2];
-        argArray[0] = "json";
-        argArray[1] = "{\"foo\":\"bar\"}";
+        event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
+        event.setTimeStamp(0);
+        final Object[] argArray = new Object[4];
+        argArray[0] = ImmutableList.of("key1", "key2");
+        argArray[1] = ImmutableList.of(Integer.valueOf(1234), "foo");
+        argArray[2] = ImmutableList.of("CONTEXT_KEY1", "CONTEXT_KEY2");
+        argArray[3] = ImmutableList.of("bar", Double.valueOf(3.14));
         event.setArgumentArray(argArray);
-        encoder.doEncode(event);
-        final String logOutput = baos.toString(StandardCharsets.UTF_8.name())
-                .replaceAll("\"id\":\"[^\"]+\"", "\"id\":\"ID\"");
-        final String expected = "{\"time\":\"2011-11-11T11:11:11.000Z\",\"name\":\"logEvent\",\"level\":\"debug\",\"data\":{\"json\":" + argArray[1] + "},\"context\":{\"host\":\"" + HOST_NAME + "\",\"processId\":\"" + PROCESS_ID + "\",\"threadId\":\"thread\"},\"id\":\"ID\"}\n";
-        assertEquals(expected, logOutput);
+        _encoder.doEncode(event);
+        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        assertOutput("StenoEncoderTest.testEncodeLists.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
 
-    @SuppressWarnings("deprecation")
     @Test
-    public void testEncodeJsonThrowsIOException() throws Exception {
+    public void testEncodeListsThrowsIOException() throws Exception {
         final LoggingEvent event = new LoggingEvent();
-        final DateTime eventTime = DateTime.parse("2011-11-11T11:11:11.000Z");
-        event.setLevel(Level.TRACE);
-        event.setMarker(StenoMarker.JSON_MARKER);
+        event.setLevel(Level.INFO);
+        event.setMarker(StenoMarker.LISTS_MARKER);
         event.setMessage("logEvent");
-        event.setThreadName("thread");
-        event.setLoggerContextRemoteView(context.getLoggerContextRemoteView());
-        event.setTimeStamp(eventTime.getMillis());
-        final Object[] argArray = new Object[2];
-        argArray[0] = "json";
-        argArray[1] = "{\"foo\":\"bar\"}";
+        event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
+        event.setTimeStamp(0);
+        final Object[] argArray = new Object[4];
+        argArray[0] = ImmutableList.of("key1", "key2");
+        argArray[1] = ImmutableList.of(Integer.valueOf(1234), "foo");
+        argArray[2] = ImmutableList.of("CONTEXT_KEY1", "CONTEXT_KEY2");
+        argArray[3] = ImmutableList.of("bar", Double.valueOf(3.14));
         event.setArgumentArray(argArray);
         final ObjectMapper objectMapper = Mockito.mock(ObjectMapper.class);
         final JsonFactory jsonFactory = Mockito.mock(JsonFactory.class);
         Mockito.doThrow(new IOException("Mock Failure")).when(jsonFactory).createGenerator(Mockito.any(Writer.class));
-        encoder = new StenoEncoder(jsonFactory, objectMapper);
-        encoder.init(baos);
-        encoder.doEncode(event);
-        final String logOutput = baos.toString(StandardCharsets.UTF_8.name());
+        _encoder = new StenoEncoder(jsonFactory, objectMapper);
+        _encoder.init(_baos);
+        _encoder.doEncode(event);
+        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
         final String expected = "Unknown exception: Mock Failure";
-        assertEquals(expected, logOutput);
+        Assert.assertEquals(expected, logOutput);
+    }
+
+    @Test
+    public void testEncodeListsEmpty() throws Exception {
+        final LoggingEvent event = new LoggingEvent();
+        event.setLevel(Level.INFO);
+        event.setMarker(StenoMarker.LISTS_MARKER);
+        event.setMessage("logEvent");
+        event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
+        event.setTimeStamp(0);
+        final Object[] argArray = new Object[4];
+        argArray[0] = Collections.emptyList();
+        argArray[1] = Collections.emptyList();
+        argArray[2] = Collections.emptyList();
+        argArray[3] = Collections.emptyList();
+        event.setArgumentArray(argArray);
+        _encoder.doEncode(event);
+        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        assertOutput("StenoEncoderTest.testEncodeListsEmpty.json", logOutput);
+        assertMatchesJsonSchema(logOutput);
+    }
+
+    @Test
+    public void testEncodeListsNull() throws Exception {
+        final LoggingEvent event = new LoggingEvent();
+        event.setLevel(Level.INFO);
+        event.setMarker(StenoMarker.LISTS_MARKER);
+        event.setMessage("logEvent");
+        event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
+        event.setTimeStamp(0);
+        final Object[] argArray = new Object[4];
+        argArray[0] = null;
+        argArray[1] = null;
+        argArray[2] = null;
+        argArray[3] = null;
+        event.setArgumentArray(argArray);
+        _encoder.doEncode(event);
+        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        assertOutput("StenoEncoderTest.testEncodeListsEmpty.json", logOutput);
+        assertMatchesJsonSchema(logOutput);
+    }
+
+    @Test
+    public void testEncodeListsValuesWithoutKeys() throws Exception {
+        final LoggingEvent event = new LoggingEvent();
+        event.setLevel(Level.INFO);
+        event.setMarker(StenoMarker.LISTS_MARKER);
+        event.setMessage("logEvent");
+        event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
+        event.setTimeStamp(0);
+        final Object[] argArray = new Object[4];
+        argArray[0] = ImmutableList.of("key1");
+        argArray[1] = ImmutableList.of(Integer.valueOf(1234), "foo");
+        argArray[2] = ImmutableList.of("CONTEXT_KEY1");
+        argArray[3] = ImmutableList.of("bar", Double.valueOf(3.14));
+        event.setArgumentArray(argArray);
+        _encoder.doEncode(event);
+        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        assertOutput("StenoEncoderTest.testEncodeListsValuesWithoutKeys.json", logOutput);
+        assertMatchesJsonSchema(logOutput);
+    }
+
+    @Test
+    public void testEncodeListsNullValues() throws Exception {
+        final LoggingEvent event = new LoggingEvent();
+        event.setLevel(Level.INFO);
+        event.setMarker(StenoMarker.LISTS_MARKER);
+        event.setMessage("logEvent");
+        event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
+        event.setTimeStamp(0);
+        final Object[] argArray = new Object[4];
+        argArray[0] = ImmutableList.of("key1", "key2");
+        argArray[1] = null;
+        argArray[2] = ImmutableList.of("CONTEXT_KEY1", "CONTEXT_KEY2");
+        argArray[3] = null;
+        event.setArgumentArray(argArray);
+        _encoder.doEncode(event);
+        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        assertOutput("StenoEncoderTest.testEncodeListsNullValues.json", logOutput);
+        assertMatchesJsonSchema(logOutput);
+    }
+
+    @Test
+    public void testEncodeListsComplexValue() throws Exception {
+        final LoggingEvent event = new LoggingEvent();
+        event.setLevel(Level.INFO);
+        event.setMarker(StenoMarker.LISTS_MARKER);
+        event.setMessage("logEvent");
+        event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
+        event.setTimeStamp(0);
+        final DateTime date = new DateTime(1415737981000L);
+        final Object[] argArray = new Object[4];
+        argArray[0] = ImmutableList.of("key1");
+        argArray[1] = ImmutableList.of(date);
+        argArray[2] = ImmutableList.of("CONTEXT_KEY1");
+        argArray[3] = ImmutableList.of(date);
+        event.setArgumentArray(argArray);
+        _encoder.doEncode(event);
+        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        assertOutput("StenoEncoderTest.testEncodeListsComplexValue.json", logOutput);
+        assertMatchesJsonSchema(logOutput);
     }
 
     @Test
@@ -779,17 +781,14 @@ public class StenoEncoderTest {
         final DateTime eventTime = DateTime.parse("2011-11-11T11:11:11.000Z");
         event.setLevel(Level.TRACE);
         event.setMessage("logEvent - foo = {}");
-        event.setThreadName("thread");
-        event.setLoggerContextRemoteView(context.getLoggerContextRemoteView());
+        event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         event.setTimeStamp(eventTime.getMillis());
         final Object[] argArray = new Object[1];
         argArray[0] = "bar";
         event.setArgumentArray(argArray);
-        encoder.doEncode(event);
-        final String logOutput = baos.toString(StandardCharsets.UTF_8.name())
-                .replaceAll("\"id\":\"[^\"]+\"", "\"id\":\"ID\"");
-        final String expected = "{\"time\":\"2011-11-11T11:11:11.000Z\",\"name\":\"log\",\"level\":\"debug\",\"data\":{\"message\":\"logEvent - foo = bar\"},\"context\":{\"host\":\"" + HOST_NAME + "\",\"processId\":\"" + PROCESS_ID + "\",\"threadId\":\"thread\"},\"id\":\"ID\"}\n";
-        assertEquals(expected, logOutput);
+        _encoder.doEncode(event);
+        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        assertOutput("StenoEncoderTest.testEncodeStandardEvent.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
 
@@ -799,21 +798,20 @@ public class StenoEncoderTest {
         final DateTime eventTime = DateTime.parse("2011-11-11T11:11:11.000Z");
         event.setLevel(Level.TRACE);
         event.setMessage("logEvent - foo = {}");
-        event.setThreadName("thread");
-        event.setLoggerContextRemoteView(context.getLoggerContextRemoteView());
+        event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         event.setTimeStamp(eventTime.getMillis());
         final Object[] argArray = new Object[1];
         argArray[0] = "bar";
         event.setArgumentArray(argArray);
         final ObjectMapper objectMapper = Mockito.mock(ObjectMapper.class);
-        JsonFactory jsonFactory = Mockito.mock(JsonFactory.class);
+        final JsonFactory jsonFactory = Mockito.mock(JsonFactory.class);
         Mockito.doThrow(new IOException("Mock Failure")).when(jsonFactory).createGenerator(Mockito.any(Writer.class));
-        encoder = new StenoEncoder(jsonFactory, objectMapper);
-        encoder.init(baos);
-        encoder.doEncode(event);
-        final String logOutput = baos.toString(StandardCharsets.UTF_8.name());
+        _encoder = new StenoEncoder(jsonFactory, objectMapper);
+        _encoder.init(_baos);
+        _encoder.doEncode(event);
+        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
         final String expected = "Unknown exception: Mock Failure";
-        assertEquals(expected, logOutput);
+        Assert.assertEquals(expected, logOutput);
     }
 
     @Test
@@ -822,22 +820,19 @@ public class StenoEncoderTest {
         final DateTime eventTime = DateTime.parse("2011-11-11T11:11:11.000Z");
         event.setLevel(Level.TRACE);
         event.setMessage("logEvent - foo = {}");
-        event.setThreadName("thread");
-        event.setLoggerContextRemoteView(context.getLoggerContextRemoteView());
+        event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         event.setTimeStamp(eventTime.getMillis());
         final Object[] argArray = new Object[1];
         argArray[0] = "bar";
         event.setArgumentArray(argArray);
-        encoder.setLogEventName("custom.name");
-        Assert.assertEquals("custom.name", encoder.getLogEventName());
-        Assert.assertTrue(encoder.isInjectContextHost());
-        Assert.assertTrue(encoder.isInjectContextThread());
-        Assert.assertTrue(encoder.isInjectContextProcess());
-        encoder.doEncode(event);
-        final String logOutput = baos.toString(StandardCharsets.UTF_8.name())
-                .replaceAll("\"id\":\"[^\"]+\"", "\"id\":\"ID\"");
-        final String expected = "{\"time\":\"2011-11-11T11:11:11.000Z\",\"name\":\"custom.name\",\"level\":\"debug\",\"data\":{\"message\":\"logEvent - foo = bar\"},\"context\":{\"host\":\"" + HOST_NAME + "\",\"processId\":\"" + PROCESS_ID + "\",\"threadId\":\"thread\"},\"id\":\"ID\"}\n";
-        assertEquals(expected, logOutput);
+        _encoder.setLogEventName("custom.name");
+        Assert.assertEquals("custom.name", _encoder.getLogEventName());
+        Assert.assertTrue(_encoder.isInjectContextHost());
+        Assert.assertTrue(_encoder.isInjectContextThread());
+        Assert.assertTrue(_encoder.isInjectContextProcess());
+        _encoder.doEncode(event);
+        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        assertOutput("StenoEncoderTest.testEncodeStandardEventWithCustomEventName.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
     
@@ -847,28 +842,45 @@ public class StenoEncoderTest {
         final DateTime eventTime = DateTime.parse("2011-11-11T11:11:11.000Z");
         event.setLevel(Level.TRACE);
         event.setMessage("logEvent - foo = {}");
-        event.setThreadName("thread");
-        event.setLoggerContextRemoteView(context.getLoggerContextRemoteView());
+        event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         event.setTimeStamp(eventTime.getMillis());
         final Object[] argArray = new Object[1];
         argArray[0] = "bar";
         event.setArgumentArray(argArray);
-        Assert.assertFalse(encoder.isInjectContextClass());
-        Assert.assertFalse(encoder.isInjectContextFile());
-        Assert.assertFalse(encoder.isInjectContextLine());
-        Assert.assertFalse(encoder.isInjectContextLogger());
-        Assert.assertFalse(encoder.isInjectContextMethod());
-        encoder.setInjectContextHost(false);
-        Assert.assertFalse(encoder.isInjectContextHost());
-        encoder.setInjectContextProcess(false);
-        Assert.assertFalse(encoder.isInjectContextProcess());
-        encoder.setInjectContextThread(false);
-        Assert.assertFalse(encoder.isInjectContextThread());
-        encoder.doEncode(event);
-        final String logOutput = baos.toString(StandardCharsets.UTF_8.name())
-                .replaceAll("\"id\":\"[^\"]+\"", "\"id\":\"ID\"");
-        final String expected = "{\"time\":\"2011-11-11T11:11:11.000Z\",\"name\":\"log\",\"level\":\"debug\",\"data\":{\"message\":\"logEvent - foo = bar\"},\"context\":{},\"id\":\"ID\"}\n";
-        assertEquals(expected, logOutput);
+        Assert.assertFalse(_encoder.isInjectContextClass());
+        Assert.assertFalse(_encoder.isInjectContextFile());
+        Assert.assertFalse(_encoder.isInjectContextLine());
+        Assert.assertFalse(_encoder.isInjectContextLogger());
+        Assert.assertFalse(_encoder.isInjectContextMethod());
+        _encoder.setInjectContextHost(false);
+        Assert.assertFalse(_encoder.isInjectContextHost());
+        _encoder.setInjectContextProcess(false);
+        Assert.assertFalse(_encoder.isInjectContextProcess());
+        _encoder.setInjectContextThread(false);
+        Assert.assertFalse(_encoder.isInjectContextThread());
+        _encoder.doEncode(event);
+        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        assertOutput("StenoEncoderTest.testEncodeStandardEventWithSuppressDefaultContext.json", logOutput);
+        assertMatchesJsonSchema(logOutput);
+    }
+
+    @Test
+    public void testEncodeStandardEventWithMdcProperties() throws Exception {
+        final LoggingEvent event = new LoggingEvent();
+        final DateTime eventTime = DateTime.parse("2011-11-11T11:11:11.000Z");
+        event.setLevel(Level.TRACE);
+        event.setMessage("logEvent - foo = {}");
+        event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
+        event.setTimeStamp(eventTime.getMillis());
+        final Object[] argArray = new Object[1];
+        argArray[0] = "bar";
+        event.setArgumentArray(argArray);
+        MDC.put("MDC_KEY", "MDC_VALUE");
+        _encoder.setMdcProperties(Collections.singleton("MDC_KEY"));
+        Assert.assertEquals(Collections.singleton("MDC_KEY"), _encoder.getMdcProperties());
+        _encoder.doEncode(event);
+        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        assertOutput("StenoEncoderTest.testEncodeStandardEventWithMdcProperties.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
 
@@ -886,30 +898,27 @@ public class StenoEncoderTest {
                 argArray);
         final DateTime eventTime = DateTime.parse("2011-11-11T11:11:11.000Z");
         event.setLoggerName("loggerName");
-        event.setThreadName("thread");
-        event.setLoggerContextRemoteView(context.getLoggerContextRemoteView());
+        event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         event.setTimeStamp(eventTime.getMillis());
-        encoder.setInjectContextHost(false);
-        Assert.assertFalse(encoder.isInjectContextHost());
-        encoder.setInjectContextProcess(false);
-        Assert.assertFalse(encoder.isInjectContextProcess());
-        encoder.setInjectContextThread(false);
-        Assert.assertFalse(encoder.isInjectContextThread());
-        encoder.setInjectContextClass(true);
-        Assert.assertTrue(encoder.isInjectContextClass());
-        encoder.setInjectContextFile(true);
-        Assert.assertTrue(encoder.isInjectContextFile());
-        encoder.setInjectContextLine(true);
-        Assert.assertTrue(encoder.isInjectContextLine());
-        encoder.setInjectContextLogger(true);
-        Assert.assertTrue(encoder.isInjectContextLogger());
-        encoder.setInjectContextMethod(true);
-        Assert.assertTrue(encoder.isInjectContextMethod());
-        encoder.doEncode(event);
-        final String logOutput = baos.toString(StandardCharsets.UTF_8.name())
-                .replaceAll("\"id\":\"[^\"]+\"", "\"id\":\"ID\"");
-        final String expected = "{\"time\":\"2011-11-11T11:11:11.000Z\",\"name\":\"log\",\"level\":\"debug\",\"data\":{\"message\":\"logEvent - foo = bar\"},\"context\":{\"logger\":\"loggerName\",\"file\":\"NativeMethodAccessorImpl.java\",\"class\":\"sun.reflect.NativeMethodAccessorImpl\",\"method\":\"invoke0\",\"line\":\"-2\"},\"id\":\"ID\"}\n";
-        assertEquals(expected, logOutput);
+        _encoder.setInjectContextHost(false);
+        Assert.assertFalse(_encoder.isInjectContextHost());
+        _encoder.setInjectContextProcess(false);
+        Assert.assertFalse(_encoder.isInjectContextProcess());
+        _encoder.setInjectContextThread(false);
+        Assert.assertFalse(_encoder.isInjectContextThread());
+        _encoder.setInjectContextClass(true);
+        Assert.assertTrue(_encoder.isInjectContextClass());
+        _encoder.setInjectContextFile(true);
+        Assert.assertTrue(_encoder.isInjectContextFile());
+        _encoder.setInjectContextLine(true);
+        Assert.assertTrue(_encoder.isInjectContextLine());
+        _encoder.setInjectContextLogger(true);
+        Assert.assertTrue(_encoder.isInjectContextLogger());
+        _encoder.setInjectContextMethod(true);
+        Assert.assertTrue(_encoder.isInjectContextMethod());
+        _encoder.doEncode(event);
+        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        assertOutput("StenoEncoderTest.testEncodeStandardEventWithIncludeOptionalContext.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
 
@@ -919,82 +928,68 @@ public class StenoEncoderTest {
         event.setLevel(Level.INFO);
         event.setMarker(StenoMarker.ARRAY_MARKER);
         event.setMessage("logEvent");
-        event.setThreadName("thread");
-        event.setLoggerContextRemoteView(context.getLoggerContextRemoteView());
+        event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         event.setTimeStamp(0);
-        final DateTime now = new DateTime(DateTimeZone.UTC);
+        final DateTime date = new DateTime(1415737981000L);
         final Object[] argArray = new Object[2];
         argArray[0] = new String[]{"key1", "redacted"};
-        argArray[1] = new Object[]{now, new Redacted("string", 1L)};
+        argArray[1] = new Object[]{date, new Redacted("string", 1L)};
         event.setArgumentArray(argArray);
-        encoder.setRedactEnabled(true);
-        encoder.setRedactNull(false);
-        encoder.setRedactNull(true);
-        encoder.setRedactEnabled(false);
-        encoder.doEncode(event);
-        final String fullLogOutput = baos.toString(StandardCharsets.UTF_8.name())
-                .replaceAll("\"id\":\"[^\"]+\"", "\"id\":\"ID\"");
-        assertEquals("{\"time\":\"1970-01-01T00:00:00.000Z\",\"name\":\"logEvent\",\"level\":\"info\",\"data\":{\"key1\":\"" + now.toString() + "\",\"redacted\":{\"stringValue\":\"string\",\"nullValue\":null,\"longValue\":1}},\"context\":{\"host\":\"" + HOST_NAME + "\",\"processId\":\"" + PROCESS_ID + "\",\"threadId\":\"thread\"},\"id\":\"ID\"}\n", fullLogOutput);
-        Assert.assertFalse(encoder.isRedactEnabled());
+        _encoder.setRedactEnabled(true);
+        _encoder.setRedactNull(false);
+        _encoder.setRedactNull(true);
+        _encoder.setRedactEnabled(false);
+        _encoder.doEncode(event);
+        final String fullLogOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        Assert.assertFalse(_encoder.isRedactEnabled());
+        assertOutput("StenoEncoderTest.testRedactSettings.1.json", fullLogOutput);
         assertMatchesJsonSchema(fullLogOutput);
-        baos.reset();
-        encoder.setRedactEnabled(true);
-        encoder.setRedactEnabled(false);
-        encoder.setRedactNull(false);
-        encoder.doEncode(event);
-        final String nonRedactedWithNullLogOutput = baos.toString(StandardCharsets.UTF_8.name())
-                .replaceAll("\"id\":\"[^\"]+\"", "\"id\":\"ID\"");
-        assertEquals("{\"time\":\"1970-01-01T00:00:00.000Z\",\"name\":\"logEvent\",\"level\":\"info\",\"data\":{\"key1\":\"" + now.toString() + "\",\"redacted\":{\"stringValue\":\"string\",\"nullValue\":null,\"longValue\":1}},\"context\":{\"host\":\"" + HOST_NAME + "\",\"processId\":\"" + PROCESS_ID + "\",\"threadId\":\"thread\"},\"id\":\"ID\"}\n",
-                nonRedactedWithNullLogOutput);
-        Assert.assertFalse(encoder.isRedactNull());
+        _baos.reset();
+        _encoder.setRedactEnabled(true);
+        _encoder.setRedactEnabled(false);
+        _encoder.setRedactNull(false);
+        _encoder.doEncode(event);
+        final String nonRedactedWithNullLogOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        Assert.assertFalse(_encoder.isRedactNull());
+        assertOutput("StenoEncoderTest.testRedactSettings.2.json", nonRedactedWithNullLogOutput);
         assertMatchesJsonSchema(nonRedactedWithNullLogOutput);
-        baos.reset();
-        encoder.setRedactEnabled(true);
-        encoder.setRedactNull(true);
-        encoder.doEncode(event);
-        final String redactedLogOutput = baos.toString(StandardCharsets.UTF_8.name())
-                .replaceAll("\"id\":\"[^\"]+\"", "\"id\":\"ID\"");
-        assertEquals(
-                "{\"time\":\"1970-01-01T00:00:00.000Z\",\"name\":\"logEvent\",\"level\":\"info\",\"data\":{\"key1\":\"" + now.toString() + "\",\"redacted\":{\"stringValue\":\"<REDACTED>\",\"nullValue\":\"<REDACTED>\",\"longValue\":\"<REDACTED>\"}},\"context\":{\"host\":\"" + HOST_NAME + "\",\"processId\":\"" + PROCESS_ID + "\",\"threadId\":\"thread\"},\"id\":\"ID\"}\n",
-                redactedLogOutput);
-        Assert.assertTrue(encoder.isRedactEnabled());
+        _baos.reset();
+        _encoder.setRedactEnabled(true);
+        _encoder.setRedactNull(true);
+        _encoder.doEncode(event);
+        final String redactedLogOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        Assert.assertTrue(_encoder.isRedactEnabled());
+        assertOutput("StenoEncoderTest.testRedactSettings.3.json", redactedLogOutput);
         assertMatchesJsonSchema(redactedLogOutput);
-        baos.reset();
-        encoder.setRedactEnabled(true);
-        encoder.setRedactNull(true);
-        encoder.doEncode(event);
-        final String redactedLogOutput2 = baos.toString(StandardCharsets.UTF_8.name())
-                .replaceAll("\"id\":\"[^\"]+\"", "\"id\":\"ID\"");
-        assertEquals(
-                "{\"time\":\"1970-01-01T00:00:00.000Z\",\"name\":\"logEvent\",\"level\":\"info\",\"data\":{\"key1\":\"" + now.toString() + "\",\"redacted\":{\"stringValue\":\"<REDACTED>\",\"nullValue\":\"<REDACTED>\",\"longValue\":\"<REDACTED>\"}},\"context\":{\"host\":\"" + HOST_NAME + "\",\"processId\":\"" + PROCESS_ID + "\",\"threadId\":\"thread\"},\"id\":\"ID\"}\n",
-                redactedLogOutput2);
-        Assert.assertTrue(encoder.isRedactEnabled());
+        _baos.reset();
+        _encoder.setRedactEnabled(true);
+        _encoder.setRedactNull(true);
+        _encoder.doEncode(event);
+        final String redactedLogOutput2 = _baos.toString(StandardCharsets.UTF_8.name());
+        Assert.assertTrue(_encoder.isRedactEnabled());
+        assertOutput("StenoEncoderTest.testRedactSettings.4.json", redactedLogOutput2);
         assertMatchesJsonSchema(redactedLogOutput2);
-
-        baos.reset();
-        encoder.setRedactEnabled(true);
-        encoder.setRedactNull(false);
-        encoder.doEncode(event);
-        final String redactedWithNullLogOutput = baos.toString(StandardCharsets.UTF_8.name())
-                .replaceAll("\"id\":\"[^\"]+\"", "\"id\":\"ID\"");
-        assertEquals(
-                "{\"time\":\"1970-01-01T00:00:00.000Z\",\"name\":\"logEvent\",\"level\":\"info\",\"data\":{\"key1\":\"" + now.toString() + "\",\"redacted\":{\"stringValue\":\"<REDACTED>\",\"nullValue\":null,\"longValue\":\"<REDACTED>\"}},\"context\":{\"host\":\"" + HOST_NAME + "\",\"processId\":\"" + PROCESS_ID + "\",\"threadId\":\"thread\"},\"id\":\"ID\"}\n",
-                redactedWithNullLogOutput);
-        Assert.assertFalse(encoder.isRedactNull());
+        _baos.reset();
+        _encoder.setRedactEnabled(true);
+        _encoder.setRedactNull(false);
+        _encoder.doEncode(event);
+        final String redactedWithNullLogOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        Assert.assertFalse(_encoder.isRedactNull());
+        assertOutput("StenoEncoderTest.testRedactSettings.5.json", redactedWithNullLogOutput);
         assertMatchesJsonSchema(redactedWithNullLogOutput);
     }
 
     @Test
     public void testIsSimpleType() {
-        assertTrue(encoder.isSimpleType(null));
-        assertTrue(encoder.isSimpleType("This is a String"));
-        assertTrue(encoder.isSimpleType(Long.valueOf(1)));
-        assertTrue(encoder.isSimpleType(Double.valueOf(3.14f)));
-        assertTrue(encoder.isSimpleType(BigInteger.ONE));
-        assertTrue(encoder.isSimpleType(Boolean.TRUE));
-        assertFalse(encoder.isSimpleType(new Object()));
-        assertFalse(encoder.isSimpleType(new long[]{}));
-        assertFalse(encoder.isSimpleType(new double[]{}));
+        Assert.assertTrue(_encoder.isSimpleType(null));
+        Assert.assertTrue(_encoder.isSimpleType("This is a String"));
+        Assert.assertTrue(_encoder.isSimpleType(Long.valueOf(1)));
+        Assert.assertTrue(_encoder.isSimpleType(Double.valueOf(3.14f)));
+        Assert.assertTrue(_encoder.isSimpleType(BigInteger.ONE));
+        Assert.assertTrue(_encoder.isSimpleType(Boolean.TRUE));
+        Assert.assertFalse(_encoder.isSimpleType(new Object()));
+        Assert.assertFalse(_encoder.isSimpleType(new long[]{}));
+        Assert.assertFalse(_encoder.isSimpleType(new double[]{}));
     }
 
     @Test
@@ -1009,27 +1004,83 @@ public class StenoEncoderTest {
         StenoEncoder.StenoLevel.valueOf("does_not_exist");
     }
 
-    private void assertMatchesJsonSchema(final String json) {
+    private static void assertOutput(final String expectedResource, final String actualOutput) {
+        final String redactedOutput = actualOutput
+                .replaceAll("\"id\":\"[^\"]+\"", "\"id\":\"<ID>\"")
+                .replaceAll("\"host\":\"[^\"]+\"", "\"host\":\"<HOST>\"")
+                .replaceAll("\"processId\":\"[^\"]+\"", "\"processId\":\"<PROCESS_ID>\"")
+                .replaceAll("\"threadId\":\"[^\"]+\"", "\"threadId\":\"<THREAD_ID>\"")
+                .replaceAll("\"backtrace\":\\[[^\\]]+\\]", "\"backtrace\":[]");
         try {
-            final JsonNode jsonNode = JsonLoader.fromString(
-                    json.replaceAll("\"logger\":\"loggerName\",?", ""));
-            final ProcessingReport report = VALIDATOR.validate(STENO_SCHEMA, jsonNode);
-            assertTrue(report.toString(), report.isSuccess());
-        } catch (final IOException | ProcessingException e) {
-            fail("Failed with exception: " + e);
+            final URL resource = Resources.getResource("com/arpnetworking/logback/" + expectedResource);
+            Assert.assertEquals(Resources.toString(resource, StandardCharsets.UTF_8), redactedOutput);
+        } catch (final IOException e) {
+            Assert.fail("Failed with exception: " + e);
         }
     }
 
-    public static class Redacted {
-        @LogRedact
-        private String stringValue;
+    private static void assertMatchesJsonSchema(final String json) {
+        try {
+            final JsonNode jsonNode = JsonLoader.fromString(json
+                    .replaceAll(",?\"MDC_KEY\":\"MDC_VALUE\"", "")
+                    .replaceAll(",?\"CONTEXT_KEY[0-9]*\":(\"[^\"]*\"|[0-9\\.]+|null)", "")
+                    .replaceAll("\"logger\":\"loggerName\",?", ""));
+            final ProcessingReport report = VALIDATOR.validate(STENO_SCHEMA, jsonNode);
+            Assert.assertTrue(report.toString(), report.isSuccess());
+        } catch (final IOException | ProcessingException e) {
+            Assert.fail("Failed with exception: " + e);
+        }
+    }
 
-        @LogRedact
-        private String nullValue;
+    private StenoEncoder _encoder;
+    private ByteArrayOutputStream _baos;
+    private LoggerContext _context;
 
-        private Long longValue;
+    private static final JsonValidator VALIDATOR = JsonSchemaFactory.byDefault().getValidator();
+    private static final JsonNode STENO_SCHEMA;
+    private static final String HOST_NAME;
+    private static final String PROCESS_ID;
 
-        public Redacted(String stringValue, Long longValue) {
+    static {
+        final Pattern processIdPattern = Pattern.compile("^([\\d]+)@.*$");
+        String processId;
+        try {
+            processId = ManagementFactory.getRuntimeMXBean().getName();
+            final Matcher matcher = processIdPattern.matcher(processId);
+            if (matcher.matches()) {
+                processId = matcher.group(1);
+            }
+            // CHECKSTYLE.OFF: IllegalCatch - Prevent all failures
+        } catch (final Throwable t) {
+            // CHECKSTYLE.ON: IllegalCatch
+            processId = "<UNKNOWN>";
+        }
+        PROCESS_ID = processId;
+
+        String hostName;
+        try {
+            hostName = InetAddress.getLocalHost().getHostName();
+            // CHECKSTYLE.OFF: IllegalCatch - Prevent all failures
+        } catch (final Throwable t) {
+            // CHECKSTYLE.ON: IllegalCatch
+            hostName = "<UNKNOWN>";
+        }
+        HOST_NAME = hostName;
+
+        JsonNode jsonNode = null;
+        try {
+            jsonNode = JsonLoader.fromResource("/steno.schema.json");
+        } catch (final IOException e) {
+            Throwables.propagate(e);
+        }
+        STENO_SCHEMA = jsonNode;
+    }
+
+    // CHECKSTYLE.OFF: MemberName - Testing field annotations requires same name as getter.
+    // CHECKSTYLE.OFF: HiddenField - Testing field annotations requires same name as getter.
+    private static class Redacted {
+
+        public Redacted(final String stringValue, final Long longValue) {
             this.stringValue = stringValue;
             this.longValue = longValue;
         }
@@ -1046,5 +1097,13 @@ public class StenoEncoderTest {
         public Long getLongValue() {
             return longValue;
         }
+
+        @LogRedact
+        private String stringValue;
+        @LogRedact
+        private String nullValue;
+        private Long longValue;
     }
+    // CHECKSTYLE.ON: HiddenField
+    // CHECKSTYLE.ON: MemberName
 }

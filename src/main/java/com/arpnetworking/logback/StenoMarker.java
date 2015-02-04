@@ -32,6 +32,7 @@ public final class StenoMarker {
     private static final String STENO_OBJECT_MARKER_NAME = "com.arpnetworking.logback.stenoMarker.object";
     private static final String STENO_OBJECT_JSON_MARKER_NAME = "com.arpnetworking.logback.stenoMarker.object.json";
     private static final String STENO_JSON_MARKER_NAME = "com.arpnetworking.logback.stenoMarker.json";
+    private static final String STENO_LISTS_MARKER_NAME = "com.arpnetworking.logback.stenoMarker.lists";
 
     /**
      * Log event payload is an array of keys and and array of values.
@@ -76,13 +77,12 @@ public final class StenoMarker {
     public static final Marker OBJECT_JSON_MARKER = new BasicMarkerFactory().getMarker(STENO_OBJECT_JSON_MARKER_NAME);
 
     /**
-     * Log event payload is a json encoded value.
+     * Log event payload is two pairs of lists, the first for data keys and
+     * value, the second for context keys and values.
      *
-     * @since 1.0.0
-     * @deprecated This functionality is now provided in more generically by other markers (as of 1.1.0).
+     * @since 1.3.0
      */
-    @Deprecated
-    public static final Marker JSON_MARKER = new BasicMarkerFactory().getMarker(STENO_JSON_MARKER_NAME);
+    public static final Marker LISTS_MARKER = new BasicMarkerFactory().getMarker(STENO_LISTS_MARKER_NAME);
 
     private StenoMarker() {
         throw new UnsupportedOperationException();

@@ -15,10 +15,6 @@
  */
 package com.arpnetworking.logback;
 
-import java.io.File;
-import java.net.UnknownHostException;
-import java.security.SecureRandom;
-
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.LoggingEvent;
 import ch.qos.logback.core.rolling.RollingFileAppender;
@@ -27,6 +23,10 @@ import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
+
+import java.io.File;
+import java.net.UnknownHostException;
+import java.security.SecureRandom;
 
 /**
  * Tests for <code>RandomizedTimeBasedFNATP</code>.

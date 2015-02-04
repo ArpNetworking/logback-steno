@@ -15,16 +15,15 @@
  */
 package com.arpnetworking.logback.jackson;
 
-import java.util.Collections;
-import java.util.Set;
-
+import com.arpnetworking.logback.annotations.LogRedact;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.BeanPropertyWriter;
 import com.fasterxml.jackson.databind.ser.PropertyWriter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 
-import com.arpnetworking.logback.annotations.LogRedact;
+import java.util.Collections;
+import java.util.Set;
 
 /**
  * Jackson property filter that replaces values of fields annotated with @LogRedact with a string value of
@@ -35,23 +34,33 @@ import com.arpnetworking.logback.annotations.LogRedact;
  * @since 1.1.0
  */
 public class RedactionFilter extends SimpleBeanPropertyFilter.SerializeExceptFilter {
-    private static final long serialVersionUID = -3087655661573890897L;
-    public static final String REDACTION_FILTER_ID = "com.arpnetworking.logback.jackson.RedactionFilterId";
-    public static final String REDACTION_STRING = "<REDACTED>";
 
-    private final boolean allowNull;
-
+    /**
+     * Public constructor.
+     *
+     * @param allowNull Whether to allow null field values to pass as-is even
+     * if those fields are annotated as redacted.
+     */
     public RedactionFilter(final boolean allowNull) {
         this(allowNull, Collections.<String>emptySet());
     }
 
+    /**
+     * Public constructor.
+     *
+     * @param allowNull Whether to allow null field values to pass as-is even
+     * if those fields are annotated as redacted.
+     * @param properties Additional properties for <code>SimpleBeanPropertyFilter</code>.
+     */
     public RedactionFilter(final boolean allowNull, final Set<String> properties) {
         super(properties);
-        this.allowNull = allowNull;
+        _allowNull = allowNull;
     }
 
     /**
      * {@inheritDoc}
+     *
+     * @deprecated Provided for compatibility with deprecated method in Jackson.
      */
     @Override
     @Deprecated
@@ -63,7 +72,7 @@ public class RedactionFilter extends SimpleBeanPropertyFilter.SerializeExceptFil
         if (writer.getAnnotation(LogRedact.class) == null) {
             super.serializeAsField(pojo, jgen, prov, writer);
         } else { // since 2.3
-            if (allowNull && writer.get(pojo) == null) {
+            if (_allowNull && writer.get(pojo) == null) {
                 super.serializeAsField(pojo, jgen, prov, writer);
             } else {
                 jgen.writeStringField(writer.getSerializedName().getValue(), REDACTION_STRING);
@@ -81,11 +90,11 @@ public class RedactionFilter extends SimpleBeanPropertyFilter.SerializeExceptFil
             final SerializerProvider prov,
             final PropertyWriter writer) throws Exception {
         if (writer instanceof BeanPropertyWriter) {
-            BeanPropertyWriter beanPropertyWriter = (BeanPropertyWriter) writer;
+            final BeanPropertyWriter beanPropertyWriter = (BeanPropertyWriter) writer;
             if (beanPropertyWriter.getAnnotation(LogRedact.class) == null) {
                 super.serializeAsField(pojo, jgen, prov, writer);
             } else {
-                if (allowNull && beanPropertyWriter.get(pojo) == null) {
+                if (_allowNull && beanPropertyWriter.get(pojo) == null) {
                     super.serializeAsField(pojo, jgen, prov, writer);
                 } else {
                     jgen.writeStringField(beanPropertyWriter.getSerializedName().getValue(), REDACTION_STRING);
@@ -95,4 +104,18 @@ public class RedactionFilter extends SimpleBeanPropertyFilter.SerializeExceptFil
             super.serializeAsField(pojo, jgen, prov, writer);
         }
     }
+
+    private final boolean _allowNull;
+
+    private static final long serialVersionUID = -3087655661573890897L;
+
+    /**
+     * The identifier of the <code>RedactionFilter</code> filter.
+     */
+    public static final String REDACTION_FILTER_ID = "com.arpnetworking.logback.jackson.RedactionFilterId";
+
+    /**
+     * The <code>String</code> to replace field values annotated as redacted.
+     */
+    public static final String REDACTION_STRING = "<REDACTED>";
 }

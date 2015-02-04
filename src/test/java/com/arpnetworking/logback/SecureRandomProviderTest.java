@@ -15,12 +15,12 @@
  */
 package com.arpnetworking.logback;
 
-import java.security.SecureRandom;
-import java.util.UUID;
-
 import com.google.common.base.Charsets;
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.security.SecureRandom;
+import java.util.UUID;
 
 /**
  * Tests for <code>SecureRandomProvider</code>.
@@ -30,13 +30,13 @@ import org.junit.Test;
 public class SecureRandomProviderTest {
 
     @Test
-    public void testDefaulSecureRandomProvider() {
+    public void testDefaultSecureRandomProvider() {
         final SecureRandom secureRandom = SecureRandomProvider.DEFAULT.get();
         Assert.assertNotNull(secureRandom);
     }
 
     @Test
-    public void testDefaulSecureRandomProviderWithSeed() {
+    public void testDefaultSecureRandomProviderWithSeed() {
         final SecureRandom secureRandom = SecureRandomProvider.DEFAULT.get(UUID.randomUUID().toString().getBytes(Charsets.UTF_8));
         Assert.assertNotNull(secureRandom);
     }

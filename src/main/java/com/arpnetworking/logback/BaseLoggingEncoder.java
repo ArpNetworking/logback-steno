@@ -15,12 +15,13 @@
  */
 package com.arpnetworking.logback;
 
-import java.io.IOException;
-import java.util.Map;
-
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.encoder.LayoutWrappingEncoder;
 import org.slf4j.Marker;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Base encoder class containing methods to determine if a Steno marker is present.
@@ -34,47 +35,53 @@ public abstract class BaseLoggingEncoder extends LayoutWrappingEncoder<ILoggingE
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("unchecked")
     public void doEncode(final ILoggingEvent event) throws IOException {
+        final Marker marker = event.getMarker();
+        final String name = event.getMessage();
         String output;
-        Marker marker = event.getMarker();
 
-        // We could add other markers and handle Maps if we choose
-        if (isArrayStenoEvent(marker)) {
-            final Object[] argumentArray = event.getArgumentArray();
-            final String name = event.getMessage();
-            final String[] keys = (String[]) argumentArray[0];
-            final Object[] values = (Object[]) argumentArray[1];
-            output = buildArrayMessage(event, name, keys, values);
+        final Object[] argumentArray = event.getArgumentArray();
+        if (isListsStenoEvent(marker)) {
+            output = buildListsMessage(
+                    event,
+                    name,
+                    (List<String>) argumentArray[0],  // data keys
+                    (List<Object>) argumentArray[1],  // data object values
+                    (List<String>) argumentArray[2],  // context keys
+                    (List<Object>) argumentArray[3]); // context object values
+        } else if (isArrayStenoEvent(marker)) {
+            output = buildArrayMessage(
+                    event,
+                    name,
+                    (String[]) argumentArray[0],  // keys
+                    (Object[]) argumentArray[1]); // object values
         } else if (isArrayJsonStenoEvent(marker)) {
-            final Object[] argumentArray = event.getArgumentArray();
-            final String name = event.getMessage();
-            final String[] keys = (String[]) argumentArray[0];
-            final String[] values = (String[]) argumentArray[1];
-            output = buildArrayJsonMessage(event, name, keys, values);
+            output = buildArrayJsonMessage(
+                    event,
+                    name,
+                    (String[]) argumentArray[0],  // keys
+                    (String[]) argumentArray[1]); // json values
         } else if (isMapStenoEvent(marker)) {
-            final Object[] argumentArray = event.getArgumentArray();
-            final String name = event.getMessage();
-            @SuppressWarnings("unchecked")
-            final Map<String, Object> map = (Map<String, Object>) argumentArray[0];
-            output = buildMapMessage(event, name, map);
+            output = buildMapMessage(
+                    event,
+                    name,
+                    (Map<String, Object>) argumentArray[0]); // key to object value map
         } else if (isMapJsonStenoEvent(marker)) {
-            final Object[] argumentArray = event.getArgumentArray();
-            final String name = event.getMessage();
-            @SuppressWarnings("unchecked")
-            final Map<String, String> map = (Map<String, String>) argumentArray[0];
-            output = buildMapJsonMessage(event, name, map);
+            output = buildMapJsonMessage(
+                    event,
+                    name,
+                    (Map<String, String>) argumentArray[0]); // key to json value map
         } else if (isObjectStenoEvent(marker)) {
-            final Object[] argumentArray = event.getArgumentArray();
-            final String name = event.getMessage();
-            output = buildObjectMessage(event, name, argumentArray[0]);
+            output = buildObjectMessage(
+                    event,
+                    name,
+                    argumentArray[0]); // data object value
         } else if (isObjectJsonStenoEvent(marker)) {
-            final Object[] argumentArray = event.getArgumentArray();
-            final String name = event.getMessage();
-            output = buildObjectJsonMessage(event, name, (String) argumentArray[0]);
-        } else if (isJsonStenoEvent(marker)) {
-            final Object[] argumentArray = event.getArgumentArray();
-            final String name = event.getMessage();
-            output = buildJsonMessage(event, name, (String) argumentArray[0], (String) argumentArray[1]);
+            output = buildObjectJsonMessage(
+                    event,
+                    name,
+                    (String) argumentArray[0]); // data json value
         } else {
             output = buildStandardMessage(event);
         }
@@ -161,19 +168,25 @@ public abstract class BaseLoggingEncoder extends LayoutWrappingEncoder<ILoggingE
     protected abstract String buildObjectJsonMessage(ILoggingEvent event, String eventName, String jsonData);
 
     /**
-     * Encode a JSON based message into a <code>String</code>.
+     * Encode a two pairs of lists representing data and context key-value pairs.
      *
-     * @since 1.0.0
+     * @since 1.3.0
      *
      * @param event Instance of <code>ILoggingEvent</code>.
      * @param eventName The name of the event.
-     * @param jsonKey The key for the JSON value.
-     * @param json The value encoded in JSON.
+     * @param dataKeys List of data keys.
+     * @param dataValues List of data values.
+     * @param contextKeys List of context keys.
+     * @param contextValues List of context values.
      * @return Message encoded as a <code>String</code>.
-     * @deprecated This functionality is now provided in more generically by other markers (as of 1.1.0).
      */
-    @Deprecated
-    protected abstract String buildJsonMessage(ILoggingEvent event, String eventName, String jsonKey, String json);
+    protected abstract String buildListsMessage(
+            ILoggingEvent event,
+            String eventName,
+            List<String> dataKeys,
+            List<Object> dataValues,
+            List<String> contextKeys,
+            List<Object> contextValues);
 
     /**
      * Encode a standard message into a <code>String</code>.
@@ -183,7 +196,7 @@ public abstract class BaseLoggingEncoder extends LayoutWrappingEncoder<ILoggingE
      * @param event Instance of <code>ILoggingEvent</code>.
      * @return Message encoded as a <code>String</code>.
      */
-    protected abstract String buildStandardMessage(ILoggingEvent event);
+    protected abstract String buildStandardMessage(final ILoggingEvent event);
 
     /**
      * Determine whether the <code>marker</code> represents an array event.
@@ -258,16 +271,14 @@ public abstract class BaseLoggingEncoder extends LayoutWrappingEncoder<ILoggingE
     }
 
     /**
-     * Determine whether the <code>marker</code> represents a JSON event.
+     * Determine whether the <code>marker</code> represents a lists event.
      *
-     * @since 1.0.0
+     * @since 1.3.0
      *
      * @param marker The <code>Marker</code> instance to evaluate.
-     * @return True if and only if <code>marker</code> represents a JSON event.
-     * @deprecated This functionality is now provided in more generically by other markers (as of 1.1.0).
+     * @return True if and only if <code>marker</code> represents a lists event.
      */
-    @Deprecated
-    protected boolean isJsonStenoEvent(final Marker marker) {
-        return marker != null && marker.contains(StenoMarker.JSON_MARKER);
+    protected boolean isListsStenoEvent(final Marker marker) {
+        return marker != null && marker.contains(StenoMarker.LISTS_MARKER);
     }
 }

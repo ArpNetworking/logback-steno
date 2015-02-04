@@ -15,12 +15,12 @@
  */
 package com.arpnetworking.logback;
 
-import java.util.regex.Pattern;
-
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
+
+import java.util.regex.Pattern;
 
 /**
  * Tests for <code>ProcessConverter</code>.

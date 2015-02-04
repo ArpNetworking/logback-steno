@@ -15,14 +15,6 @@
  */
 package com.arpnetworking.logback;
 
-import java.io.IOException;
-import java.io.StringWriter;
-import java.nio.ByteBuffer;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.pattern.ClassOfCallerConverter;
 import ch.qos.logback.classic.pattern.ClassicConverter;
@@ -34,6 +26,8 @@ import ch.qos.logback.classic.pattern.ThreadConverter;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.IThrowableProxy;
 import ch.qos.logback.classic.spi.StackTraceElementProxy;
+import com.arpnetworking.logback.jackson.FilterForcingAnnotationIntrospector;
+import com.arpnetworking.logback.jackson.RedactionFilter;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -49,93 +43,101 @@ import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
-import com.arpnetworking.logback.jackson.FilterForcingAnnotationIntrospector;
-import com.arpnetworking.logback.jackson.RedactionFilter;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.nio.ByteBuffer;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 /**
  * Encoder that builds Steno formatted log messages.
- * <p/>
+ * <br>
  * This encoder accepts logging events in various formats and keys off the existence of an slf4j Marker added to the log
  * event to determine the format of the arguments.
- * <p/>
+ * <br>
  * For logging events that don't have an associated Marker a standard Steno wrapper will be created with the string
  * logging message added as a 'message' field in the 'data' object. In such a case the name defaults to "log" unless a
  * name is specifically configured on the encoder.
- * <p/>
+ * <br><br>
  * <i>Example Output:</i>
- * <pre>
- *     <code>
- *         {"time":"2011-11-11T00:00:00.000Z","name":"log","level":"info","data":{"message":"log message"},"context":{"host":"h","processId":"p","threadId":"t"},"id":"oRw59PrARvatGNC7fiWw4A"}
- *     </code>
- * </pre>
- * <p/>
+ * <pre><code>
+ * {
+ *   "time":"2011-11-11T00:00:00.000Z",
+ *   "name":"log",
+ *   "level":"info",
+ *   "data":{
+ *     "message":"log message"
+ *   },
+ *   "context":{
+ *     "host":"h",
+ *     "processId":"p",
+ *     "threadId":"t"
+ *   },
+ *   "id":"oRw59PrARvatGNC7fiWw4A"
+ * }
+ * </code></pre>
  * For logging events that have the {@link com.arpnetworking.logback.StenoMarker#ARRAY_MARKER} Marker the logging event is
  * expected to contain the name of the event as the 'message', with the first argument being a String array (String[])
  * containing the keys to be added to the 'data' object and the second argument being an Object array (Object[])
  * containing the values for each key.
- * <p/>
+ * <br><br>
  * <i>Example logger call:</i>
- * <pre>
- *     <code>
- *         log.info(StenoMarker.ARRAY_MARKER, "log", new String[] {"key1","key2"}, new Object[] {1234, "foo"});
- *     </code>
- * </pre>
+ * <pre><code>
+ * log.info(StenoMarker.ARRAY_MARKER, "log", new String[] {"key1","key2"}, new Object[] {1234, "foo"});
+ * </code></pre>
  * Example Output:
- * <pre>
- *     <code>
- *         {"time":"2011-11-11T00:00:00.000Z","name":"log","level":"info","data":{"key1":1234,"key2":"foo"},"context":{"host":"h","processId":"p","threadId":"t"},"id":"oRw59PrARvatGNC7fiWw4A"}
- *     </code>
- * </pre>
- * <p/>
+ * <pre><code>
+ * {
+ *   "time":"2011-11-11T00:00:00.000Z",
+ *   "name":"log",
+ *   "level":"info",
+ *   "data":{
+ *     "key1":1234,
+ *     "key2":"foo"
+ *   },
+ *   "context":{
+ *     "host":"h",
+ *     "processId":"p",
+ *     "threadId":"t"
+ *   },
+ *   "id":"oRw59PrARvatGNC7fiWw4A"
+ * }
+ * </code></pre>
  * For logging events that have the {@link com.arpnetworking.logback.StenoMarker#MAP_MARKER} Marker the logging event is
  * expected to contain the name of the event as the 'message', with the first argument being a map of key to value to be
  * included inside the 'data' object.
- * <p/>
+ * <br><br>
  * <i>Example logger call:</i>
- * <pre>
- *     <code>
- *         log.info(StenoMarker.MAP_MARKER, "log", ImmutableMap.of("key1", 1234, "key2", "foo"));
- *     </code>
- * </pre>
+ * <pre><code>
+ * log.info(StenoMarker.MAP_MARKER, "log", ImmutableMap.of("key1", 1234, "key2", "foo"));
+ * </code></pre>
  * <i>Example Output:</i>
- * <pre>
- *     <code>
- *         {"time":"2011-11-11T00:00:00.000Z","name":"log","level":"info","data":{"key1":1234,"key2":"foo"},"context":{"host":"h","processId":"p","threadId":"t"},"id":"oRw59PrARvatGNC7fiWw4A"}
- *     </code>
- * </pre>
+ * <pre><code>
+ * {
+ *   "time":"2011-11-11T00:00:00.000Z",
+ *   "name":"log",
+ *   "level":"info",
+ *   "data":{
+ *     "key1":1234,
+ *     "key2":"foo"
+ *   },
+ *   "context":{
+ *     "host":"h",
+ *     "processId":"p",
+ *     "threadId":"t"
+ *   },
+ *   "id":"oRw59PrARvatGNC7fiWw4A"
+ * }
+ * </code></pre>
  *
  * @author Gil Markham (gil at groupon dot com)
  * @since 1.0.0
  */
-@SuppressWarnings("deprecation")
 public class StenoEncoder extends BaseLoggingEncoder {
-    private static final int UUID_LENGTH_IN_BYTES = 16;
-    private static final boolean DEFAULT_REDACT_NULL = true;
-    private static final String STANDARD_LOG_EVENT_NAME = "log";
-    private static final JsonFactory JSON_FACTORY = new JsonFactory();
-    private static final DateTimeFormatter ISO_DATE_TIME_FORMATTER = ISODateTimeFormat.dateTime().withZoneUTC();
-    private static final ClassicConverter HOST_CONVERTER = new HostConverter();
-    private static final ClassicConverter PROCESS_CONVERTER = new ProcessConverter();
-    private static final ClassicConverter THREAD_CONVERTER = new ThreadConverter();
-    private static final ClassicConverter LOGGER_CONVERTER = new LoggerConverter();
-    private static final ClassicConverter FILE_CONVERTER = new FileOfCallerConverter();
-    private static final ClassicConverter CLASS_CONVERTER = new ClassOfCallerConverter();
-    private static final ClassicConverter METHOD_CONVERTER = new MethodOfCallerConverter();
-    private static final ClassicConverter LINE_CONVERTER = new LineOfCallerConverter();
-
-    private ObjectMapper objectMapper;
-    private final JsonFactory jsonFactory;
-    private String logEventName = STANDARD_LOG_EVENT_NAME;
-    private boolean redactEnabled;
-    private boolean redactNull = DEFAULT_REDACT_NULL;
-    private boolean injectContextProcess = true;
-    private boolean injectContextHost = true;
-    private boolean injectContextThread = true;
-    private boolean injectContextLogger = false;
-    private boolean injectContextClass = false;
-    private boolean injectContextFile = false;
-    private boolean injectContextMethod = false;
-    private boolean injectContextLine = false;
 
     /**
      * Public constructor.
@@ -147,40 +149,27 @@ public class StenoEncoder extends BaseLoggingEncoder {
     }
 
     /* package private */ StenoEncoder(final JsonFactory jsonFactory, final ObjectMapper objectMapper) {
-        this.jsonFactory = jsonFactory;
+        _jsonFactory = jsonFactory;
 
         // Initialize object mapper;
-        this.objectMapper = objectMapper;
-        this.objectMapper.setAnnotationIntrospector(new FilterForcingAnnotationIntrospector());
-        SimpleFilterProvider simpleFilterProvider = new SimpleFilterProvider();
+        _objectMapper = objectMapper;
+        _objectMapper.setAnnotationIntrospector(new FilterForcingAnnotationIntrospector());
+        final SimpleFilterProvider simpleFilterProvider = new SimpleFilterProvider();
         simpleFilterProvider.addFilter(RedactionFilter.REDACTION_FILTER_ID, new RedactionFilter(!DEFAULT_REDACT_NULL));
         // Initialize this here based on the above code, if it was initialized at the declaration site then things
         // could get out of sync
-        redactEnabled = true;
-        this.objectMapper.setFilters(simpleFilterProvider);
+        _redactEnabled = true;
+        _objectMapper.setFilters(simpleFilterProvider);
 
         // Setup writing of Date/DateTime values
-        this.objectMapper.registerModule(new JodaModule());
-        this.objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-        this.objectMapper.setDateFormat(new ISO8601DateFormat());
-    }
-
-    /**
-     * Determines if fields marked with the annotation @LogRedact will be redacted in log output when serializing
-     * complex objects. If true then values for annotated fields/properties will be output as a string with the value
-     * "<REDACTED>", otherwise the value will be output as serialized json using a Jackson object mapper. Default: true
-     *
-     * @return whether redacted fields or filtered
-     *
-     * @since 1.1.0
-     */
-    public boolean isRedactEnabled() {
-        return redactEnabled;
+        _objectMapper.registerModule(new JodaModule());
+        _objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        _objectMapper.setDateFormat(new ISO8601DateFormat());
     }
 
     /**
      * Enables/Disables redaction support when serializing complex objects.  Redacted fields/properties marked
-     * with the @LogRedact annotation will be output as a string with the value "<REDACTED>".
+     * with the @LogRedact annotation will be output as a string with the value "{@code<REDACTED>}".
      *
      * @param redactEnabled - true to filter out redacted fields
      *
@@ -189,26 +178,27 @@ public class StenoEncoder extends BaseLoggingEncoder {
     public void setRedactEnabled(final boolean redactEnabled) {
         final SimpleFilterProvider simpleFilterProvider = new SimpleFilterProvider();
         if (redactEnabled) {
-            simpleFilterProvider.addFilter(RedactionFilter.REDACTION_FILTER_ID, new RedactionFilter(!redactNull));
+            simpleFilterProvider.addFilter(RedactionFilter.REDACTION_FILTER_ID, new RedactionFilter(!_redactNull));
         } else {
             simpleFilterProvider.addFilter(RedactionFilter.REDACTION_FILTER_ID,
                     SimpleBeanPropertyFilter.serializeAllExcept(Collections.<String>emptySet()));
         }
-        objectMapper.setFilters(simpleFilterProvider);
-        this.redactEnabled = redactEnabled;
+        _objectMapper.setFilters(simpleFilterProvider);
+        _redactEnabled = redactEnabled;
     }
 
     /**
-     * Determines how null values will be output for fields marked with @LogRedact.  If this is set
-     * to false then null values will be output as null, otherwise a string with the value of "<REDACTED>" will
-     * be used.  This property only takes effect if 'redactEnabled' is true.  Default: true
+     * Determines if fields marked with the annotation @LogRedact will be redacted in log output when serializing
+     * complex objects. If true then values for annotated fields/properties will be output as a string with the value
+     * "{@code <REDACTED>}", otherwise the value will be output as serialized json using a Jackson object mapper.
+     * Default: true
      *
-     * @return whether nulls will be redacted
+     * @return whether redacted fields or filtered
      *
      * @since 1.1.0
      */
-    public boolean isRedactNull() {
-        return redactNull;
+    public boolean isRedactEnabled() {
+        return _redactEnabled;
     }
 
     /**
@@ -219,12 +209,25 @@ public class StenoEncoder extends BaseLoggingEncoder {
      * @since 1.1.0
      */
     public void setRedactNull(final boolean redactNull) {
-        if (redactEnabled) {
+        if (_redactEnabled) {
             final SimpleFilterProvider simpleFilterProvider = new SimpleFilterProvider();
             simpleFilterProvider.addFilter(RedactionFilter.REDACTION_FILTER_ID, new RedactionFilter(!redactNull));
-            objectMapper.setFilters(simpleFilterProvider);
+            _objectMapper.setFilters(simpleFilterProvider);
         }
-        this.redactNull = redactNull;
+        _redactNull = redactNull;
+    }
+
+    /**
+     * Determines how null values will be output for fields marked with @LogRedact.  If this is set
+     * to false then null values will be output as null, otherwise a string with the value of "{@code <REDACTED>}" will
+     * be used.  This property only takes effect if 'redactEnabled' is true.  Default: true
+     *
+     * @return whether nulls will be redacted
+     *
+     * @since 1.1.0
+     */
+    public boolean isRedactNull() {
+        return _redactNull;
     }
 
     /**
@@ -236,11 +239,19 @@ public class StenoEncoder extends BaseLoggingEncoder {
      * @since 1.1.0
      */
     public void setLogEventName(final String logEventName) {
-        this.logEventName = logEventName;
+        _logEventName = logEventName;
     }
 
+    /**
+     * Retrieve the default log event name. This is used in place of the default log event name for logging events which
+     * do not specify a {@link com.arpnetworking.logback.StenoMarker} Marker.
+     *
+     * @return The default log event name.
+     *
+     * @since 1.1.0
+     */
     public String getLogEventName() {
-        return this.logEventName;
+        return _logEventName;
     }
 
     /**
@@ -252,11 +263,18 @@ public class StenoEncoder extends BaseLoggingEncoder {
      * @since 1.1.0
      */
     public void setInjectContextProcess(final boolean value) {
-        this.injectContextProcess = value;
+        _injectContextProcess = value;
     }
 
+    /**
+     * Whether process id is injected into the context. By default this is <b>true</b>.
+     *
+     * @return True if and only if process id is injected into the context.
+     *
+     * @since 1.1.0
+     */
     public boolean isInjectContextProcess() {
-        return this.injectContextProcess;
+        return _injectContextProcess;
     }
 
     /**
@@ -268,11 +286,18 @@ public class StenoEncoder extends BaseLoggingEncoder {
      * @since 1.1.0
      */
     public void setInjectContextHost(final boolean value) {
-        this.injectContextHost = value;
+        _injectContextHost = value;
     }
 
+    /**
+     * Whether host name is injected into the context. By default this is <b>true</b>.
+     *
+     * @return True if and only if host name is injected into the context.
+     *
+     * @since 1.1.0
+     */
     public boolean isInjectContextHost() {
-        return this.injectContextHost;
+        return _injectContextHost;
     }
 
     /**
@@ -284,11 +309,18 @@ public class StenoEncoder extends BaseLoggingEncoder {
      * @since 1.1.0
      */
     public void setInjectContextThread(final boolean value) {
-        this.injectContextThread = value;
+        _injectContextThread = value;
     }
 
+    /**
+     * Whether thread name is injected into the context. By default this is <b>true</b>.
+     *
+     * @return True if and only if thread name is injected into the context.
+     *
+     * @since 1.1.0
+     */
     public boolean isInjectContextThread() {
-        return this.injectContextThread;
+        return _injectContextThread;
     }
 
     /**
@@ -304,11 +336,18 @@ public class StenoEncoder extends BaseLoggingEncoder {
      * @since 1.1.0
      */
     public void setInjectContextLogger(final boolean value) {
-        this.injectContextLogger = value;
+        _injectContextLogger = value;
     }
 
+    /**
+     * Whether logger name is injected into the context. By default this is false.
+     *
+     * @return True if and only if logger name is injected into the context.
+     *
+     * @since 1.1.0
+     */
     public boolean isInjectContextLogger() {
-        return this.injectContextLogger;
+        return _injectContextLogger;
     }
 
     /**
@@ -320,11 +359,18 @@ public class StenoEncoder extends BaseLoggingEncoder {
      * @since 1.1.0
      */
     public void setInjectContextFile(final boolean value) {
-        this.injectContextFile = value;
+        _injectContextFile = value;
     }
 
+    /**
+     * Whether source file name is injected into the context. By default this is false.
+     *
+     * @return True if and only if source file name is injected into the context.
+     *
+     * @since 1.1.0
+     */
     public boolean isInjectContextFile() {
-        return this.injectContextFile;
+        return _injectContextFile;
     }
 
     /**
@@ -336,11 +382,18 @@ public class StenoEncoder extends BaseLoggingEncoder {
      * @since 1.1.0
      */
     public void setInjectContextClass(final boolean value) {
-        this.injectContextClass = value;
+        _injectContextClass = value;
     }
 
+    /**
+     * Whether class name is injected into the context. By default this is false.
+     *
+     * @return True if and only if class name is injected into the context.
+     *
+     * @since 1.1.0
+     */
     public boolean isInjectContextClass() {
-        return this.injectContextClass;
+        return _injectContextClass;
     }
 
     /**
@@ -352,11 +405,18 @@ public class StenoEncoder extends BaseLoggingEncoder {
      * @since 1.1.0
      */
     public void setInjectContextMethod(final boolean value) {
-        this.injectContextMethod = value;
+        _injectContextMethod = value;
     }
 
+    /**
+     * Whether method name is injected into the context. By default this is false.
+     *
+     * @return True if and only if method name is injected into the context.
+     *
+     * @since 1.1.0
+     */
     public boolean isInjectContextMethod() {
-        return this.injectContextMethod;
+        return _injectContextMethod;
     }
 
     /**
@@ -368,11 +428,41 @@ public class StenoEncoder extends BaseLoggingEncoder {
      * @since 1.1.0
      */
     public void setInjectContextLine(final boolean value) {
-        this.injectContextLine = value;
+        _injectContextLine = value;
     }
 
+    /**
+     * Whether line number is injected into the context. By default this is false.
+     *
+     * @return True if and only if line number is injected into the context.
+     *
+     * @since 1.1.0
+     */
     public boolean isInjectContextLine() {
-        return this.injectContextLine;
+        return _injectContextLine;
+    }
+
+    /**
+     * Inject MDC properties. This controls which MDC properties are injected into each message's context. By default
+     * no properties are injected.
+     *
+     * @param values The MDC properties to inject into the context.
+     *
+     * @since 1.3.0
+     */
+    public void setMdcProperties(final Set<String> values) {
+        _injectMdcProperties = values;
+    }
+
+    /**
+     * Which MDC properties are injected into the context. By default this is an empty set.
+     *
+     * @return The set of MDC properties injected into the context.
+     *
+     * @since 1.3.0
+     */
+    public Set<String> getMdcProperties() {
+        return _injectMdcProperties;
     }
 
     /**
@@ -382,9 +472,9 @@ public class StenoEncoder extends BaseLoggingEncoder {
     protected String buildStandardMessage(final ILoggingEvent event) {
         final StringWriter jsonWriter = new StringWriter();
         try {
-            final JsonGenerator jsonGenerator = this.jsonFactory.createGenerator(jsonWriter);
+            final JsonGenerator jsonGenerator = _jsonFactory.createGenerator(jsonWriter);
             // Start wrapper
-            startStenoWrapper(event, logEventName, jsonGenerator);
+            startStenoWrapper(event, _logEventName, jsonGenerator);
 
             // Write event data
             jsonGenerator.writeObjectFieldStart("data");
@@ -395,8 +485,8 @@ public class StenoEncoder extends BaseLoggingEncoder {
             writeThrowable(event.getThrowableProxy(), jsonGenerator);
 
             // End wrapper
-            endStenoWrapper(event, logEventName, jsonGenerator);
-        } catch (IOException e) {
+            endStenoWrapper(event, _logEventName, jsonGenerator);
+        } catch (final IOException e) {
             return "Unknown exception: " + e.getMessage();
         }
 
@@ -415,7 +505,7 @@ public class StenoEncoder extends BaseLoggingEncoder {
 
         final StringWriter jsonWriter = new StringWriter();
         try {
-            final JsonGenerator jsonGenerator = this.jsonFactory.createGenerator(jsonWriter);
+            final JsonGenerator jsonGenerator = _jsonFactory.createGenerator(jsonWriter);
             // Start wrapper
             startStenoWrapper(event, eventName, jsonGenerator);
 
@@ -430,7 +520,7 @@ public class StenoEncoder extends BaseLoggingEncoder {
                         jsonGenerator.writeObjectField(keys[i], values[i]);
                     } else {
                         jsonGenerator.writeFieldName(keys[i]);
-                        objectMapper.writeValue(jsonGenerator, values[i]);
+                        _objectMapper.writeValue(jsonGenerator, values[i]);
                     }
                 }
             }
@@ -460,7 +550,7 @@ public class StenoEncoder extends BaseLoggingEncoder {
 
         final StringWriter jsonWriter = new StringWriter();
         try {
-            final JsonGenerator jsonGenerator = this.jsonFactory.createGenerator(jsonWriter);
+            final JsonGenerator jsonGenerator = _jsonFactory.createGenerator(jsonWriter);
             // Start wrapper
             startStenoWrapper(event, eventName, jsonGenerator);
 
@@ -502,7 +592,7 @@ public class StenoEncoder extends BaseLoggingEncoder {
 
         final StringWriter jsonWriter = new StringWriter();
         try {
-            final JsonGenerator jsonGenerator = this.jsonFactory.createGenerator(jsonWriter);
+            final JsonGenerator jsonGenerator = _jsonFactory.createGenerator(jsonWriter);
             // Start wrapper
             startStenoWrapper(event, eventName, jsonGenerator);
 
@@ -514,7 +604,7 @@ public class StenoEncoder extends BaseLoggingEncoder {
                         jsonGenerator.writeObjectField(entry.getKey(), entry.getValue());
                     } else {
                         jsonGenerator.writeFieldName(entry.getKey());
-                        objectMapper.writeValue(jsonGenerator, entry.getValue());
+                        _objectMapper.writeValue(jsonGenerator, entry.getValue());
                     }
                 }
             }
@@ -543,7 +633,7 @@ public class StenoEncoder extends BaseLoggingEncoder {
 
         final StringWriter jsonWriter = new StringWriter();
         try {
-            final JsonGenerator jsonGenerator = this.jsonFactory.createGenerator(jsonWriter);
+            final JsonGenerator jsonGenerator = _jsonFactory.createGenerator(jsonWriter);
             // Start wrapper
             startStenoWrapper(event, eventName, jsonGenerator);
 
@@ -584,8 +674,8 @@ public class StenoEncoder extends BaseLoggingEncoder {
 
         final String jsonData;
         try {
-            jsonData = data == null ? null : objectMapper.writeValueAsString(data);
-        } catch (JsonProcessingException e) {
+            jsonData = data == null ? null : _objectMapper.writeValueAsString(data);
+        } catch (final JsonProcessingException e) {
             return "Unknown exception: " + e.getMessage();
         }
         return buildObjectJsonMessage(
@@ -605,7 +695,7 @@ public class StenoEncoder extends BaseLoggingEncoder {
 
         final StringWriter jsonWriter = new StringWriter();
         try {
-            final JsonGenerator jsonGenerator = this.jsonFactory.createGenerator(jsonWriter);
+            final JsonGenerator jsonGenerator = _jsonFactory.createGenerator(jsonWriter);
             // Start wrapper
             startStenoWrapper(event, eventName, jsonGenerator);
 
@@ -635,32 +725,32 @@ public class StenoEncoder extends BaseLoggingEncoder {
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("deprecation")
     @Override
-    protected String buildJsonMessage(
+    protected String buildListsMessage(
             final ILoggingEvent event,
             final String eventName,
-            final String jsonKey,
-            final String json) {
+            final List<String> dataKeys,
+            final List<Object> dataValues,
+            final List<String> contextKeys,
+            final List<Object> contextValues) {
 
         final StringWriter jsonWriter = new StringWriter();
         try {
-            final JsonGenerator jsonGenerator = this.jsonFactory.createGenerator(jsonWriter);
+            final JsonGenerator jsonGenerator = _jsonFactory.createGenerator(jsonWriter);
             // Start wrapper
             startStenoWrapper(event, eventName, jsonGenerator);
 
             // Write event data
             jsonGenerator.writeObjectFieldStart("data");
-            jsonGenerator.writeFieldName(jsonKey);
-            jsonGenerator.writeRawValue(json);
+            writeKeyValuePairs(dataKeys, dataValues, jsonGenerator);
             jsonGenerator.writeEndObject(); // End 'data' field
 
             // Output throwable
             writeThrowable(event.getThrowableProxy(), jsonGenerator);
 
             // End wrapper
-            endStenoWrapper(event, eventName, jsonGenerator);
-        } catch (IOException e) {
+            endStenoWrapper(event, eventName, contextKeys, contextValues, jsonGenerator);
+        } catch (final IOException e) {
             return "Unknown exception: " + e.getMessage();
         }
 
@@ -670,8 +760,8 @@ public class StenoEncoder extends BaseLoggingEncoder {
     /**
      * Start writing the Steno JSON wrapper.
      *
-     * @param event         Instance of <code>ILoggingEvent</code>.
-     * @param eventName     The name of the event.
+     * @param event Instance of <code>ILoggingEvent</code>.
+     * @param eventName The name of the event.
      * @param jsonGenerator <code>JsonGenerator</code> instance.
      * @throws IOException If writing JSON fails.
      */
@@ -692,8 +782,32 @@ public class StenoEncoder extends BaseLoggingEncoder {
     /**
      * Complete writing the Steno JSON wrapper.
      *
-     * @param event         Instance of <code>ILoggingEvent</code>.
-     * @param eventName     The name of the event.
+     * @param event Instance of <code>ILoggingEvent</code>.
+     * @param eventName The name of the event.
+     * @param jsonGenerator <code>JsonGenerator</code> instance.
+     * @throws IOException If writing JSON fails.
+     */
+    // CS.OFF: NPathComplexity
+    protected void endStenoWrapper(
+            final ILoggingEvent event,
+            final String eventName,
+            final JsonGenerator jsonGenerator)
+            throws IOException {
+        endStenoWrapper(
+                event,
+                eventName,
+                Collections.emptyList(),
+                Collections.emptyList(),
+                jsonGenerator);
+    }
+
+    /**
+     * Complete writing the Steno JSON wrapper.
+     *
+     * @param event Instance of <code>ILoggingEvent</code>.
+     * @param eventName The name of the event.
+     * @param contextKeys The <code>List</code> of context keys.
+     * @param contextValues The <code>List</code> of context values.
      * @param jsonGenerator <code>JsonGenerator</code> instance.
      * @throws IOException If writing JSON fails.
      */
@@ -701,39 +815,78 @@ public class StenoEncoder extends BaseLoggingEncoder {
     protected void endStenoWrapper(
         final ILoggingEvent event,
         final String eventName,
+        final List<String> contextKeys,
+        final List<Object> contextValues,
         final JsonGenerator jsonGenerator)
         throws IOException {
 
         jsonGenerator.writeObjectFieldStart("context");
-        if (this.injectContextHost) {
+        if (_injectContextHost) {
             jsonGenerator.writeStringField("host", HOST_CONVERTER.convert(event));
         }
-        if (this.injectContextProcess) {
+        if (_injectContextProcess) {
             jsonGenerator.writeStringField("processId", PROCESS_CONVERTER.convert(event));
         }
-        if (this.injectContextThread) {
+        if (_injectContextThread) {
             jsonGenerator.writeObjectField("threadId", THREAD_CONVERTER.convert(event));
         }
-        if (this.injectContextLogger) {
+        if (_injectContextLogger) {
             jsonGenerator.writeStringField("logger", LOGGER_CONVERTER.convert(event));
         }
-        if (this.injectContextFile) {
+        if (_injectContextFile) {
             jsonGenerator.writeStringField("file", FILE_CONVERTER.convert(event));
         }
-        if (this.injectContextClass) {
+        if (_injectContextClass) {
             jsonGenerator.writeStringField("class", CLASS_CONVERTER.convert(event));
         }
-        if (this.injectContextMethod) {
+        if (_injectContextMethod) {
             jsonGenerator.writeStringField("method", METHOD_CONVERTER.convert(event));
         }
-        if (this.injectContextLine) {
+        if (_injectContextLine) {
             jsonGenerator.writeStringField("line", LINE_CONVERTER.convert(event));
         }
+        for (final String key : _injectMdcProperties) {
+            final String value = event.getMDCPropertyMap().get(key);
+            jsonGenerator.writeStringField(key, value);
+        }
+        writeKeyValuePairs(contextKeys, contextValues, jsonGenerator);
         jsonGenerator.writeEndObject(); // End 'context' field
         jsonGenerator.writeObjectField("id", createId());
         jsonGenerator.writeEndObject(); // End log message
         jsonGenerator.writeRaw('\n');
         jsonGenerator.flush();
+    }
+
+    /**
+     * Write specified key-value pairs into the current block.
+     *
+     * @param keys The <code>List</code> of keys.
+     * @param values The <code>List</code> of values.
+     * @param jsonGenerator <code>JsonGenerator</code> instance.
+     * @throws IOException If writing JSON fails.
+     */
+    protected void writeKeyValuePairs(
+            final List<String> keys,
+            final List<Object> values,
+            final JsonGenerator jsonGenerator)
+            throws IOException {
+        if (keys != null) {
+            final int contextValuesLength = values == null ? 0 : values.size();
+            for (int i = 0; i < keys.size(); ++i) {
+                final String key = keys.get(i);
+                if (i >= contextValuesLength) {
+                    jsonGenerator.writeObjectField(key, null);
+                } else {
+                    final Object value = values.get(i);
+                    if (isSimpleType(value)) {
+                        jsonGenerator.writeObjectField(key, value);
+                    } else {
+                        jsonGenerator.writeFieldName(key);
+                        _objectMapper.writeValue(jsonGenerator, value);
+                    }
+                }
+            }
+        }
     }
     // CS.ON: NPathComplexity
 
@@ -828,6 +981,35 @@ public class StenoEncoder extends BaseLoggingEncoder {
         return false;
     }
 
+    private ObjectMapper _objectMapper;
+    private final JsonFactory _jsonFactory;
+    private String _logEventName = STANDARD_LOG_EVENT_NAME;
+    private boolean _redactEnabled;
+    private boolean _redactNull = DEFAULT_REDACT_NULL;
+    private boolean _injectContextProcess = true;
+    private boolean _injectContextHost = true;
+    private boolean _injectContextThread = true;
+    private boolean _injectContextLogger = false;
+    private boolean _injectContextClass = false;
+    private boolean _injectContextFile = false;
+    private boolean _injectContextMethod = false;
+    private boolean _injectContextLine = false;
+    private Set<String> _injectMdcProperties = Collections.emptySet();
+
+    private static final int UUID_LENGTH_IN_BYTES = 16;
+    private static final boolean DEFAULT_REDACT_NULL = true;
+    private static final String STANDARD_LOG_EVENT_NAME = "log";
+    private static final JsonFactory JSON_FACTORY = new JsonFactory();
+    private static final DateTimeFormatter ISO_DATE_TIME_FORMATTER = ISODateTimeFormat.dateTime().withZoneUTC();
+    private static final ClassicConverter HOST_CONVERTER = new HostConverter();
+    private static final ClassicConverter PROCESS_CONVERTER = new ProcessConverter();
+    private static final ClassicConverter THREAD_CONVERTER = new ThreadConverter();
+    private static final ClassicConverter LOGGER_CONVERTER = new LoggerConverter();
+    private static final ClassicConverter FILE_CONVERTER = new FileOfCallerConverter();
+    private static final ClassicConverter CLASS_CONVERTER = new ClassOfCallerConverter();
+    private static final ClassicConverter METHOD_CONVERTER = new MethodOfCallerConverter();
+    private static final ClassicConverter LINE_CONVERTER = new LineOfCallerConverter();
+
     /**
      * Log levels used by Steno.
      */
@@ -837,19 +1019,19 @@ public class StenoEncoder extends BaseLoggingEncoder {
         warn(Level.WARN),
         crit(Level.ERROR);
 
-        private final Level[] logbackLevels;
+        private final Level[] _logbackLevels;
         private static final Map<Level, StenoLevel> LOGBACK_LEVEL_MAP = new HashMap<>();
 
         static {
             for (StenoLevel stenoLevel : values()) {
-                for (Level logbackLevel : stenoLevel.logbackLevels) {
+                for (Level logbackLevel : stenoLevel._logbackLevels) {
                     LOGBACK_LEVEL_MAP.put(logbackLevel, stenoLevel);
                 }
             }
         }
 
         private StenoLevel(final Level... logbackLevels) {
-            this.logbackLevels = logbackLevels;
+            _logbackLevels = logbackLevels;
         }
 
         /**

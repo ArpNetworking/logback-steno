@@ -15,22 +15,18 @@
  */
 package com.arpnetworking.logback;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.IThrowableProxy;
 import ch.qos.logback.classic.spi.LoggerContextVO;
+import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.slf4j.Marker;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Tests for <code>LoggingEventWrapper</code>.
@@ -39,14 +35,18 @@ import org.slf4j.Marker;
  */
 public class LoggingEventWrapperTest {
 
+    /**
+     * @deprecated Invokes deprecated methods on Logback classes.
+     */
+    @Deprecated
     @Test
-    @SuppressWarnings("deprecation")
     public void test() {
         final ILoggingEvent wrapped = Mockito.mock(ILoggingEvent.class);
         final LoggerContextVO loggerContext = Mockito.mock(LoggerContextVO.class);
         final IThrowableProxy throwableProxy = Mockito.mock(IThrowableProxy.class);
         final StackTraceElement[] callerData = new StackTraceElement[]{};
         final Marker marker = Mockito.mock(Marker.class);
+
         final Map<String, String> mdcPropertyMap = new HashMap<>();
         mdcPropertyMap.put("foo1", "bar1");
         final Map<String, String> mdc = new HashMap<>();
@@ -67,26 +67,26 @@ public class LoggingEventWrapperTest {
         Mockito.doReturn(Long.valueOf(1L)).when(wrapped).getTimeStamp();
 
         final LoggingEventWrapper wrapper = new LoggingEventWrapper(wrapped, message, arguments);
-        assertEquals("threadName", wrapper.getThreadName());
-        assertEquals(Level.WARN, wrapper.getLevel());
-        assertEquals("loggerName", wrapper.getLoggerName());
-        assertSame(loggerContext, wrapper.getLoggerContextVO());
-        assertSame(throwableProxy, wrapper.getThrowableProxy());
-        assertSame(callerData, wrapper.getCallerData());
-        assertTrue(wrapper.hasCallerData());
-        assertSame(marker, wrapper.getMarker());
-        assertEquals(mdcPropertyMap, wrapper.getMDCPropertyMap());
-        assertEquals(mdc, wrapper.getMdc());
-        assertEquals(1L, wrapped.getTimeStamp());
+        Assert.assertEquals("threadName", wrapper.getThreadName());
+        Assert.assertEquals(Level.WARN, wrapper.getLevel());
+        Assert.assertEquals("loggerName", wrapper.getLoggerName());
+        Assert.assertSame(loggerContext, wrapper.getLoggerContextVO());
+        Assert.assertSame(throwableProxy, wrapper.getThrowableProxy());
+        Assert.assertSame(callerData, wrapper.getCallerData());
+        Assert.assertTrue(wrapper.hasCallerData());
+        Assert.assertSame(marker, wrapper.getMarker());
+        Assert.assertEquals(mdcPropertyMap, wrapper.getMDCPropertyMap());
+        Assert.assertEquals(mdc, wrapper.getMdc());
+        Assert.assertEquals(1L, wrapped.getTimeStamp());
 
-        assertEquals(message, wrapper.getMessage());
-        assertTrue(Arrays.equals(arguments, wrapper.getArgumentArray()));
+        Assert.assertEquals(message, wrapper.getMessage());
+        Assert.assertTrue(Arrays.equals(arguments, wrapper.getArgumentArray()));
     }
 
     @Test
     public void testNullArgumentArray() {
         final LoggingEventWrapper wrapper = new LoggingEventWrapper(null, null, null);
-        assertNull(wrapper.getArgumentArray());
+        Assert.assertNull(wrapper.getArgumentArray());
     }
 
     @Test
@@ -104,8 +104,8 @@ public class LoggingEventWrapperTest {
         final LoggingEventWrapper wrapper = new LoggingEventWrapper(null, message, arguments);
         final String formattedMessage1 = wrapper.getFormattedMessage();
         final String formattedMessage2 = wrapper.getFormattedMessage();
-        assertEquals(message, formattedMessage2);
-        assertEquals(formattedMessage1, formattedMessage2);
+        Assert.assertEquals(message, formattedMessage2);
+        Assert.assertEquals(formattedMessage1, formattedMessage2);
     }
 
     @Test
@@ -114,7 +114,7 @@ public class LoggingEventWrapperTest {
         final LoggingEventWrapper wrapper = new LoggingEventWrapper(null, message, null);
         final String formattedMessage1 = wrapper.getFormattedMessage();
         final String formattedMessage2 = wrapper.getFormattedMessage();
-        assertEquals(message, formattedMessage2);
-        assertEquals(formattedMessage1, formattedMessage2);
+        Assert.assertEquals(message, formattedMessage2);
+        Assert.assertEquals(formattedMessage1, formattedMessage2);
     }
 }

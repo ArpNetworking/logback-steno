@@ -15,13 +15,13 @@
  */
 package com.arpnetworking.logback;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 /**
  * Tests for <code>HostConverter</code>.
