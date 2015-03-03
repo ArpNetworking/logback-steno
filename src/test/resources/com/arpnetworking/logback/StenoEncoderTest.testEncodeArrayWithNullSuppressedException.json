@@ -1,1 +1,1 @@
-{"time":"1970-01-01T00:00:00.000Z","name":"logEvent","level":"info","data":{},"exception":{"type":"java.lang.NullPointerException","message":"npe!","backtrace":[],"data":{}},"context":{"host":"<HOST>","processId":"<PROCESS_ID>","threadId":"<THREAD_ID>"},"id":"<ID>"}
+{"time":"1970-01-01T00:00:00.000Z","name":"logEvent","level":"info","data":{},"exception":{"type":"java.lang.NullPointerException","message":"npe!","backtrace":[],"data":{}},"context":{"host":"<HOST>","processId":"<PROCESS_ID>","threadId":"<THREAD_ID>"},"id":"<ID>","version":"0"}

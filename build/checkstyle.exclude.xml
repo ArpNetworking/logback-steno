@@ -43,7 +43,4 @@
     <!-- Exclude logger from file length and method count checks -->
     <suppress checks="FileLength" files="com[\\/]arpnetworking[\\/]steno[\\/]Logger\.java"/>
     <suppress checks="MethodCount" files=".com[\\/]arpnetworking[\\/]tsdcore[\\/]Logger\.java"/>
-
-    <!-- Exclude stenoencoder from file length checks -->
-    <suppress checks="FileLength" files="com[\\/]arpnetworking[\\/]logback[\\/]StenoEncoder\.java"/>
 </suppressions>

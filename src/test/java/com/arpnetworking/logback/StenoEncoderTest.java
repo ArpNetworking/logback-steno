@@ -26,6 +26,7 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.fge.jackson.JsonLoader;
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
 import com.github.fge.jsonschema.core.report.ProcessingReport;
@@ -47,7 +48,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.Writer;
 import java.lang.management.ManagementFactory;
-import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -835,6 +835,27 @@ public class StenoEncoderTest {
         assertOutput("StenoEncoderTest.testEncodeStandardEventWithCustomEventName.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
+
+    @Test
+    public void testEncodeStandardEventWithCompressedLoggerName() throws Exception {
+        final LoggingEvent event = new LoggingEvent();
+        final DateTime eventTime = DateTime.parse("2011-11-11T11:11:11.000Z");
+        event.setLevel(Level.TRACE);
+        event.setMessage("logEvent - foo = {}");
+        event.setLoggerName("foo.bar.loggerName");
+        event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
+        event.setTimeStamp(eventTime.getMillis());
+        final Object[] argArray = new Object[1];
+        argArray[0] = "bar";
+        event.setArgumentArray(argArray);
+        _encoder.setInjectContextLogger(true);
+        _encoder.setCompressLoggerName(true);
+        Assert.assertTrue(_encoder.isCompressLoggerName());
+        _encoder.doEncode(event);
+        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        assertOutput("StenoEncoderTest.testEncodeStandardEventWithCompressedLoggerName.json", logOutput);
+        assertMatchesJsonSchema(logOutput);
+    }
     
     @Test
     public void testEncodeStandardEventWithSuppressDefaultContext() throws Exception {
@@ -979,31 +1000,6 @@ public class StenoEncoderTest {
         assertMatchesJsonSchema(redactedWithNullLogOutput);
     }
 
-    @Test
-    public void testIsSimpleType() {
-        Assert.assertTrue(_encoder.isSimpleType(null));
-        Assert.assertTrue(_encoder.isSimpleType("This is a String"));
-        Assert.assertTrue(_encoder.isSimpleType(Long.valueOf(1)));
-        Assert.assertTrue(_encoder.isSimpleType(Double.valueOf(3.14f)));
-        Assert.assertTrue(_encoder.isSimpleType(BigInteger.ONE));
-        Assert.assertTrue(_encoder.isSimpleType(Boolean.TRUE));
-        Assert.assertFalse(_encoder.isSimpleType(new Object()));
-        Assert.assertFalse(_encoder.isSimpleType(new long[]{}));
-        Assert.assertFalse(_encoder.isSimpleType(new double[]{}));
-    }
-
-    @Test
-    public void testStenoLevel() {
-        for (final StenoEncoder.StenoLevel level : StenoEncoder.StenoLevel.values()) {
-            Assert.assertSame(level, StenoEncoder.StenoLevel.valueOf(level.toString()));
-        }
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testStenoLevelDoesNotExist() {
-        StenoEncoder.StenoLevel.valueOf("does_not_exist");
-    }
-
     private static void assertOutput(final String expectedResource, final String actualOutput) {
         final String redactedOutput = actualOutput
                 .replaceAll("\"id\":\"[^\"]+\"", "\"id\":\"<ID>\"")
@@ -1021,11 +1017,15 @@ public class StenoEncoderTest {
 
     private static void assertMatchesJsonSchema(final String json) {
         try {
-            final JsonNode jsonNode = JsonLoader.fromString(json
-                    .replaceAll(",?\"MDC_KEY\":\"MDC_VALUE\"", "")
-                    .replaceAll(",?\"CONTEXT_KEY[0-9]*\":(\"[^\"]*\"|[0-9\\.]+|null)", "")
-                    .replaceAll("\"logger\":\"loggerName\",?", ""));
-            final ProcessingReport report = VALIDATOR.validate(STENO_SCHEMA, jsonNode);
+            final ObjectNode rootNode = (ObjectNode) JsonLoader.fromString(json);
+            final ObjectNode contextNode = (ObjectNode) rootNode.get("context");
+            if (contextNode != null) {
+                contextNode.remove("logger");
+                contextNode.remove("MDC_KEY");
+                contextNode.remove("CONTEXT_KEY1");
+                contextNode.remove("CONTEXT_KEY2");
+            }
+            final ProcessingReport report = VALIDATOR.validate(STENO_SCHEMA, rootNode);
             Assert.assertTrue(report.toString(), report.isSuccess());
         } catch (final IOException | ProcessingException e) {
             Assert.fail("Failed with exception: " + e);

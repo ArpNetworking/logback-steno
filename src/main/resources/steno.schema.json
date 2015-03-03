@@ -80,6 +80,10 @@
         },
         "id":  {
             "type":"string"
+        },
+        "version":  {
+            "type":"string",
+            "pattern": "^0$"
         }
     },
     "required": ["time", "name", "level"],

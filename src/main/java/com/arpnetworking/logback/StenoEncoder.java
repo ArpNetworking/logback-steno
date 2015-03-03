@@ -15,43 +15,33 @@
  */
 package com.arpnetworking.logback;
 
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.pattern.ClassOfCallerConverter;
-import ch.qos.logback.classic.pattern.ClassicConverter;
-import ch.qos.logback.classic.pattern.FileOfCallerConverter;
-import ch.qos.logback.classic.pattern.LineOfCallerConverter;
-import ch.qos.logback.classic.pattern.LoggerConverter;
-import ch.qos.logback.classic.pattern.MethodOfCallerConverter;
-import ch.qos.logback.classic.pattern.ThreadConverter;
 import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.classic.spi.IThrowableProxy;
-import ch.qos.logback.classic.spi.StackTraceElementProxy;
 import com.arpnetworking.logback.jackson.FilterForcingAnnotationIntrospector;
 import com.arpnetworking.logback.jackson.RedactionFilter;
+import com.arpnetworking.logback.serialization.ArrayOfJsonSerialziationStrategy;
+import com.arpnetworking.logback.serialization.ArraySerialziationStrategy;
+import com.arpnetworking.logback.serialization.ListsSerialziationStrategy;
+import com.arpnetworking.logback.serialization.MapOfJsonSerialziationStrategy;
+import com.arpnetworking.logback.serialization.MapSerialziationStrategy;
+import com.arpnetworking.logback.serialization.ObjectAsJsonSerialziationStrategy;
+import com.arpnetworking.logback.serialization.ObjectSerialziationStrategy;
+import com.arpnetworking.logback.serialization.StandardSerializationStrategy;
 import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
+import com.fasterxml.jackson.datatype.guava.GuavaModule;
+import com.fasterxml.jackson.datatype.jdk7.Jdk7Module;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
-import org.apache.commons.codec.binary.Base64;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.ISODateTimeFormat;
+import com.google.common.base.Objects;
 
-import java.io.IOException;
-import java.io.StringWriter;
-import java.nio.ByteBuffer;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 
 /**
  * Encoder that builds Steno formatted log messages.
@@ -135,6 +125,7 @@ import java.util.UUID;
  * </code></pre>
  *
  * @author Gil Markham (gil at groupon dot com)
+ * @author Ville Koskela (vkoskela at groupon dot com)
  * @since 1.0.0
  */
 public class StenoEncoder extends BaseLoggingEncoder {
@@ -149,7 +140,6 @@ public class StenoEncoder extends BaseLoggingEncoder {
     }
 
     /* package private */ StenoEncoder(final JsonFactory jsonFactory, final ObjectMapper objectMapper) {
-        _jsonFactory = jsonFactory;
 
         // Initialize object mapper;
         _objectMapper = objectMapper;
@@ -165,6 +155,21 @@ public class StenoEncoder extends BaseLoggingEncoder {
         _objectMapper.registerModule(new JodaModule());
         _objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         _objectMapper.setDateFormat(new ISO8601DateFormat());
+
+        // Setup other common modules
+        _objectMapper.registerModule(new Jdk7Module());
+        _objectMapper.registerModule(new Jdk8Module());
+        _objectMapper.registerModule(new GuavaModule());
+
+        // Serialization strategies
+        _listsSerialziationStrategy = new ListsSerialziationStrategy(this, jsonFactory, _objectMapper);
+        _objectAsJsonSerialziationStrategy = new ObjectAsJsonSerialziationStrategy(this, jsonFactory, _objectMapper);
+        _objectSerialziationStrategy = new ObjectSerialziationStrategy(this, jsonFactory, _objectMapper);
+        _mapOfJsonSerialziationStrategy = new MapOfJsonSerialziationStrategy(this, jsonFactory, _objectMapper);
+        _mapSerialziationStrategy = new MapSerialziationStrategy(this, jsonFactory, _objectMapper);
+        _arrayOfJsonSerialziationStrategy = new ArrayOfJsonSerialziationStrategy(this, jsonFactory, _objectMapper);
+        _arraySerialziationStrategy = new ArraySerialziationStrategy(this, jsonFactory, _objectMapper);
+        _standardSerializationStrategy = new StandardSerializationStrategy(this, jsonFactory, _objectMapper);
     }
 
     /**
@@ -351,6 +356,32 @@ public class StenoEncoder extends BaseLoggingEncoder {
     }
 
     /**
+     * Compress logger name. This controls whether the logger name is compressed prior to injection into each message's
+     * context. By default this is false. Compression takes each part of name separated by "." (aka period or dot) and
+     * reduces all but the last to only the first character. Compression has no effect if logger name injection is
+     * disabled.
+     *
+     * @param value Whether to compress the logger name.
+     *
+     * @since 1.3.1
+     */
+    public void setCompressLoggerName(final boolean value) {
+        _compressLoggerName = value;
+    }
+
+    /**
+     * Whether logger name is compressed. By default this is false. Compression takes each part of name separated by
+     * "." (aka period or dot) and reduces all but the last to only the first character.
+     *
+     * @return True if and only if logger name is to be compressed.
+     *
+     * @since 1.3.1
+     */
+    public boolean isCompressLoggerName() {
+        return _compressLoggerName;
+    }
+
+    /**
      * Inject file. This controls whether the source file name is injected into each message's context. By default this
      * is false.
      *
@@ -470,27 +501,7 @@ public class StenoEncoder extends BaseLoggingEncoder {
      */
     @Override
     protected String buildStandardMessage(final ILoggingEvent event) {
-        final StringWriter jsonWriter = new StringWriter();
-        try {
-            final JsonGenerator jsonGenerator = _jsonFactory.createGenerator(jsonWriter);
-            // Start wrapper
-            startStenoWrapper(event, _logEventName, jsonGenerator);
-
-            // Write event data
-            jsonGenerator.writeObjectFieldStart("data");
-            jsonGenerator.writeObjectField("message", event.getFormattedMessage());
-            jsonGenerator.writeEndObject(); // End 'data' field
-
-            // Output throwable
-            writeThrowable(event.getThrowableProxy(), jsonGenerator);
-
-            // End wrapper
-            endStenoWrapper(event, _logEventName, jsonGenerator);
-        } catch (final IOException e) {
-            return "Unknown exception: " + e.getMessage();
-        }
-
-        return jsonWriter.toString();
+        return _standardSerializationStrategy.serialize(event, _logEventName);
     }
 
     /**
@@ -503,39 +514,11 @@ public class StenoEncoder extends BaseLoggingEncoder {
             final String[] keys,
             final Object[] values) {
 
-        final StringWriter jsonWriter = new StringWriter();
-        try {
-            final JsonGenerator jsonGenerator = _jsonFactory.createGenerator(jsonWriter);
-            // Start wrapper
-            startStenoWrapper(event, eventName, jsonGenerator);
-
-            // Write event data
-            jsonGenerator.writeObjectFieldStart("data");
-            final int argsLength = values == null ? 0 : values.length;
-            if (keys != null) {
-                for (int i = 0; i < keys.length; i++) {
-                    if (i >= argsLength) {
-                        jsonGenerator.writeObjectField(keys[i], null);
-                    } else if (isSimpleType(values[i])) {
-                        jsonGenerator.writeObjectField(keys[i], values[i]);
-                    } else {
-                        jsonGenerator.writeFieldName(keys[i]);
-                        _objectMapper.writeValue(jsonGenerator, values[i]);
-                    }
-                }
-            }
-            jsonGenerator.writeEndObject(); // End 'data' field
-
-            // Output throwable
-            writeThrowable(event.getThrowableProxy(), jsonGenerator);
-
-            // End wrapper
-            endStenoWrapper(event, eventName, jsonGenerator);
-        } catch (final IOException e) {
-            return "Unknown exception: " + e.getMessage();
-        }
-
-        return jsonWriter.toString();
+        return _arraySerialziationStrategy.serialize(
+                event,
+                Objects.firstNonNull(eventName, _logEventName),
+                keys,
+                values);
     }
 
     /**
@@ -548,37 +531,11 @@ public class StenoEncoder extends BaseLoggingEncoder {
             final String[] keys,
             final String[] jsonValues) {
 
-        final StringWriter jsonWriter = new StringWriter();
-        try {
-            final JsonGenerator jsonGenerator = _jsonFactory.createGenerator(jsonWriter);
-            // Start wrapper
-            startStenoWrapper(event, eventName, jsonGenerator);
-
-            // Write event data
-            jsonGenerator.writeObjectFieldStart("data");
-            final int argsLength = jsonValues == null ? 0 : jsonValues.length;
-            if (keys != null) {
-                for (int i = 0; i < keys.length; i++) {
-                    if (i >= argsLength) {
-                        jsonGenerator.writeObjectField(keys[i], null);
-                    } else {
-                        jsonGenerator.writeFieldName(keys[i]);
-                        jsonGenerator.writeRawValue(jsonValues[i]);
-                    }
-                }
-            }
-            jsonGenerator.writeEndObject(); // End 'data' field
-
-            // Output throwable
-            writeThrowable(event.getThrowableProxy(), jsonGenerator);
-
-            // End wrapper
-            endStenoWrapper(event, eventName, jsonGenerator);
-        } catch (final IOException e) {
-            return "Unknown exception: " + e.getMessage();
-        }
-
-        return jsonWriter.toString();
+        return _arrayOfJsonSerialziationStrategy.serialize(
+                event,
+                Objects.firstNonNull(eventName, _logEventName),
+                keys,
+                jsonValues);
     }
 
     /**
@@ -590,36 +547,10 @@ public class StenoEncoder extends BaseLoggingEncoder {
             final String eventName,
             final Map<String, ? extends Object> map) {
 
-        final StringWriter jsonWriter = new StringWriter();
-        try {
-            final JsonGenerator jsonGenerator = _jsonFactory.createGenerator(jsonWriter);
-            // Start wrapper
-            startStenoWrapper(event, eventName, jsonGenerator);
-
-            // Write event data
-            jsonGenerator.writeObjectFieldStart("data");
-            if (map != null) {
-                for (final Map.Entry<String, ? extends Object> entry : map.entrySet()) {
-                    if (isSimpleType(entry.getValue())) {
-                        jsonGenerator.writeObjectField(entry.getKey(), entry.getValue());
-                    } else {
-                        jsonGenerator.writeFieldName(entry.getKey());
-                        _objectMapper.writeValue(jsonGenerator, entry.getValue());
-                    }
-                }
-            }
-            jsonGenerator.writeEndObject(); // End 'data' field
-
-            // Output throwable
-            writeThrowable(event.getThrowableProxy(), jsonGenerator);
-
-            // End wrapper
-            endStenoWrapper(event, eventName, jsonGenerator);
-        } catch (final IOException e) {
-            return "Unknown exception: " + e.getMessage();
-        }
-
-        return jsonWriter.toString();
+        return _mapSerialziationStrategy.serialize(
+                event,
+                Objects.firstNonNull(eventName, _logEventName),
+                map);
     }
 
     /**
@@ -631,36 +562,10 @@ public class StenoEncoder extends BaseLoggingEncoder {
             final String eventName,
             final Map<String, String> map) {
 
-        final StringWriter jsonWriter = new StringWriter();
-        try {
-            final JsonGenerator jsonGenerator = _jsonFactory.createGenerator(jsonWriter);
-            // Start wrapper
-            startStenoWrapper(event, eventName, jsonGenerator);
-
-            // Write event data
-            jsonGenerator.writeObjectFieldStart("data");
-            if (map != null) {
-                for (final Map.Entry<String, String> entry : map.entrySet()) {
-                    if (entry.getValue() == null) {
-                        jsonGenerator.writeObjectField(entry.getKey(), null);
-                    } else {
-                        jsonGenerator.writeFieldName(entry.getKey());
-                        jsonGenerator.writeRawValue(entry.getValue());
-                    }
-                }
-            }
-            jsonGenerator.writeEndObject(); // End 'data' field
-
-            // Output throwable
-            writeThrowable(event.getThrowableProxy(), jsonGenerator);
-
-            // End wrapper
-            endStenoWrapper(event, eventName, jsonGenerator);
-        } catch (final IOException e) {
-            return "Unknown exception: " + e.getMessage();
-        }
-
-        return jsonWriter.toString();
+        return _mapOfJsonSerialziationStrategy.serialize(
+                event,
+                Objects.firstNonNull(eventName, _logEventName),
+                map);
     }
 
     /**
@@ -672,16 +577,10 @@ public class StenoEncoder extends BaseLoggingEncoder {
             final String eventName,
             final Object data) {
 
-        final String jsonData;
-        try {
-            jsonData = data == null ? null : _objectMapper.writeValueAsString(data);
-        } catch (final JsonProcessingException e) {
-            return "Unknown exception: " + e.getMessage();
-        }
-        return buildObjectJsonMessage(
+        return _objectSerialziationStrategy.serialize(
                 event,
-                eventName,
-                jsonData);
+                Objects.firstNonNull(eventName, _logEventName),
+                data);
     }
 
     /**
@@ -693,33 +592,10 @@ public class StenoEncoder extends BaseLoggingEncoder {
             final String eventName,
             final String jsonData) {
 
-        final StringWriter jsonWriter = new StringWriter();
-        try {
-            final JsonGenerator jsonGenerator = _jsonFactory.createGenerator(jsonWriter);
-            // Start wrapper
-            startStenoWrapper(event, eventName, jsonGenerator);
-
-            // Write event data
-            jsonGenerator.writeFieldName("data");
-            if (jsonData == null) {
-                jsonGenerator.writeStartObject();
-                jsonGenerator.writeEndObject();
-            } else {
-                jsonGenerator.writeRawValue(jsonData);
-            }
-            // TODO(vkoskela): Support writing null objects as-is via configuration [MAI-333]
-            // e.g. "data":null -- although this is not supported by the current Steno specification
-
-            // Output throwable
-            writeThrowable(event.getThrowableProxy(), jsonGenerator);
-
-            // End wrapper
-            endStenoWrapper(event, eventName, jsonGenerator);
-        } catch (final IOException e) {
-            return "Unknown exception: " + e.getMessage();
-        }
-
-        return jsonWriter.toString();
+        return _objectAsJsonSerialziationStrategy.serialize(
+                event,
+                Objects.firstNonNull(eventName, _logEventName),
+                jsonData);
     }
 
     /**
@@ -734,255 +610,25 @@ public class StenoEncoder extends BaseLoggingEncoder {
             final List<String> contextKeys,
             final List<Object> contextValues) {
 
-        final StringWriter jsonWriter = new StringWriter();
-        try {
-            final JsonGenerator jsonGenerator = _jsonFactory.createGenerator(jsonWriter);
-            // Start wrapper
-            startStenoWrapper(event, eventName, jsonGenerator);
-
-            // Write event data
-            jsonGenerator.writeObjectFieldStart("data");
-            writeKeyValuePairs(dataKeys, dataValues, jsonGenerator);
-            jsonGenerator.writeEndObject(); // End 'data' field
-
-            // Output throwable
-            writeThrowable(event.getThrowableProxy(), jsonGenerator);
-
-            // End wrapper
-            endStenoWrapper(event, eventName, contextKeys, contextValues, jsonGenerator);
-        } catch (final IOException e) {
-            return "Unknown exception: " + e.getMessage();
-        }
-
-        return jsonWriter.toString();
-    }
-
-    /**
-     * Start writing the Steno JSON wrapper.
-     *
-     * @param event Instance of <code>ILoggingEvent</code>.
-     * @param eventName The name of the event.
-     * @param jsonGenerator <code>JsonGenerator</code> instance.
-     * @throws IOException If writing JSON fails.
-     */
-    protected void startStenoWrapper(
-        final ILoggingEvent event,
-        final String eventName,
-        final JsonGenerator jsonGenerator)
-        throws IOException {
-
-        final StenoLevel level = StenoLevel.findByLogbackLevel(event.getLevel());
-        jsonGenerator.writeStartObject();
-        jsonGenerator.writeObjectField("time",
-                ISO_DATE_TIME_FORMATTER.print(new DateTime(event.getTimeStamp(), DateTimeZone.UTC)));
-        jsonGenerator.writeObjectField("name", eventName);
-        jsonGenerator.writeObjectField("level", level.name());
-    }
-
-    /**
-     * Complete writing the Steno JSON wrapper.
-     *
-     * @param event Instance of <code>ILoggingEvent</code>.
-     * @param eventName The name of the event.
-     * @param jsonGenerator <code>JsonGenerator</code> instance.
-     * @throws IOException If writing JSON fails.
-     */
-    // CS.OFF: NPathComplexity
-    protected void endStenoWrapper(
-            final ILoggingEvent event,
-            final String eventName,
-            final JsonGenerator jsonGenerator)
-            throws IOException {
-        endStenoWrapper(
+        return _listsSerialziationStrategy.serialize(
                 event,
-                eventName,
-                Collections.emptyList(),
-                Collections.emptyList(),
-                jsonGenerator);
-    }
-
-    /**
-     * Complete writing the Steno JSON wrapper.
-     *
-     * @param event Instance of <code>ILoggingEvent</code>.
-     * @param eventName The name of the event.
-     * @param contextKeys The <code>List</code> of context keys.
-     * @param contextValues The <code>List</code> of context values.
-     * @param jsonGenerator <code>JsonGenerator</code> instance.
-     * @throws IOException If writing JSON fails.
-     */
-    // CS.OFF: NPathComplexity
-    protected void endStenoWrapper(
-        final ILoggingEvent event,
-        final String eventName,
-        final List<String> contextKeys,
-        final List<Object> contextValues,
-        final JsonGenerator jsonGenerator)
-        throws IOException {
-
-        jsonGenerator.writeObjectFieldStart("context");
-        if (_injectContextHost) {
-            jsonGenerator.writeStringField("host", HOST_CONVERTER.convert(event));
-        }
-        if (_injectContextProcess) {
-            jsonGenerator.writeStringField("processId", PROCESS_CONVERTER.convert(event));
-        }
-        if (_injectContextThread) {
-            jsonGenerator.writeObjectField("threadId", THREAD_CONVERTER.convert(event));
-        }
-        if (_injectContextLogger) {
-            jsonGenerator.writeStringField("logger", LOGGER_CONVERTER.convert(event));
-        }
-        if (_injectContextFile) {
-            jsonGenerator.writeStringField("file", FILE_CONVERTER.convert(event));
-        }
-        if (_injectContextClass) {
-            jsonGenerator.writeStringField("class", CLASS_CONVERTER.convert(event));
-        }
-        if (_injectContextMethod) {
-            jsonGenerator.writeStringField("method", METHOD_CONVERTER.convert(event));
-        }
-        if (_injectContextLine) {
-            jsonGenerator.writeStringField("line", LINE_CONVERTER.convert(event));
-        }
-        for (final String key : _injectMdcProperties) {
-            final String value = event.getMDCPropertyMap().get(key);
-            jsonGenerator.writeStringField(key, value);
-        }
-        writeKeyValuePairs(contextKeys, contextValues, jsonGenerator);
-        jsonGenerator.writeEndObject(); // End 'context' field
-        jsonGenerator.writeObjectField("id", createId());
-        jsonGenerator.writeEndObject(); // End log message
-        jsonGenerator.writeRaw('\n');
-        jsonGenerator.flush();
-    }
-
-    /**
-     * Write specified key-value pairs into the current block.
-     *
-     * @param keys The <code>List</code> of keys.
-     * @param values The <code>List</code> of values.
-     * @param jsonGenerator <code>JsonGenerator</code> instance.
-     * @throws IOException If writing JSON fails.
-     */
-    protected void writeKeyValuePairs(
-            final List<String> keys,
-            final List<Object> values,
-            final JsonGenerator jsonGenerator)
-            throws IOException {
-        if (keys != null) {
-            final int contextValuesLength = values == null ? 0 : values.size();
-            for (int i = 0; i < keys.size(); ++i) {
-                final String key = keys.get(i);
-                if (i >= contextValuesLength) {
-                    jsonGenerator.writeObjectField(key, null);
-                } else {
-                    final Object value = values.get(i);
-                    if (isSimpleType(value)) {
-                        jsonGenerator.writeObjectField(key, value);
-                    } else {
-                        jsonGenerator.writeFieldName(key);
-                        _objectMapper.writeValue(jsonGenerator, value);
-                    }
-                }
-            }
-        }
-    }
-    // CS.ON: NPathComplexity
-
-    /**
-     * Write a <code>Throwable</code> via <code>IThrowableProxy</code> as JSON.
-     *
-     * @param throwableProxy Throwable to serialize
-     * @param jsonGenerator  <code>JsonGenerator</code> instance.
-     * @throws IOException If writing JSON fails.
-     */
-    protected void writeThrowable(
-        final IThrowableProxy throwableProxy,
-        final JsonGenerator jsonGenerator)
-        throws IOException {
-
-        if (throwableProxy != null) {
-            jsonGenerator.writeObjectFieldStart("exception");
-            serializeThrowable(throwableProxy, jsonGenerator);
-            jsonGenerator.writeEndObject();
-        }
-    }
-
-    /**
-     * This function assumes the field object has already been started for this throwable, this only fills in
-     * the fields in the 'exception' or equivalent object and does not create the field in the containing object.
-     *
-     * @param throwableProxy Throwable to serialize
-     * @param jsonGenerator  <code>JsonGenerator</code> instance after exception object is started
-     * @throws IOException If writing the <code>Throwable</code> as JSON fails.
-     */
-    protected void serializeThrowable(
-        final IThrowableProxy throwableProxy,
-        final JsonGenerator jsonGenerator)
-        throws IOException {
-
-        jsonGenerator.writeObjectField("type", throwableProxy.getClassName());
-        jsonGenerator.writeObjectField("message", throwableProxy.getMessage());
-        jsonGenerator.writeArrayFieldStart("backtrace");
-        for (StackTraceElementProxy ste : throwableProxy.getStackTraceElementProxyArray()) {
-            jsonGenerator.writeString(ste.toString());
-        }
-        jsonGenerator.writeEndArray();
-        jsonGenerator.writeObjectFieldStart("data");
-        if (throwableProxy.getSuppressed() != null) {
-            jsonGenerator.writeArrayFieldStart("suppressed");
-            for (IThrowableProxy suppressed : throwableProxy.getSuppressed()) {
-                jsonGenerator.writeStartObject();
-                serializeThrowable(suppressed, jsonGenerator);
-                jsonGenerator.writeEndObject();
-            }
-            jsonGenerator.writeEndArray();
-        }
-        if (throwableProxy.getCause() != null) {
-            jsonGenerator.writeObjectFieldStart("cause");
-            serializeThrowable(throwableProxy.getCause(), jsonGenerator);
-            jsonGenerator.writeEndObject();
-        }
-        jsonGenerator.writeEndObject();
-    }
-
-    /**
-     * Create a Steno compatible identifier.
-     *
-     * @return New identifier as a <code>String</code>.
-     */
-    protected String createId() {
-        final UUID uuid = UUID.randomUUID();
-        final ByteBuffer buffer = ByteBuffer.wrap(new byte[UUID_LENGTH_IN_BYTES]);
-        buffer.putLong(uuid.getMostSignificantBits());
-        buffer.putLong(uuid.getLeastSignificantBits());
-        return Base64.encodeBase64URLSafeString(buffer.array());
-    }
-
-    /* package private */ boolean isSimpleType(final Object obj) {
-        if (obj == null) {
-            return true;
-        }
-
-        final Class<?> objClass = obj.getClass();
-        if (String.class.isAssignableFrom(objClass)) {
-            return true;
-        }
-
-        if (Number.class.isAssignableFrom(objClass)) {
-            return true;
-        }
-
-        if (Boolean.class.isAssignableFrom(objClass)) {
-            return true;
-        }
-
-        return false;
+                Objects.firstNonNull(eventName, _logEventName),
+                dataKeys,
+                dataValues,
+                contextKeys,
+                contextValues);
     }
 
     private ObjectMapper _objectMapper;
-    private final JsonFactory _jsonFactory;
+    private final ListsSerialziationStrategy _listsSerialziationStrategy;
+    private final ObjectAsJsonSerialziationStrategy _objectAsJsonSerialziationStrategy;
+    private final ObjectSerialziationStrategy _objectSerialziationStrategy;
+    private final MapOfJsonSerialziationStrategy _mapOfJsonSerialziationStrategy;
+    private final MapSerialziationStrategy _mapSerialziationStrategy;
+    private final ArrayOfJsonSerialziationStrategy _arrayOfJsonSerialziationStrategy;
+    private final ArraySerialziationStrategy _arraySerialziationStrategy;
+    private final StandardSerializationStrategy _standardSerializationStrategy;
+
     private String _logEventName = STANDARD_LOG_EVENT_NAME;
     private boolean _redactEnabled;
     private boolean _redactNull = DEFAULT_REDACT_NULL;
@@ -990,6 +636,7 @@ public class StenoEncoder extends BaseLoggingEncoder {
     private boolean _injectContextHost = true;
     private boolean _injectContextThread = true;
     private boolean _injectContextLogger = false;
+    private boolean _compressLoggerName = false;
     private boolean _injectContextClass = false;
     private boolean _injectContextFile = false;
     private boolean _injectContextMethod = false;
@@ -1000,48 +647,4 @@ public class StenoEncoder extends BaseLoggingEncoder {
     private static final boolean DEFAULT_REDACT_NULL = true;
     private static final String STANDARD_LOG_EVENT_NAME = "log";
     private static final JsonFactory JSON_FACTORY = new JsonFactory();
-    private static final DateTimeFormatter ISO_DATE_TIME_FORMATTER = ISODateTimeFormat.dateTime().withZoneUTC();
-    private static final ClassicConverter HOST_CONVERTER = new HostConverter();
-    private static final ClassicConverter PROCESS_CONVERTER = new ProcessConverter();
-    private static final ClassicConverter THREAD_CONVERTER = new ThreadConverter();
-    private static final ClassicConverter LOGGER_CONVERTER = new LoggerConverter();
-    private static final ClassicConverter FILE_CONVERTER = new FileOfCallerConverter();
-    private static final ClassicConverter CLASS_CONVERTER = new ClassOfCallerConverter();
-    private static final ClassicConverter METHOD_CONVERTER = new MethodOfCallerConverter();
-    private static final ClassicConverter LINE_CONVERTER = new LineOfCallerConverter();
-
-    /**
-     * Log levels used by Steno.
-     */
-    protected enum StenoLevel {
-        debug(Level.DEBUG, Level.TRACE),
-        info(Level.INFO),
-        warn(Level.WARN),
-        crit(Level.ERROR);
-
-        private final Level[] _logbackLevels;
-        private static final Map<Level, StenoLevel> LOGBACK_LEVEL_MAP = new HashMap<>();
-
-        static {
-            for (StenoLevel stenoLevel : values()) {
-                for (Level logbackLevel : stenoLevel._logbackLevels) {
-                    LOGBACK_LEVEL_MAP.put(logbackLevel, stenoLevel);
-                }
-            }
-        }
-
-        private StenoLevel(final Level... logbackLevels) {
-            _logbackLevels = logbackLevels;
-        }
-
-        /**
-         * Find the <code>StenoLevel</code> corresponding to the Logback <code>Level</code>.
-         *
-         * @param logbackLevel The Logback <code>Level</code> to map to a <code>StenoLevel</code>.
-         * @return The matching <code>StenoLevel</code> or null if one is not found.
-         */
-        public static StenoLevel findByLogbackLevel(final Level logbackLevel) {
-            return LOGBACK_LEVEL_MAP.get(logbackLevel);
-        }
-    }
 }
