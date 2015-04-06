@@ -119,7 +119,7 @@ import java.util.UUID;
      * @param objectMapper <code>ObjectMapper</code> instance.
      * @throws IOException If writing JSON fails.
      */
-    // CS.OFF: NPathComplexity
+    // CHECKSTYLE.OFF: NPathComplexity - Many combinations
     protected void endStenoWrapper(
             final ILoggingEvent event,
             final String eventName,
@@ -170,6 +170,7 @@ import java.util.UUID;
         jsonGenerator.writeRaw('\n');
         jsonGenerator.flush();
     }
+    // CHECKSTYLE.ON: NPathComplexity
 
     /**
      * Write specified key-value pairs into the current block.
@@ -204,7 +205,6 @@ import java.util.UUID;
             }
         }
     }
-    // CS.ON: NPathComplexity
 
     /**
      * Write a <code>Throwable</code> via <code>IThrowableProxy</code> as JSON.

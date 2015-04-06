@@ -49,7 +49,7 @@ public class RedactionFilterTest {
     @Before
     public void setUp() {
         _objectMapper = new ObjectMapper();
-        _objectMapper.setAnnotationIntrospector(new FilterForcingAnnotationIntrospector());
+        _objectMapper.setAnnotationIntrospector(new StenoAnnotationIntrospector());
         final Map<String, Object> filterMap = new HashMap<>();
         filterMap.put(RedactionFilter.REDACTION_FILTER_ID, new RedactionFilter(false));
         _objectMapper.setFilters(new SimpleFilterProvider(filterMap));

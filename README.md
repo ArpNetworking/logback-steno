@@ -88,6 +88,7 @@ The StenoEncoder encoder supports several options:
 * InjectContextLine - Add the calling line to the context block. The default is false. (2)
 * MdcProperties - Add the specified key-value pairs from MDC into the context. The default is none. MDC key-value pairs  
 will override any context key-value pairs injected by the Steno encoder. (1)
+* CompressLoggerName - Compress the dotted logger name replacing each segment except the last with only its first letter. The default is false. 
 
 _Note 1_: Injecting additional key-value pairs into context is not strictly compliant with the current definition of Steno.<br>
 _Note 2_: Injecting class, file, method or line will incur a significant performance penalty. 
@@ -393,6 +394,37 @@ if a getter exists the member must match the getter name (e.g. _private String f
 Redaction may be disabled by setting the RedactEnabled encoder property to false (it defaults to true).  Further, 
 redaction of null values may be disabled by setting the RedactNull encoder property to false (it defaults to true). 
 Suppression is supported with Jackson's @JsonIgnore.
+
+Logging Non-Pojo/Bean Classes
+-----------------------------
+
+To log a representation of an object other than what is defined by its fields/accessors you can annotate a method with
+@LogValue to return an alternate representation.  Typically, this is a String, but it can be any object which is then
+serialized in place of the original.
+
+This is the same functionality as provided by @JsonValue which is honored in the absence of @LogValue.  However, the
+separate @LogValue annotation permits an alternate logged form to the serialized form.  You may also disable both
+@LogValue and @LogJson and revert an instance to bean serialization by including both annotations and setting its value
+and fallback both to false.
+
+The following table summarizes the configuration options:
+
+| Annotation        |               |                | @JsonValue Absent | @JsonValue Present |                    |
+|-------------------|---------------|----------------|:-----------------:|:------------------:|:------------------:|
+|                   |               |                |                   | value=true         | value=false        |
+| @LogValue Absent  |               |                | SJS               | @JV                | SJS                |
+| @LogValue Present | enabled=true  | fallback=true  | @LV               | @LV                | @LV                |
+|                   |               | fallback=false | @LV               | @LV                | @LV                |
+|                   | enabled=false | fallback=true  | SJS               | @JV                | SJS                |
+|                   |               | fallback=false | SJS               | @JV                | SJS                |
+
+The three possible outcomes are:
+
+| Result     | Meaning                                                                                             |
+|------------|-----------------------------------------------------------------------------------------------------|
+| SJS        | Standard Jackson Serialization                                                                      |
+| @JV        | @JsonValue Serialization                                                                            |
+| @LV        | @LogValue Serialization                                                                             |
 
 Development
 -----------

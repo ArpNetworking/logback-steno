@@ -16,8 +16,8 @@
 package com.arpnetworking.logback;
 
 import ch.qos.logback.classic.spi.ILoggingEvent;
-import com.arpnetworking.logback.jackson.FilterForcingAnnotationIntrospector;
 import com.arpnetworking.logback.jackson.RedactionFilter;
+import com.arpnetworking.logback.jackson.StenoAnnotationIntrospector;
 import com.arpnetworking.logback.serialization.ArrayOfJsonSerialziationStrategy;
 import com.arpnetworking.logback.serialization.ArraySerialziationStrategy;
 import com.arpnetworking.logback.serialization.ListsSerialziationStrategy;
@@ -36,6 +36,7 @@ import com.fasterxml.jackson.datatype.guava.GuavaModule;
 import com.fasterxml.jackson.datatype.jdk7.Jdk7Module;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
+import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
 import com.google.common.base.Objects;
 
 import java.util.Collections;
@@ -143,7 +144,7 @@ public class StenoEncoder extends BaseLoggingEncoder {
 
         // Initialize object mapper;
         _objectMapper = objectMapper;
-        _objectMapper.setAnnotationIntrospector(new FilterForcingAnnotationIntrospector());
+        _objectMapper.setAnnotationIntrospector(new StenoAnnotationIntrospector());
         final SimpleFilterProvider simpleFilterProvider = new SimpleFilterProvider();
         simpleFilterProvider.addFilter(RedactionFilter.REDACTION_FILTER_ID, new RedactionFilter(!DEFAULT_REDACT_NULL));
         // Initialize this here based on the above code, if it was initialized at the declaration site then things
@@ -154,9 +155,11 @@ public class StenoEncoder extends BaseLoggingEncoder {
         // Setup writing of Date/DateTime values
         _objectMapper.registerModule(new JodaModule());
         _objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        _objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
         _objectMapper.setDateFormat(new ISO8601DateFormat());
 
         // Setup other common modules
+        _objectMapper.registerModule(new AfterburnerModule());
         _objectMapper.registerModule(new Jdk7Module());
         _objectMapper.registerModule(new Jdk8Module());
         _objectMapper.registerModule(new GuavaModule());

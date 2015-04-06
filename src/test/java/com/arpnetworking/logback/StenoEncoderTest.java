@@ -22,6 +22,7 @@ import ch.qos.logback.classic.spi.IThrowableProxy;
 import ch.qos.logback.classic.spi.LoggingEvent;
 import ch.qos.logback.classic.spi.ThrowableProxy;
 import com.arpnetworking.logback.annotations.LogRedact;
+import com.arpnetworking.logback.annotations.LogValue;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -1000,6 +1001,25 @@ public class StenoEncoderTest {
         assertMatchesJsonSchema(redactedWithNullLogOutput);
     }
 
+    @Test
+    public void testEncodeLogValue() throws Exception {
+        final LoggingEvent event = new LoggingEvent();
+        event.setLevel(Level.INFO);
+        event.setMarker(StenoMarker.ARRAY_MARKER);
+        event.setMessage("logEvent");
+        event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
+        event.setTimeStamp(0);
+        final DateTime date = new DateTime(1415737981000L);
+        final Object[] argArray = new Object[2];
+        argArray[0] = new String[]{"key1", "logValue"};
+        argArray[1] = new Object[]{date, new LogValueBean("FooBar!")};
+        event.setArgumentArray(argArray);
+        _encoder.doEncode(event);
+        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        assertOutput("StenoEncoderTest.testEncodeLogValue.json", logOutput);
+        assertMatchesJsonSchema(logOutput);
+    }
+
     private static void assertOutput(final String expectedResource, final String actualOutput) {
         final String redactedOutput = actualOutput
                 .replaceAll("\"id\":\"[^\"]+\"", "\"id\":\"<ID>\"")
@@ -1106,4 +1126,23 @@ public class StenoEncoderTest {
     }
     // CHECKSTYLE.ON: HiddenField
     // CHECKSTYLE.ON: MemberName
+
+    private static class LogValueBean {
+
+        public LogValueBean(final String value) {
+            _value = value;
+        }
+
+        public String getValue() {
+            return "This is not the value you are looking for";
+        }
+
+        @LogValue
+        @Override
+        public String toString() {
+            return _value;
+        }
+
+        private final String _value;
+    }
 }
