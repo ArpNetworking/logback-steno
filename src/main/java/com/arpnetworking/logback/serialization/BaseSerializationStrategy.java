@@ -39,6 +39,7 @@ import org.joda.time.format.ISODateTimeFormat;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -158,7 +159,9 @@ import java.util.UUID;
         if (_encoder.isInjectContextLine()) {
             jsonGenerator.writeStringField("line", LINE_CONVERTER.convert(event));
         }
-        for (final String key : _encoder.getMdcProperties()) {
+        final Iterator<String> injectContextMdcIterator = _encoder.iteratorForInjectContextMdc();
+        while (injectContextMdcIterator.hasNext()) {
+            final String key = injectContextMdcIterator.next();
             final String value = event.getMDCPropertyMap().get(key);
             jsonGenerator.writeStringField(key, value);
         }

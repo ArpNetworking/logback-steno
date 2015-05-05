@@ -37,9 +37,11 @@ import com.fasterxml.jackson.datatype.jdk7.Jdk7Module;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
+import com.google.common.collect.Sets;
 
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -477,26 +479,38 @@ public class StenoEncoder extends BaseLoggingEncoder {
     }
 
     /**
-     * Inject MDC properties. This controls which MDC properties are injected into each message's context. By default
-     * no properties are injected.
+     * Add MDC property to inject into the context. This controls which MDC properties are injected into each message's
+     * context. By default no properties are injected.
      *
-     * @param values The MDC properties to inject into the context.
+     * @param key The MDC property key to inject into the context.
      *
-     * @since 1.3.0
+     * @since 1.4.0
      */
-    public void setMdcProperties(final Set<String> values) {
-        _injectMdcProperties = values;
+    public void addInjectContextMdc(final String key) {
+        _injectMdcProperties.add(key);
     }
 
     /**
-     * Which MDC properties are injected into the context. By default this is an empty set.
+     * Which MDC properties are injected into the context. By default this is none.
      *
-     * @return The set of MDC properties injected into the context.
+     * @return The iterator over MDC properties injected into the context.
      *
-     * @since 1.3.0
+     * @since 1.4.0
      */
-    public Set<String> getMdcProperties() {
-        return _injectMdcProperties;
+    public Iterator<String> iteratorForInjectContextMdc() {
+        return _injectMdcProperties.iterator();
+    }
+
+    /**
+     * Determine if the specific MDC property key is injected into the context. By default it is not.
+     *
+     * @param key The MDC property key to check.
+     * @return True if and only if the key is injected into the context.
+     *
+     * @since 1.4.0
+     */
+    public boolean isInjectContextMdc(final String key) {
+        return _injectMdcProperties.contains(key);
     }
 
     /**
@@ -519,7 +533,7 @@ public class StenoEncoder extends BaseLoggingEncoder {
 
         return _arraySerialziationStrategy.serialize(
                 event,
-                Objects.firstNonNull(eventName, _logEventName),
+                MoreObjects.firstNonNull(eventName, _logEventName),
                 keys,
                 values);
     }
@@ -536,7 +550,7 @@ public class StenoEncoder extends BaseLoggingEncoder {
 
         return _arrayOfJsonSerialziationStrategy.serialize(
                 event,
-                Objects.firstNonNull(eventName, _logEventName),
+                MoreObjects.firstNonNull(eventName, _logEventName),
                 keys,
                 jsonValues);
     }
@@ -548,11 +562,11 @@ public class StenoEncoder extends BaseLoggingEncoder {
     protected String buildMapMessage(
             final ILoggingEvent event,
             final String eventName,
-            final Map<String, ? extends Object> map) {
+            final Map<String, ?> map) {
 
         return _mapSerialziationStrategy.serialize(
                 event,
-                Objects.firstNonNull(eventName, _logEventName),
+                MoreObjects.firstNonNull(eventName, _logEventName),
                 map);
     }
 
@@ -567,7 +581,7 @@ public class StenoEncoder extends BaseLoggingEncoder {
 
         return _mapOfJsonSerialziationStrategy.serialize(
                 event,
-                Objects.firstNonNull(eventName, _logEventName),
+                MoreObjects.firstNonNull(eventName, _logEventName),
                 map);
     }
 
@@ -582,7 +596,7 @@ public class StenoEncoder extends BaseLoggingEncoder {
 
         return _objectSerialziationStrategy.serialize(
                 event,
-                Objects.firstNonNull(eventName, _logEventName),
+                MoreObjects.firstNonNull(eventName, _logEventName),
                 data);
     }
 
@@ -597,7 +611,7 @@ public class StenoEncoder extends BaseLoggingEncoder {
 
         return _objectAsJsonSerialziationStrategy.serialize(
                 event,
-                Objects.firstNonNull(eventName, _logEventName),
+                MoreObjects.firstNonNull(eventName, _logEventName),
                 jsonData);
     }
 
@@ -615,7 +629,7 @@ public class StenoEncoder extends BaseLoggingEncoder {
 
         return _listsSerialziationStrategy.serialize(
                 event,
-                Objects.firstNonNull(eventName, _logEventName),
+                MoreObjects.firstNonNull(eventName, _logEventName),
                 dataKeys,
                 dataValues,
                 contextKeys,
@@ -644,9 +658,8 @@ public class StenoEncoder extends BaseLoggingEncoder {
     private boolean _injectContextFile = false;
     private boolean _injectContextMethod = false;
     private boolean _injectContextLine = false;
-    private Set<String> _injectMdcProperties = Collections.emptySet();
+    private Set<String> _injectMdcProperties = Sets.newLinkedHashSet();
 
-    private static final int UUID_LENGTH_IN_BYTES = 16;
     private static final boolean DEFAULT_REDACT_NULL = true;
     private static final String STANDARD_LOG_EVENT_NAME = "log";
     private static final JsonFactory JSON_FACTORY = new JsonFactory();

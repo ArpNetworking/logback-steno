@@ -86,8 +86,8 @@ The StenoEncoder encoder supports several options:
 * InjectContextFile - Add the calling file name to the context block. The default is false.  (2)
 * InjectContextMethod - Add the calling method name to the context block. The default is false. (2)
 * InjectContextLine - Add the calling line to the context block. The default is false. (2)
-* MdcProperties - Add the specified key-value pairs from MDC into the context. The default is none. MDC key-value pairs  
-will override any context key-value pairs injected by the Steno encoder. (1)
+* InjectContextMdc - Add the specified key pairs from MDC into the context. The default is none. Injected MDC keys   
+override any context keys pairs injected by the Steno encoder. (1)
 * CompressLoggerName - Compress the dotted logger name replacing each segment except the last with only its first letter. The default is false. 
 
 _Note 1_: Injecting additional key-value pairs into context is not strictly compliant with the current definition of Steno.<br>
@@ -382,6 +382,12 @@ Output:
 ```json
 {"time":"2011-11-11T00:00:00.000Z","name":"log","level":"info","data":{"key":"value"},"context":{"host":"<HOST>","processId":"<PROCESS>","threadId":"<THREAD>"},"id":"oRw59PrARvatGNC7fiWw4A"}
 ```
+
+Exceptions
+----------
+
+The SLF4J logging methods which accept a marker (e.g. StenoMarker.*) also accept a Throwable as the final argument.  The
+value of the Throwable will be serialized into the top-level exception block in the Steno format.
 
 Redacting and Ignoring Fields
 -----------------------------

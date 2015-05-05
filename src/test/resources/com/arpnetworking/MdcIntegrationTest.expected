@@ -1,0 +1,3 @@
+{"time":"<TIME>","name":"log","level":"info","data":{"message":"This is informative"},"context":{"host":"<HOST>","processId":"<PROCESS_ID>","threadId":"<THREAD_ID>","logger":"ROOT","Foo":null,"Bar":"Easy"},"id":"<ID>","version":"0"}
+{"time":"<TIME>","name":"log","level":"warn","data":{"message":"This is a warning"},"context":{"host":"<HOST>","processId":"<PROCESS_ID>","threadId":"<THREAD_ID>","logger":"ROOT","Foo":"As","Bar":"ABC"},"id":"<ID>","version":"0"}
+{"time":"<TIME>","name":"log","level":"crit","data":{"message":"This is an error"},"context":{"host":"<HOST>","processId":"<PROCESS_ID>","threadId":"<THREAD_ID>","logger":"ROOT","Foo":"123","Bar":null},"id":"<ID>","version":"0"}

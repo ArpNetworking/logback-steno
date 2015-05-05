@@ -1,0 +1,9 @@
+<TIME> main [INFO] ROOT : 3. This is informative 
+<TIME> main [WARN] ROOT : 4. This is a warning 
+<TIME> main [ERROR] ROOT : 5. This is an error 
+<TIME> main [INFO] ROOT : name="IT", message="8. This is informative" 
+<TIME> main [WARN] ROOT : name="IT", message="9. This is a warning" 
+<TIME> main [ERROR] ROOT : name="IT", message="10. This is an error" 
+<TIME> main [INFO] ROOT : name="IT", message="13. This is informative" 
+<TIME> main [WARN] ROOT : name="IT", message="14. This is a warning" 
+<TIME> main [ERROR] ROOT : name="IT", message="15. This is an error" 
