@@ -1,0 +1,17 @@
+language: java
+jdk:
+- oraclejdk8
+env:
+  global:
+  - secure: TEAIvQ6sAVXzdRQxCJ4cuw8oN7GFhiLCVKIiVe9kdAgdvkz2hstCDgF2GuLnzscizzSQ9J8os28c8oW8XeXwTz7TWO5OaW0gMbQVt5hcKKuY4ilfs0El9Oq/TjMP87zkaEmsVG1Xhbo2KDmNy2LmvvPUEPVujrvgaHZQ3kyrxrk=
+  - secure: DRRZdbdlFVoR0GzLGw6+l0ZRKt1OLVy4BmAA/CQPobIWkXU4W/IBMwzemRQ0CWlxsjFdTMZntlXlNPRv3rYJH1eKmcsep0H/g9qDg07va2JmlgdYXuVOlU6laXGaanhnjjqcjBEofJhnt1+NS3Jj4UaJdqmMtQxwdD8aANwgqXM=
+  - secure: bm9EkLcbdHMNx7bO7dck5idTAmwfH2qsqhoSlT+cCdi5KY49K/3h3hPPuzaNM1/MpU1DpDQFOSMcfEtVVdS3KvJ+L9IZkUxnfBND3csMOim8jrSiZ7236VefYtj0+T7axtSb+EBOf1TYSKmcuL37NYSdo8vTel9YMIYj+IX9kpI=
+install: true
+before_script:
+- gpg --import arpnetworking.key
+- echo "<settings><servers><server><id>ossrh</id><username>\${env.OSSRH_USER}</username><password>\${env.OSSRH_PASS}</password></server><server><id>arpnet</id><passphrase>\${env.GPG_PASS}</passphrase></server></servers></settings>"
+  > ~/settings.xml
+script:
+- mvn verify install --settings ~/settings.xml
+after_success:
+- mvn deploy --settings ~/settings.xml
