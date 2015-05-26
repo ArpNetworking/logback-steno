@@ -15,6 +15,6 @@ before_script:
 - echo "<settings><servers><server><id>ossrh</id><username>\${env.OSSRH_USER}</username><password>\${env.OSSRH_PASS}</password></server><server><id>arpnet</id><passphrase>\${env.GPG_PASS}</passphrase></server></servers></settings>"
   > ~/settings.xml
 script:
-- mvn verify install --settings ~/settings.xml
+- mvn verify install --settings ~/settings.xml -P release
 after_success:
-- mvn deploy --settings ~/settings.xml
+- mvn deploy --settings ~/settings.xml -P release

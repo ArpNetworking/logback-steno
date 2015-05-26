@@ -23,7 +23,7 @@
     <name>logback-steno</name>
     <description>A logback encoder for the steno format</description>
     <url>https://github.com/arpnetworking/logback-steno</url>
-    <version>1.4.0</version>
+    <version>1.4.1-SNAPSHOT</version>
 
     <licenses>
         <license>
@@ -380,10 +380,6 @@
         </profile>
     </profiles>
     <distributionManagement>
-      <snapshotRepository>
-        <id>ossrh</id>
-        <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-      </snapshotRepository>
       <repository>
         <id>ossrh</id>
         <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
