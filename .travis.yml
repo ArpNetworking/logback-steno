@@ -17,4 +17,4 @@ before_script:
 script:
 - mvn verify install --settings ~/settings.xml -P release
 after_success:
-- mvn deploy --settings ~/settings.xml -P release
+- if [ "${TRAVIS_BRANCH}" = "master" -a  "${TRAVIS_PULL_REQUEST}" = "false" ]; then mvn deploy --settings ~/settings.xml -P release; fi;
