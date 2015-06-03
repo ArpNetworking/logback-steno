@@ -23,7 +23,7 @@
     <name>logback-steno</name>
     <description>A logback encoder for the steno format</description>
     <url>https://github.com/arpnetworking/logback-steno</url>
-    <version>1.4.0</version>
+    <version>1.8.0</version>
 
     <licenses>
         <license>
@@ -88,32 +88,34 @@
     </developers>
 
     <properties>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.test.skip>false</maven.test.skip>
 
         <!--Dependency versions-->
         <build-resources.version>1.0.3</build-resources.version>
         <slf4j.version>1.7.10</slf4j.version>
-        <logback.version>1.1.2</logback.version>
-        <jackson.version>2.5.0</jackson.version>
+        <logback.version>1.1.3</logback.version>
+        <jackson.version>2.5.3</jackson.version>
         <afterburner.version>2.5.1</afterburner.version>
-        <joda-time.version>2.7</joda-time.version>
-        <commons-codec.version>1.10</commons-codec.version>
+        <aspectjrt.version>1.8.5</aspectjrt.version>
+        <aspectjtools.version>1.8.5</aspectjtools.version>
         <junit.version>4.12</junit.version>
         <mockito.version>1.10.19</mockito.version>
         <findbugs.annotations.version>3.0.0</findbugs.annotations.version>
         <json-schema-validator.version>2.2.6</json-schema-validator.version>
-        <guava.version>18.0</guava.version>
 
         <!--Plugin versions-->
         <maven.compiler.plugin.version>3.2</maven.compiler.plugin.version>
+        <aspectj.maven.plugin.version>1.7</aspectj.maven.plugin.version>
         <maven.source.plugin.version>2.4</maven.source.plugin.version>
         <maven.surefire.plugin.version>2.18.1</maven.surefire.plugin.version>
         <maven.javadoc.plugin.version>2.10.1</maven.javadoc.plugin.version>
         <maven.resources.plugin.version>2.7</maven.resources.plugin.version>
-        <maven.checkstyle.plugin.version>2.13</maven.checkstyle.plugin.version>
-        <maven.findbugs.plugin.version>3.0.0</maven.findbugs.plugin.version>
-        <maven.jacoco.plugin.version>0.7.2.201409121644</maven.jacoco.plugin.version>
+        <maven.checkstyle.plugin.version>2.15</maven.checkstyle.plugin.version>
+        <maven.findbugs.plugin.version>3.0.1</maven.findbugs.plugin.version>
+        <maven.jacoco.plugin.version>0.7.4.201502262128</maven.jacoco.plugin.version>
     </properties>
 
     <scm>
@@ -149,44 +151,14 @@
             <version>${jackson.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-guava</artifactId>
-            <version>${jackson.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-jdk7</artifactId>
-            <version>${jackson.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-jdk8</artifactId>
-            <version>${jackson.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-joda</artifactId>
-            <version>${jackson.version}</version>
-        </dependency>
-        <dependency>
           <groupId>com.fasterxml.jackson.module</groupId>
           <artifactId>jackson-module-afterburner</artifactId>
           <version>${afterburner.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>18.0</version>
-        </dependency>
-        <dependency>
-            <groupId>joda-time</groupId>
-            <artifactId>joda-time</artifactId>
-            <version>${joda-time.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>commons-codec</groupId>
-            <artifactId>commons-codec</artifactId>
-            <version>${commons-codec.version}</version>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjrt</artifactId>
+            <version>${aspectjrt.version}</version>
         </dependency>
 
         <!-- Test dependencies -->
@@ -214,6 +186,12 @@
             <version>${json-schema-validator.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>${jackson.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -222,8 +200,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${maven.compiler.plugin.version}</version>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
                     <showDeprecation>true</showDeprecation>
                     <showWarnings>true</showWarnings>
                     <compilerArgs>
@@ -231,6 +209,43 @@
                         <arg>-Xlint:all</arg>
                     </compilerArgs>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>aspectj-maven-plugin</artifactId>
+                <version>${aspectj.maven.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                            <goal>test-compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
+                    <complianceLevel>1.8</complianceLevel>
+                    <showWeaveInfo>true</showWeaveInfo>
+                    <testSources>
+                        <scanner implementation="org.codehaus.plexus.util.DirectoryScanner">
+                            <basedir>${basedir}/src/test/java/com/arpnetworking/steno/aspect</basedir>
+                            <includes>
+                                <include>
+                                    **/*
+                                </include>
+                            </includes>
+                        </scanner>
+                    </testSources>
+                    <warn>constructorName,packageDefaultMethod,deprecation,maskedCatchBlocks,unusedImports</warn>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.aspectj</groupId>
+                        <artifactId>aspectjtools</artifactId>
+                        <version>${aspectjtools.version}</version>
+                    </dependency>
+                </dependencies>
             </plugin>
             <plugin>
                 <artifactId>maven-source-plugin</artifactId>
@@ -282,6 +297,7 @@
                     <failOnError>true</failOnError>
                     <xmlOutput>true</xmlOutput>
                     <xmlOutputDirectory>${project.build.directory}</xmlOutputDirectory>
+                    <excludeFilterFile>${project.basedir}/findbugs.exclude.xml</excludeFilterFile>
                 </configuration>
             </plugin>
             <plugin>
@@ -346,6 +362,9 @@
                                     </limits>
                                 </rule>
                             </rules>
+                            <excludes>
+                                <exclude>com/arpnetworking/steno/aspect/**</exclude>
+                            </excludes>
                         </configuration>
                     </execution>
                 </executions>

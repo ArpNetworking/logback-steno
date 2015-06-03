@@ -1,0 +1,1 @@
+{"time":"<TIME>","name":"log","level":"info","data":{"message":"Contains a Widget","widget":{"serializerValue":"This is my widget"}},"context":{"host":"<HOST>","processId":"<PROCESS_ID>","threadId":"<THREAD_ID>","logger":"ROOT"},"id":"<ID>","version":"0"}

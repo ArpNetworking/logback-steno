@@ -38,7 +38,8 @@ public class KeyValueEncoder extends BaseLoggingEncoder {
             final ILoggingEvent event,
             final String eventName,
             final String[] keys,
-            final Object[] values) {
+            final Object[] values)
+            throws EncodingException {
 
         final String formatString = buildFormatString(eventName, keys);
         final LoggingEventWrapper eventWrapper = new LoggingEventWrapper(event, formatString, values);
@@ -53,7 +54,8 @@ public class KeyValueEncoder extends BaseLoggingEncoder {
             final ILoggingEvent event,
             final String eventName,
             final String[] keys,
-            final String[] jsonValues) {
+            final String[] jsonValues)
+            throws EncodingException {
 
         final Object[] escapedJsonValues = jsonValues == null ? null : escapeStringValues(jsonValues);
         return buildArrayMessage(event, eventName, keys, escapedJsonValues);
@@ -66,7 +68,8 @@ public class KeyValueEncoder extends BaseLoggingEncoder {
     protected String buildMapMessage(
             final ILoggingEvent event,
             final String eventName,
-            final Map<String, ? extends Object> map) {
+            final Map<String, ? extends Object> map)
+            throws EncodingException {
 
         final String[] keys = map == null ? null : new String[map.size()];
         final Object[] values = map == null ? null : new Object[map.size()];
@@ -93,7 +96,8 @@ public class KeyValueEncoder extends BaseLoggingEncoder {
     protected String buildMapJsonMessage(
             final ILoggingEvent event,
             final String eventName,
-            final Map<String, String> map) {
+            final Map<String, String> map)
+            throws EncodingException {
 
         final String[] keys = map == null ? null : new String[map.size()];
         final Object[] values = map == null ? null : new Object[map.size()];
@@ -120,7 +124,8 @@ public class KeyValueEncoder extends BaseLoggingEncoder {
     protected String buildObjectMessage(
             final ILoggingEvent event,
             final String eventName,
-            final Object data) {
+            final Object data)
+            throws EncodingException {
 
         return buildObjectJsonMessage(
                 event,
@@ -135,7 +140,8 @@ public class KeyValueEncoder extends BaseLoggingEncoder {
     protected String buildObjectJsonMessage(
             final ILoggingEvent event,
             final String eventName,
-            final String jsonData) {
+            final String jsonData)
+            throws EncodingException {
 
         return buildArrayMessage(
                 event,
@@ -154,7 +160,8 @@ public class KeyValueEncoder extends BaseLoggingEncoder {
             final List<String> dataKeys,
             final List<Object> dataValues,
             final List<String> contextKeys,
-            final List<Object> contextValues) {
+            final List<Object> contextValues)
+            throws EncodingException {
 
         final int dataKeysSize = dataKeys == null ? 0 : dataKeys.size();
         final int contextKeysSize = contextKeys == null ? 0 : contextKeys.size();
@@ -210,7 +217,7 @@ public class KeyValueEncoder extends BaseLoggingEncoder {
      * {@inheritDoc}
      */
     @Override
-    protected String buildStandardMessage(final ILoggingEvent event) {
+    protected String buildStandardMessage(final ILoggingEvent event) throws EncodingException {
         return layout.doLayout(event);
     }
 

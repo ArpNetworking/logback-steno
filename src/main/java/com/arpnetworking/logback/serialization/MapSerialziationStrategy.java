@@ -21,7 +21,6 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Map;
 
@@ -31,7 +30,7 @@ import java.util.Map;
  * @author Ville Koskela (vkoskela at groupon dot com)
  * @since 1.3.1
  */
-public class MapSerialziationStrategy extends BaseSerializationStrategy {
+public class MapSerialziationStrategy {
 
     /**
      * Public constructor.
@@ -44,7 +43,7 @@ public class MapSerialziationStrategy extends BaseSerializationStrategy {
             final StenoEncoder encoder,
             final JsonFactory jsonFactory,
             final ObjectMapper objectMapper) {
-        super(encoder);
+        _encoder = encoder;
         _jsonFactory = jsonFactory;
         _objectMapper = objectMapper;
     }
@@ -56,44 +55,48 @@ public class MapSerialziationStrategy extends BaseSerializationStrategy {
      * @param eventName The event name.
      * @param map The message key to value pairs.
      * @return Serialization of message as a <code>String</code>.
+     * @throws Exception Serialization may throw any <code>Exception</code>.
      */
     public String serialize(
             final ILoggingEvent event,
             final String eventName,
-            final Map<String, ? extends Object> map) {
+            final Map<String, ? extends Object> map)
+            throws Exception {
         final StringWriter jsonWriter = new StringWriter();
+        final JsonGenerator jsonGenerator = _jsonFactory.createGenerator(jsonWriter);
 
-        try {
-            final JsonGenerator jsonGenerator = _jsonFactory.createGenerator(jsonWriter);
-            // Start wrapper
-            startStenoWrapper(event, eventName, jsonGenerator, _objectMapper);
+        // Start wrapper
+        StenoSerializationHelper.startStenoWrapper(event, eventName, jsonGenerator, _objectMapper);
 
-            // Write event data
-            jsonGenerator.writeObjectFieldStart("data");
-            if (map != null) {
-                for (final Map.Entry<String, ? extends Object> entry : map.entrySet()) {
-                    if (isSimpleType(entry.getValue())) {
-                        jsonGenerator.writeObjectField(entry.getKey(), entry.getValue());
-                    } else {
-                        jsonGenerator.writeFieldName(entry.getKey());
-                        _objectMapper.writeValue(jsonGenerator, entry.getValue());
-                    }
+        // Write event data
+        jsonGenerator.writeObjectFieldStart("data");
+        if (map != null) {
+            for (final Map.Entry<String, ? extends Object> entry : map.entrySet()) {
+                if (StenoSerializationHelper.isSimpleType(entry.getValue())) {
+                    jsonGenerator.writeObjectField(entry.getKey(), entry.getValue());
+                } else {
+                    jsonGenerator.writeFieldName(entry.getKey());
+                    _objectMapper.writeValue(
+                            jsonGenerator,
+                            StenoSerializationHelper.prepareForSerialization(
+                                    _objectMapper,
+                                    _encoder,
+                                    entry.getValue()));
                 }
             }
-            jsonGenerator.writeEndObject(); // End 'data' field
-
-            // Output throwable
-            writeThrowable(event.getThrowableProxy(), jsonGenerator, _objectMapper);
-
-            // End wrapper
-            endStenoWrapper(event, eventName, jsonGenerator, _objectMapper);
-        } catch (final IOException e) {
-            return "Unknown exception: " + e.getMessage();
         }
+        jsonGenerator.writeEndObject(); // End 'data' field
+
+        // Output throwable
+        StenoSerializationHelper.writeThrowable(event.getThrowableProxy(), jsonGenerator, _objectMapper);
+
+        // End wrapper
+        StenoSerializationHelper.endStenoWrapper(event, eventName, jsonGenerator, _objectMapper, _encoder);
 
         return jsonWriter.toString();
     }
 
+    private final StenoEncoder _encoder;
     private final JsonFactory _jsonFactory;
     private final ObjectMapper _objectMapper;
 }

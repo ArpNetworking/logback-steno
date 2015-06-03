@@ -22,12 +22,16 @@ import ch.qos.logback.classic.spi.IThrowableProxy;
 import ch.qos.logback.classic.spi.LoggingEvent;
 import ch.qos.logback.classic.spi.ThrowableProxy;
 import com.arpnetworking.logback.annotations.LogRedact;
-import com.arpnetworking.logback.annotations.LogValue;
+import com.arpnetworking.logback.annotations.Loggable;
+import com.arpnetworking.logback.widgets.Widget;
+import com.arpnetworking.logback.widgets.WidgetWithLogValue;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.datatype.jsr310.JSR310Module;
 import com.github.fge.jackson.JsonLoader;
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
 import com.github.fge.jsonschema.core.report.ProcessingReport;
@@ -38,7 +42,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterators;
 import com.google.common.io.Resources;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -53,6 +56,9 @@ import java.lang.management.ManagementFactory;
 import java.net.InetAddress;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -68,6 +74,7 @@ public class StenoEncoderTest {
 
     @Before
     public void setUp() throws Exception {
+        _jsr310Module = new JSR310Module();
         _context = new LoggerContext();
         _context.start();
         _baos = new ByteArrayOutputStream();
@@ -77,6 +84,7 @@ public class StenoEncoderTest {
         _encoder.setImmediateFlush(true);
         _encoder.init(_baos);
         _encoder.setContext(_context);
+        _encoder.addJacksonModule(_jsr310Module);
         _encoder.start();
     }
 
@@ -191,7 +199,7 @@ public class StenoEncoderTest {
         event.setMessage("logEvent");
         event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         event.setTimeStamp(0);
-        final DateTime date = new DateTime(1415737981000L);
+        final ZonedDateTime date = ZonedDateTime.ofInstant(Instant.ofEpochMilli(1415737981000L), ZoneId.of("UTC"));
         final Object[] argArray = new Object[2];
         argArray[0] = new String[]{"key1", "redacted"};
         argArray[1] = new Object[]{date, new Redacted("string", 1L)};
@@ -258,7 +266,8 @@ public class StenoEncoderTest {
         _encoder.init(_baos);
         _encoder.doEncode(event);
         final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
-        Assert.assertEquals("Unknown exception: Mock Failure", logOutput);
+        Assert.assertTrue(logOutput, logOutput.matches(
+                "^EncodingException context=\\{[^}]+\\} cause=java.io.IOException: Mock Failure$"));
     }
 
     @Test
@@ -334,7 +343,8 @@ public class StenoEncoderTest {
         _encoder.init(_baos);
         _encoder.doEncode(event);
         final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
-        Assert.assertEquals("Unknown exception: Mock Failure", logOutput);
+        Assert.assertTrue(logOutput, logOutput.matches(
+                "^EncodingException context=\\{[^}]+\\} cause=java.io.IOException: Mock Failure$"));
     }
 
     @Test
@@ -365,7 +375,7 @@ public class StenoEncoderTest {
         event.setMessage("logEvent");
         event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         event.setTimeStamp(0);
-        final DateTime date = new DateTime(1415737981000L);
+        final ZonedDateTime date = ZonedDateTime.ofInstant(Instant.ofEpochMilli(1415737981000L), ZoneId.of("UTC"));
         final Map<String, Object> map = new LinkedHashMap<>();
         map.put("key1", date);
         final Object[] argArray = new Object[1];
@@ -435,7 +445,8 @@ public class StenoEncoderTest {
         _encoder.init(_baos);
         _encoder.doEncode(event);
         final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
-        Assert.assertEquals("Unknown exception: Mock Failure", logOutput);
+        Assert.assertTrue(logOutput, logOutput.matches(
+                "^EncodingException context=\\{[^}]+\\} cause=java.io.IOException: Mock Failure$"));
     }
 
     @Test
@@ -516,7 +527,8 @@ public class StenoEncoderTest {
         _encoder.init(_baos);
         _encoder.doEncode(event);
         final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
-        Assert.assertEquals("Unknown exception: Mock Failure", logOutput);
+        Assert.assertTrue(logOutput, logOutput.matches(
+                "^EncodingException context=\\{[^}]+\\} cause=java.io.IOException: Mock Failure$"));
     }
 
     @Test
@@ -554,8 +566,8 @@ public class StenoEncoderTest {
         _encoder.init(_baos);
         _encoder.doEncode(event);
         final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
-        final String expected = "Unknown exception: Mock Failure";
-        Assert.assertEquals(expected, logOutput);
+        Assert.assertTrue(logOutput, logOutput.matches(
+                "^EncodingException context=\\{[^}]+\\} cause=com.fasterxml.jackson.core.JsonGenerationException: Mock Failure$"));
     }
 
     @Test
@@ -610,8 +622,8 @@ public class StenoEncoderTest {
         _encoder.init(_baos);
         _encoder.doEncode(event);
         final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
-        final String expected = "Unknown exception: Mock Failure";
-        Assert.assertEquals(expected, logOutput);
+        Assert.assertTrue(logOutput, logOutput.matches(
+                "^EncodingException context=\\{[^}]+\\} cause=java.io.IOException: Mock Failure$"));
     }
 
     @Test
@@ -643,7 +655,7 @@ public class StenoEncoderTest {
         argArray[0] = ImmutableList.of("key1", "key2");
         argArray[1] = ImmutableList.of(Integer.valueOf(1234), "foo");
         argArray[2] = ImmutableList.of("CONTEXT_KEY1", "CONTEXT_KEY2");
-        argArray[3] = ImmutableList.of("bar", Double.valueOf(3.14));
+        argArray[3] = ImmutableList.of("bar", Double.valueOf(1.23));
         event.setArgumentArray(argArray);
         _encoder.doEncode(event);
         final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
@@ -663,7 +675,7 @@ public class StenoEncoderTest {
         argArray[0] = ImmutableList.of("key1", "key2");
         argArray[1] = ImmutableList.of(Integer.valueOf(1234), "foo");
         argArray[2] = ImmutableList.of("CONTEXT_KEY1", "CONTEXT_KEY2");
-        argArray[3] = ImmutableList.of("bar", Double.valueOf(3.14));
+        argArray[3] = ImmutableList.of("bar", Double.valueOf(1.23));
         event.setArgumentArray(argArray);
         final ObjectMapper objectMapper = Mockito.mock(ObjectMapper.class);
         final JsonFactory jsonFactory = Mockito.mock(JsonFactory.class);
@@ -672,8 +684,8 @@ public class StenoEncoderTest {
         _encoder.init(_baos);
         _encoder.doEncode(event);
         final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
-        final String expected = "Unknown exception: Mock Failure";
-        Assert.assertEquals(expected, logOutput);
+        Assert.assertTrue(logOutput, logOutput.matches(
+                "^EncodingException context=\\{[^}]+\\} cause=java.io.IOException: Mock Failure$"));
     }
 
     @Test
@@ -728,7 +740,7 @@ public class StenoEncoderTest {
         argArray[0] = ImmutableList.of("key1");
         argArray[1] = ImmutableList.of(Integer.valueOf(1234), "foo");
         argArray[2] = ImmutableList.of("CONTEXT_KEY1");
-        argArray[3] = ImmutableList.of("bar", Double.valueOf(3.14));
+        argArray[3] = ImmutableList.of("bar", Double.valueOf(1.23));
         event.setArgumentArray(argArray);
         _encoder.doEncode(event);
         final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
@@ -764,7 +776,7 @@ public class StenoEncoderTest {
         event.setMessage("logEvent");
         event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         event.setTimeStamp(0);
-        final DateTime date = new DateTime(1415737981000L);
+        final ZonedDateTime date = ZonedDateTime.ofInstant(Instant.ofEpochMilli(1415737981000L), ZoneId.of("UTC"));
         final Object[] argArray = new Object[4];
         argArray[0] = ImmutableList.of("key1");
         argArray[1] = ImmutableList.of(date);
@@ -780,11 +792,11 @@ public class StenoEncoderTest {
     @Test
     public void testEncodeStandardEvent() throws Exception {
         final LoggingEvent event = new LoggingEvent();
-        final DateTime eventTime = DateTime.parse("2011-11-11T11:11:11.000Z");
+        final ZonedDateTime eventTime = ZonedDateTime.parse("2011-11-11T11:11:11.000Z");
         event.setLevel(Level.TRACE);
         event.setMessage("logEvent - foo = {}");
         event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
-        event.setTimeStamp(eventTime.getMillis());
+        event.setTimeStamp(eventTime.toInstant().toEpochMilli());
         final Object[] argArray = new Object[1];
         argArray[0] = "bar";
         event.setArgumentArray(argArray);
@@ -797,11 +809,11 @@ public class StenoEncoderTest {
     @Test
     public void testEncodeStandardEventThrowsIOException() throws Exception {
         final LoggingEvent event = new LoggingEvent();
-        final DateTime eventTime = DateTime.parse("2011-11-11T11:11:11.000Z");
+        final ZonedDateTime eventTime = ZonedDateTime.parse("2011-11-11T11:11:11.000Z");
         event.setLevel(Level.TRACE);
         event.setMessage("logEvent - foo = {}");
         event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
-        event.setTimeStamp(eventTime.getMillis());
+        event.setTimeStamp(eventTime.toInstant().toEpochMilli());
         final Object[] argArray = new Object[1];
         argArray[0] = "bar";
         event.setArgumentArray(argArray);
@@ -812,18 +824,18 @@ public class StenoEncoderTest {
         _encoder.init(_baos);
         _encoder.doEncode(event);
         final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
-        final String expected = "Unknown exception: Mock Failure";
-        Assert.assertEquals(expected, logOutput);
+        Assert.assertTrue(logOutput, logOutput.matches(
+                "^EncodingException context=\\{[^}]+\\} cause=java.io.IOException: Mock Failure$"));
     }
 
     @Test
     public void testEncodeStandardEventWithCustomEventName() throws Exception {
         final LoggingEvent event = new LoggingEvent();
-        final DateTime eventTime = DateTime.parse("2011-11-11T11:11:11.000Z");
+        final ZonedDateTime eventTime = ZonedDateTime.parse("2011-11-11T11:11:11.000Z");
         event.setLevel(Level.TRACE);
         event.setMessage("logEvent - foo = {}");
         event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
-        event.setTimeStamp(eventTime.getMillis());
+        event.setTimeStamp(eventTime.toInstant().toEpochMilli());
         final Object[] argArray = new Object[1];
         argArray[0] = "bar";
         event.setArgumentArray(argArray);
@@ -841,12 +853,12 @@ public class StenoEncoderTest {
     @Test
     public void testEncodeStandardEventWithCompressedLoggerName() throws Exception {
         final LoggingEvent event = new LoggingEvent();
-        final DateTime eventTime = DateTime.parse("2011-11-11T11:11:11.000Z");
+        final ZonedDateTime eventTime = ZonedDateTime.parse("2011-11-11T11:11:11.000Z");
         event.setLevel(Level.TRACE);
         event.setMessage("logEvent - foo = {}");
         event.setLoggerName("foo.bar.loggerName");
         event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
-        event.setTimeStamp(eventTime.getMillis());
+        event.setTimeStamp(eventTime.toInstant().toEpochMilli());
         final Object[] argArray = new Object[1];
         argArray[0] = "bar";
         event.setArgumentArray(argArray);
@@ -858,15 +870,15 @@ public class StenoEncoderTest {
         assertOutput("StenoEncoderTest.testEncodeStandardEventWithCompressedLoggerName.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
-    
+
     @Test
     public void testEncodeStandardEventWithSuppressDefaultContext() throws Exception {
         final LoggingEvent event = new LoggingEvent();
-        final DateTime eventTime = DateTime.parse("2011-11-11T11:11:11.000Z");
+        final ZonedDateTime eventTime = ZonedDateTime.parse("2011-11-11T11:11:11.000Z");
         event.setLevel(Level.TRACE);
         event.setMessage("logEvent - foo = {}");
         event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
-        event.setTimeStamp(eventTime.getMillis());
+        event.setTimeStamp(eventTime.toInstant().toEpochMilli());
         final Object[] argArray = new Object[1];
         argArray[0] = "bar";
         event.setArgumentArray(argArray);
@@ -890,11 +902,11 @@ public class StenoEncoderTest {
     @Test
     public void testEncodeStandardEventWithMdcProperties() throws Exception {
         final LoggingEvent event = new LoggingEvent();
-        final DateTime eventTime = DateTime.parse("2011-11-11T11:11:11.000Z");
+        final ZonedDateTime eventTime = ZonedDateTime.parse("2011-11-11T11:11:11.000Z");
         event.setLevel(Level.TRACE);
         event.setMessage("logEvent - foo = {}");
         event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
-        event.setTimeStamp(eventTime.getMillis());
+        event.setTimeStamp(eventTime.toInstant().toEpochMilli());
         final Object[] argArray = new Object[1];
         argArray[0] = "bar";
         event.setArgumentArray(argArray);
@@ -921,10 +933,10 @@ public class StenoEncoderTest {
                 "logEvent - foo = {}",
                 null,
                 argArray);
-        final DateTime eventTime = DateTime.parse("2011-11-11T11:11:11.000Z");
+        final ZonedDateTime eventTime = ZonedDateTime.parse("2011-11-11T11:11:11.000Z");
         event.setLoggerName("loggerName");
         event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
-        event.setTimeStamp(eventTime.getMillis());
+        event.setTimeStamp(eventTime.toInstant().toEpochMilli());
         _encoder.setInjectContextHost(false);
         Assert.assertFalse(_encoder.isInjectContextHost());
         _encoder.setInjectContextProcess(false);
@@ -955,7 +967,7 @@ public class StenoEncoderTest {
         event.setMessage("logEvent");
         event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         event.setTimeStamp(0);
-        final DateTime date = new DateTime(1415737981000L);
+        final ZonedDateTime date = ZonedDateTime.ofInstant(Instant.ofEpochMilli(1415737981000L), ZoneId.of("UTC"));
         final Object[] argArray = new Object[2];
         argArray[0] = new String[]{"key1", "redacted"};
         argArray[1] = new Object[]{date, new Redacted("string", 1L)};
@@ -1006,21 +1018,160 @@ public class StenoEncoderTest {
 
     @Test
     public void testEncodeLogValue() throws Exception {
+        Assert.assertTrue(_encoder.isJacksonModule(_jsr310Module));
+        Assert.assertEquals(_jsr310Module, Iterators.getOnlyElement(_encoder.iteratorForJacksonModule()));
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
         event.setMarker(StenoMarker.ARRAY_MARKER);
         event.setMessage("logEvent");
         event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         event.setTimeStamp(0);
-        final DateTime date = new DateTime(1415737981000L);
+        final ZonedDateTime date = ZonedDateTime.ofInstant(Instant.ofEpochMilli(1415737981000L), ZoneId.of("UTC"));
         final Object[] argArray = new Object[2];
         argArray[0] = new String[]{"key1", "logValue"};
-        argArray[1] = new Object[]{date, new LogValueBean("FooBar!")};
+        argArray[1] = new Object[]{date, new WidgetWithLogValue("FooBar!")};
         event.setArgumentArray(argArray);
         _encoder.doEncode(event);
         final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
         assertOutput("StenoEncoderTest.testEncodeLogValue.json", logOutput);
         assertMatchesJsonSchema(logOutput);
+    }
+
+    @Test
+    public void testFirstNonNull() {
+        final String a = "a";
+        final String b = "b";
+        Assert.assertEquals(a, StenoEncoder.firstNonNull(a, b));
+        Assert.assertEquals(a, StenoEncoder.firstNonNull(a, null));
+        Assert.assertEquals(b, StenoEncoder.firstNonNull(null, b));
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testFirstNonNullNone() {
+        StenoEncoder.firstNonNull(null, null);
+    }
+
+    @Test
+    public void testSafeContextWithSuppressDefaultContext() throws Exception {
+        final LoggingEvent event = new LoggingEvent();
+        event.setLevel(Level.INFO);
+        event.setMarker(StenoMarker.ARRAY_MARKER);
+        event.setMessage("logEvent");
+        event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
+        event.setTimeStamp(0);
+        final Object[] argArray = new Object[2];
+        argArray[0] = new String[]{};
+        argArray[1] = new Object[]{};
+        event.setArgumentArray(argArray);
+        final ObjectMapper objectMapper = Mockito.mock(ObjectMapper.class);
+        final JsonFactory jsonFactory = Mockito.mock(JsonFactory.class);
+        Mockito.doThrow(new RuntimeException("Mock Failure")).when(jsonFactory).createGenerator(Mockito.any(Writer.class));
+        _encoder = new StenoEncoder(jsonFactory, objectMapper);
+        _encoder.init(_baos);
+        _encoder.setInjectContextHost(false);
+        _encoder.setInjectContextProcess(false);
+        _encoder.setInjectContextThread(false);
+        _encoder.doEncode(event);
+        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        Assert.assertTrue(logOutput, logOutput.matches(
+                "^EncodingException context=\\{\\} cause=java.lang.RuntimeException: Mock Failure$"));
+    }
+
+    @Test
+    public void testSafeContextWithMdcProperties() throws Exception {
+        final LoggingEvent event = new LoggingEvent();
+        event.setLevel(Level.INFO);
+        event.setMarker(StenoMarker.ARRAY_MARKER);
+        event.setMessage("logEvent");
+        event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
+        event.setTimeStamp(0);
+        final Object[] argArray = new Object[2];
+        argArray[0] = new String[]{};
+        argArray[1] = new Object[]{};
+        event.setArgumentArray(argArray);
+        final ObjectMapper objectMapper = Mockito.mock(ObjectMapper.class);
+        final JsonFactory jsonFactory = Mockito.mock(JsonFactory.class);
+        Mockito.doThrow(new RuntimeException("Mock Failure")).when(jsonFactory).createGenerator(Mockito.any(Writer.class));
+        _encoder = new StenoEncoder(jsonFactory, objectMapper);
+        _encoder.init(_baos);
+        _encoder.setInjectContextHost(false);
+        _encoder.setInjectContextProcess(false);
+        _encoder.setInjectContextThread(false);
+        MDC.put("MDC_KEY", "MDC_VALUE");
+        _encoder.addInjectContextMdc("MDC_KEY");
+        _encoder.doEncode(event);
+        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        Assert.assertTrue(logOutput, logOutput.matches(
+                "^EncodingException context=\\{MDC_KEY=MDC_VALUE\\} cause=java.lang.RuntimeException: Mock Failure$"));
+    }
+
+    @Test
+    public void testSafeContextWithIncludeOptionalContext() throws Exception {
+        final Logger logger = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(StenoEncoderTest.class);
+        final Object[] argArray = new Object[1];
+        argArray[0] = "bar";
+        final LoggingEvent event = new LoggingEvent(
+                "com.arpnetworking.logback.StenoEncoderTest",
+                logger,
+                Level.DEBUG,
+                "logEvent - foo = {}",
+                null,
+                argArray);
+        final ZonedDateTime eventTime = ZonedDateTime.parse("2011-11-11T11:11:11.000Z");
+        event.setLoggerName("loggerName");
+        event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
+        event.setTimeStamp(eventTime.toInstant().toEpochMilli());
+        final ObjectMapper objectMapper = Mockito.mock(ObjectMapper.class);
+        final JsonFactory jsonFactory = Mockito.mock(JsonFactory.class);
+        Mockito.doThrow(new RuntimeException("Mock Failure")).when(jsonFactory).createGenerator(Mockito.any(Writer.class));
+        _encoder = new StenoEncoder(jsonFactory, objectMapper);
+        _encoder.init(_baos);
+        _encoder.setInjectContextHost(false);
+        _encoder.setInjectContextProcess(false);
+        _encoder.setInjectContextThread(false);
+        _encoder.setInjectContextHost(false);
+        _encoder.setInjectContextClass(true);
+        _encoder.setInjectContextFile(true);
+        _encoder.setInjectContextLine(true);
+        _encoder.setInjectContextLogger(true);
+        _encoder.setInjectContextMethod(true);
+        _encoder.doEncode(event);
+        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        Assert.assertTrue(logOutput, logOutput.matches(
+                "^EncodingException context=\\{logger=loggerName, file=NativeMethodAccessorImpl.java, "
+                + "class=sun.reflect.NativeMethodAccessorImpl, method=invoke0, line=-2\\} "
+                + "cause=java.lang.RuntimeException: Mock Failure$"));
+    }
+
+    @Test
+    public void testSafeContextWithUserDefinedContext() throws Exception {
+        final LoggingEvent event = new LoggingEvent();
+        event.setLevel(Level.INFO);
+        event.setMarker(StenoMarker.LISTS_MARKER);
+        event.setMessage("logEvent");
+        event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
+        event.setTimeStamp(0);
+        final Object[] argArray = new Object[4];
+        argArray[0] = ImmutableList.of("key1", "key2");
+        argArray[1] = ImmutableList.of(Integer.valueOf(1234), "foo");
+        argArray[2] = ImmutableList.of("CONTEXT_KEY1", "CONTEXT_KEY2");
+        argArray[3] = ImmutableList.of(1.23f, new WidgetWithLogValue("bar"));
+        event.setArgumentArray(argArray);
+        final ObjectMapper objectMapper = Mockito.mock(ObjectMapper.class);
+        final JsonFactory jsonFactory = Mockito.mock(JsonFactory.class);
+        Mockito.doThrow(new RuntimeException("Mock Failure")).when(jsonFactory).createGenerator(Mockito.any(Writer.class));
+        _encoder = new StenoEncoder(jsonFactory, objectMapper);
+        _encoder.setInjectContextHost(false);
+        _encoder.setInjectContextProcess(false);
+        _encoder.setInjectContextThread(false);
+        _encoder.setInjectContextHost(false);
+        _encoder.init(_baos);
+        _encoder.doEncode(event);
+        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        Assert.assertTrue(logOutput, logOutput.matches(
+                "^EncodingException context=\\{CONTEXT_KEY1=1.23, CONTEXT_KEY2=\\{id=[^,]+, "
+                + "class=com\\.arpnetworking\\.logback\\.widgets\\.WidgetWithLogValue\\}\\} "
+                + "cause=java.lang.RuntimeException: Mock Failure$"));
     }
 
     private static void assertOutput(final String expectedResource, final String actualOutput) {
@@ -1056,6 +1207,7 @@ public class StenoEncoderTest {
     }
 
     private StenoEncoder _encoder;
+    private Module _jsr310Module;
     private ByteArrayOutputStream _baos;
     private LoggerContext _context;
 
@@ -1074,8 +1226,9 @@ public class StenoEncoderTest {
                 processId = matcher.group(1);
             }
             // CHECKSTYLE.OFF: IllegalCatch - Prevent all failures
-        } catch (final Throwable t) {
+        } catch (final Exception t) {
             // CHECKSTYLE.ON: IllegalCatch
+            System.out.println("Unable to determine process id: " + t);
             processId = "<UNKNOWN>";
         }
         PROCESS_ID = processId;
@@ -1084,8 +1237,9 @@ public class StenoEncoderTest {
         try {
             hostName = InetAddress.getLocalHost().getHostName();
             // CHECKSTYLE.OFF: IllegalCatch - Prevent all failures
-        } catch (final Throwable t) {
+        } catch (final Exception t) {
             // CHECKSTYLE.ON: IllegalCatch
+            System.out.println("Unable to determine hostname: " + t);
             hostName = "<UNKNOWN>";
         }
         HOST_NAME = hostName;
@@ -1101,6 +1255,7 @@ public class StenoEncoderTest {
 
     // CHECKSTYLE.OFF: MemberName - Testing field annotations requires same name as getter.
     // CHECKSTYLE.OFF: HiddenField - Testing field annotations requires same name as getter.
+    @Loggable
     private static class Redacted {
 
         public Redacted(final String stringValue, final Long longValue) {
@@ -1129,23 +1284,4 @@ public class StenoEncoderTest {
     }
     // CHECKSTYLE.ON: HiddenField
     // CHECKSTYLE.ON: MemberName
-
-    private static class LogValueBean {
-
-        public LogValueBean(final String value) {
-            _value = value;
-        }
-
-        public String getValue() {
-            return "This is not the value you are looking for";
-        }
-
-        @LogValue
-        @Override
-        public String toString() {
-            return _value;
-        }
-
-        private final String _value;
-    }
 }
