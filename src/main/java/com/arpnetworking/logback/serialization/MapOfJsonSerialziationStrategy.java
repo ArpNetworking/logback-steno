@@ -21,7 +21,6 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Map;
 
@@ -31,7 +30,7 @@ import java.util.Map;
  * @author Ville Koskela (vkoskela at groupon dot com)
  * @since 1.3.1
  */
-public class MapOfJsonSerialziationStrategy extends BaseSerializationStrategy {
+public class MapOfJsonSerialziationStrategy {
 
     /**
      * Public constructor.
@@ -44,7 +43,7 @@ public class MapOfJsonSerialziationStrategy extends BaseSerializationStrategy {
             final StenoEncoder encoder,
             final JsonFactory jsonFactory,
             final ObjectMapper objectMapper) {
-        super(encoder);
+        _encoder = encoder;
         _jsonFactory = jsonFactory;
         _objectMapper = objectMapper;
     }
@@ -56,43 +55,43 @@ public class MapOfJsonSerialziationStrategy extends BaseSerializationStrategy {
      * @param eventName The event name.
      * @param map The message key to json-value pairs.
      * @return Serialization of message as a <code>String</code>.
+     * @throws Exception Serialization may throw any <code>Exception</code>.
      */
     public String serialize(
             final ILoggingEvent event,
             final String eventName,
-            final Map<String, String> map) {
+            final Map<String, String> map)
+            throws Exception {
         final StringWriter jsonWriter = new StringWriter();
-        try {
-            final JsonGenerator jsonGenerator = _jsonFactory.createGenerator(jsonWriter);
-            // Start wrapper
-            startStenoWrapper(event, eventName, jsonGenerator, _objectMapper);
+        final JsonGenerator jsonGenerator = _jsonFactory.createGenerator(jsonWriter);
 
-            // Write event data
-            jsonGenerator.writeObjectFieldStart("data");
-            if (map != null) {
-                for (final Map.Entry<String, String> entry : map.entrySet()) {
-                    if (entry.getValue() == null) {
-                        jsonGenerator.writeObjectField(entry.getKey(), null);
-                    } else {
-                        jsonGenerator.writeFieldName(entry.getKey());
-                        jsonGenerator.writeRawValue(entry.getValue());
-                    }
+        // Start wrapper
+        StenoSerializationHelper.startStenoWrapper(event, eventName, jsonGenerator, _objectMapper);
+
+        // Write event data
+        jsonGenerator.writeObjectFieldStart("data");
+        if (map != null) {
+            for (final Map.Entry<String, String> entry : map.entrySet()) {
+                if (entry.getValue() == null) {
+                    jsonGenerator.writeObjectField(entry.getKey(), null);
+                } else {
+                    jsonGenerator.writeFieldName(entry.getKey());
+                    jsonGenerator.writeRawValue(entry.getValue());
                 }
             }
-            jsonGenerator.writeEndObject(); // End 'data' field
-
-            // Output throwable
-            writeThrowable(event.getThrowableProxy(), jsonGenerator, _objectMapper);
-
-            // End wrapper
-            endStenoWrapper(event, eventName, jsonGenerator, _objectMapper);
-        } catch (final IOException e) {
-            return "Unknown exception: " + e.getMessage();
         }
+        jsonGenerator.writeEndObject(); // End 'data' field
+
+        // Output throwable
+        StenoSerializationHelper.writeThrowable(event.getThrowableProxy(), jsonGenerator, _objectMapper);
+
+        // End wrapper
+        StenoSerializationHelper.endStenoWrapper(event, eventName, jsonGenerator, _objectMapper, _encoder);
 
         return jsonWriter.toString();
     }
 
+    private final StenoEncoder _encoder;
     private final JsonFactory _jsonFactory;
     private final ObjectMapper _objectMapper;
 }

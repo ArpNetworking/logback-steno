@@ -18,7 +18,6 @@ package com.arpnetworking.logback.serialization;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import com.arpnetworking.logback.StenoEncoder;
 import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
@@ -51,17 +50,14 @@ public class ObjectSerialziationStrategy {
      * @param eventName The event name.
      * @param data The message data <code>Object</code>.
      * @return Serialization of message as a <code>String</code>.
+     * @throws Exception Serialization may throw any <code>Exception</code>.
      */
     public String serialize(
             final ILoggingEvent event,
             final String eventName,
-            final Object data) {
-        final String jsonData;
-        try {
-            jsonData = data == null ? null : _objectMapper.writeValueAsString(data);
-        } catch (final JsonProcessingException e) {
-            return "Unknown exception: " + e.getMessage();
-        }
+            final Object data)
+            throws Exception {
+        final String jsonData = data == null ? null : _objectMapper.writeValueAsString(data);
         return _objectAsJsonStrategy.serialize(
                 event,
                 eventName,

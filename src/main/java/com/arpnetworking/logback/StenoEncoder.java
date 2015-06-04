@@ -26,22 +26,19 @@ import com.arpnetworking.logback.serialization.MapSerialziationStrategy;
 import com.arpnetworking.logback.serialization.ObjectAsJsonSerialziationStrategy;
 import com.arpnetworking.logback.serialization.ObjectSerialziationStrategy;
 import com.arpnetworking.logback.serialization.StandardSerializationStrategy;
+import com.arpnetworking.logback.serialization.StenoSerializationHelper;
 import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
-import com.fasterxml.jackson.datatype.guava.GuavaModule;
-import com.fasterxml.jackson.datatype.jdk7.Jdk7Module;
-import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
-import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
-import com.google.common.base.MoreObjects;
-import com.google.common.collect.Sets;
 
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -155,16 +152,12 @@ public class StenoEncoder extends BaseLoggingEncoder {
         _objectMapper.setFilters(simpleFilterProvider);
 
         // Setup writing of Date/DateTime values
-        _objectMapper.registerModule(new JodaModule());
         _objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         _objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
         _objectMapper.setDateFormat(new ISO8601DateFormat());
 
-        // Setup other common modules
+        // After burner to improve data-bind performance
         _objectMapper.registerModule(new AfterburnerModule());
-        _objectMapper.registerModule(new Jdk7Module());
-        _objectMapper.registerModule(new Jdk8Module());
-        _objectMapper.registerModule(new GuavaModule());
 
         // Serialization strategies
         _listsSerialziationStrategy = new ListsSerialziationStrategy(this, jsonFactory, _objectMapper);
@@ -175,6 +168,15 @@ public class StenoEncoder extends BaseLoggingEncoder {
         _arrayOfJsonSerialziationStrategy = new ArrayOfJsonSerialziationStrategy(this, jsonFactory, _objectMapper);
         _arraySerialziationStrategy = new ArraySerialziationStrategy(this, jsonFactory, _objectMapper);
         _standardSerializationStrategy = new StandardSerializationStrategy(this, jsonFactory, _objectMapper);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void start() {
+        // Add configured Jackson modules
+        _objectMapper.registerModules(_jacksonModules);
     }
 
     /**
@@ -514,11 +516,91 @@ public class StenoEncoder extends BaseLoggingEncoder {
     }
 
     /**
+     * Add Jackson <code>Module</code>.
+     *
+     * @param module The Jackson <code>Module</code>.
+     *
+     * @since 1.5.0
+     */
+    public void addJacksonModule(final Module module) {
+        _jacksonModules.add(module);
+    }
+
+    /**
+     * Which Jackson <code>Module</code> instances are configured.
+     *
+     * @return The iterator over configured Jackson <code>Module</code> instances.
+     *
+     * @since 1.5.0
+     */
+    public Iterator<Module> iteratorForJacksonModule() {
+        return _jacksonModules.iterator();
+    }
+
+    /**
+     * Determine if the specific Jackson <code>Module</code> is configured.
+     *
+     * @param module The Jackson <code>Module</code>.
+     * @return True if and only if the <code>Module</code> is configured.
+     *
+     * @since 1.5.0
+     */
+    public boolean isJacksonModule(final Module module) {
+        return _jacksonModules.contains(module);
+    }
+
+    /**
+     * This controls whether the encoder should only encode types when safe to do so. By default this is true. Types are
+     * considered safe for serialization if any of the following are true:
+     *
+     * <ul>
+     *     <li>The instance is null.</li>
+     *     <li>The type is a String, Number or Boolean.</li>
+     *     <li>The type is a JsonNode.</li>
+     *     <li>The type is associated with a custom serializer (e.g. not BeanSerializer):
+     *          <ul>
+     *              <li>Set with the class annotation @JsonSerialize.</li>
+     *              <li>Set with by a registered module.</li>
+     *              <li>Set with the method annotation @JsonValue.</li>
+     *              <li>Set with the method annotation @LogValue.</li>
+     *          </ul>
+     *     </li>
+     *     <li>The class is explicitly marked safe for logging with the annotation @Loggable.</li>
+     * </ul>
+     *
+     * When safe is set to true and a type is determined to be unsafe it is serialized as a reference only.
+     *
+     * @param value True if and only if the encoder should only encode types when safe to do so.
+     *
+     * @since 1.8.0
+     */
+    public void setSafe(final boolean value) {
+        _safe = value;
+    }
+
+    /**
+     * Whether the encoder should only encode types when safe to do so. By default this is true.
+     *
+     * @return True if and only if the encoder should only encode types when safe to do so.
+     *
+     * @since 1.8.0
+     */
+    public boolean isSafe() {
+        return _safe;
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
-    protected String buildStandardMessage(final ILoggingEvent event) {
-        return _standardSerializationStrategy.serialize(event, _logEventName);
+    protected String buildStandardMessage(final ILoggingEvent event) throws EncodingException {
+        try {
+            return _standardSerializationStrategy.serialize(event, _logEventName);
+            // CHECKSTYLE.OFF: IllegalCatch: Ensure any exception or error is caught to prevent Appender death.
+        } catch (final Throwable t) {
+            // CHECKSTYLE.ON: IllegalCatch
+            throw new EncodingException(createSafeContext(event), t);
+        }
     }
 
     /**
@@ -529,13 +611,20 @@ public class StenoEncoder extends BaseLoggingEncoder {
             final ILoggingEvent event,
             final String eventName,
             final String[] keys,
-            final Object[] values) {
+            final Object[] values)
+            throws EncodingException {
 
-        return _arraySerialziationStrategy.serialize(
-                event,
-                MoreObjects.firstNonNull(eventName, _logEventName),
-                keys,
-                values);
+        try {
+            return _arraySerialziationStrategy.serialize(
+                    event,
+                    firstNonNull(eventName, _logEventName),
+                    keys,
+                    values);
+            // CHECKSTYLE.OFF: IllegalCatch: Ensure any exception or error is caught to prevent Appender death.
+        } catch (final Throwable t) {
+            // CHECKSTYLE.ON: IllegalCatch
+            throw new EncodingException(createSafeContext(event), t);
+        }
     }
 
     /**
@@ -546,13 +635,20 @@ public class StenoEncoder extends BaseLoggingEncoder {
             final ILoggingEvent event,
             final String eventName,
             final String[] keys,
-            final String[] jsonValues) {
+            final String[] jsonValues)
+            throws EncodingException {
 
-        return _arrayOfJsonSerialziationStrategy.serialize(
-                event,
-                MoreObjects.firstNonNull(eventName, _logEventName),
-                keys,
-                jsonValues);
+        try {
+            return _arrayOfJsonSerialziationStrategy.serialize(
+                    event,
+                    firstNonNull(eventName, _logEventName),
+                    keys,
+                    jsonValues);
+            // CHECKSTYLE.OFF: IllegalCatch: Ensure any exception or error is caught to prevent Appender death.
+        } catch (final Throwable t) {
+            // CHECKSTYLE.ON: IllegalCatch
+            throw new EncodingException(createSafeContext(event), t);
+        }
     }
 
     /**
@@ -562,12 +658,19 @@ public class StenoEncoder extends BaseLoggingEncoder {
     protected String buildMapMessage(
             final ILoggingEvent event,
             final String eventName,
-            final Map<String, ?> map) {
+            final Map<String, ?> map)
+            throws EncodingException {
 
-        return _mapSerialziationStrategy.serialize(
-                event,
-                MoreObjects.firstNonNull(eventName, _logEventName),
-                map);
+        try {
+            return _mapSerialziationStrategy.serialize(
+                    event,
+                    firstNonNull(eventName, _logEventName),
+                    map);
+            // CHECKSTYLE.OFF: IllegalCatch: Ensure any exception or error is caught to prevent Appender death.
+        } catch (final Throwable t) {
+            // CHECKSTYLE.ON: IllegalCatch
+            throw new EncodingException(createSafeContext(event), t);
+        }
     }
 
     /**
@@ -577,12 +680,19 @@ public class StenoEncoder extends BaseLoggingEncoder {
     protected String buildMapJsonMessage(
             final ILoggingEvent event,
             final String eventName,
-            final Map<String, String> map) {
+            final Map<String, String> map)
+            throws EncodingException {
 
-        return _mapOfJsonSerialziationStrategy.serialize(
-                event,
-                MoreObjects.firstNonNull(eventName, _logEventName),
-                map);
+        try {
+            return _mapOfJsonSerialziationStrategy.serialize(
+                    event,
+                    firstNonNull(eventName, _logEventName),
+                    map);
+            // CHECKSTYLE.OFF: IllegalCatch: Ensure any exception or error is caught to prevent Appender death.
+        } catch (final Throwable t) {
+            // CHECKSTYLE.ON: IllegalCatch
+            throw new EncodingException(createSafeContext(event), t);
+        }
     }
 
     /**
@@ -592,12 +702,19 @@ public class StenoEncoder extends BaseLoggingEncoder {
     protected String buildObjectMessage(
             final ILoggingEvent event,
             final String eventName,
-            final Object data) {
+            final Object data)
+            throws EncodingException {
 
-        return _objectSerialziationStrategy.serialize(
-                event,
-                MoreObjects.firstNonNull(eventName, _logEventName),
-                data);
+        try {
+            return _objectSerialziationStrategy.serialize(
+                    event,
+                    firstNonNull(eventName, _logEventName),
+                    data);
+            // CHECKSTYLE.OFF: IllegalCatch: Ensure any exception or error is caught to prevent Appender death.
+        } catch (final Throwable t) {
+            // CHECKSTYLE.ON: IllegalCatch
+            throw new EncodingException(createSafeContext(event), t);
+        }
     }
 
     /**
@@ -607,12 +724,19 @@ public class StenoEncoder extends BaseLoggingEncoder {
     protected String buildObjectJsonMessage(
             final ILoggingEvent event,
             final String eventName,
-            final String jsonData) {
+            final String jsonData)
+            throws EncodingException {
 
-        return _objectAsJsonSerialziationStrategy.serialize(
-                event,
-                MoreObjects.firstNonNull(eventName, _logEventName),
-                jsonData);
+        try {
+            return _objectAsJsonSerialziationStrategy.serialize(
+                    event,
+                    firstNonNull(eventName, _logEventName),
+                    jsonData);
+            // CHECKSTYLE.OFF: IllegalCatch: Ensure any exception or error is caught to prevent Appender death.
+        } catch (final Throwable t) {
+            // CHECKSTYLE.ON: IllegalCatch
+            throw new EncodingException(createSafeContext(event), t);
+        }
     }
 
     /**
@@ -625,15 +749,42 @@ public class StenoEncoder extends BaseLoggingEncoder {
             final List<String> dataKeys,
             final List<Object> dataValues,
             final List<String> contextKeys,
-            final List<Object> contextValues) {
+            final List<Object> contextValues)
+            throws EncodingException {
 
-        return _listsSerialziationStrategy.serialize(
-                event,
-                MoreObjects.firstNonNull(eventName, _logEventName),
-                dataKeys,
-                dataValues,
-                contextKeys,
-                contextValues);
+        try {
+            return _listsSerialziationStrategy.serialize(
+                    event,
+                    firstNonNull(eventName, _logEventName),
+                    dataKeys,
+                    dataValues,
+                    contextKeys,
+                    contextValues);
+            // CHECKSTYLE.OFF: IllegalCatch: Ensure any exception or error is caught to prevent Appender death.
+        } catch (final Throwable t) {
+            // CHECKSTYLE.ON: IllegalCatch
+            throw new EncodingException(createSafeContext(event, contextKeys, contextValues), t);
+        }
+    }
+
+    /* package private */ Map<String, Object> createSafeContext(final ILoggingEvent event) {
+        return createSafeContext(event, Collections.emptyList(), Collections.emptyList());
+    }
+
+    /* package private */ Map<String, Object> createSafeContext(
+            final ILoggingEvent event,
+            final List<String> contextKeys,
+            final List<Object> contextValues) {
+        return StenoSerializationHelper.createContext(this, event, _objectMapper, contextKeys, contextValues, true);
+    }
+
+    /* package private */ static <T> T firstNonNull(final T first, final T second) {
+        if (first != null) {
+            return first;
+        } else if (second != null) {
+            return second;
+        }
+        throw new NullPointerException("Both arguments are null");
     }
 
     private ObjectMapper _objectMapper;
@@ -658,7 +809,9 @@ public class StenoEncoder extends BaseLoggingEncoder {
     private boolean _injectContextFile = false;
     private boolean _injectContextMethod = false;
     private boolean _injectContextLine = false;
-    private Set<String> _injectMdcProperties = Sets.newLinkedHashSet();
+    private Set<String> _injectMdcProperties = new LinkedHashSet<>();
+    private Set<Module> _jacksonModules = new LinkedHashSet<>();
+    private boolean _safe = true;
 
     private static final boolean DEFAULT_REDACT_NULL = true;
     private static final String STANDARD_LOG_EVENT_NAME = "log";

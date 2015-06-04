@@ -22,8 +22,6 @@ Compile Dependencies
 
 Project                    | License                    | Project link
 ---------------------------|----------------------------|-------------
-Apache Commons Codec       | Apache License 2           | http://commons.apache.org/proper/commons-codec/
-Guava                      | Apache License 2           | https://code.google.com/p/guava-libraries/
 Jackson                    | Apache License 2           | http://jackson.codehaus.org/
 Joda DateTime              | Apache License 2           | http://www.joda.org/joda-time/
 Logback                    | Eclipse Public License 1.0 | http://logback.qos.ch/

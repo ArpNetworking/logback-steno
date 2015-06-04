@@ -15,8 +15,11 @@
  */
 package com.arpnetworking.logback.jackson;
 
-import com.arpnetworking.logback.annotations.LogValue;
-import com.fasterxml.jackson.annotation.JsonValue;
+import com.arpnetworking.logback.widgets.WidgetWithLogValue;
+import com.arpnetworking.logback.widgets.WidgetWithLogValueAndJsonValue;
+import com.arpnetworking.logback.widgets.WidgetWithLogValueDisabled;
+import com.arpnetworking.logback.widgets.WidgetWithLogValueDisabledAndJsonValue;
+import com.arpnetworking.logback.widgets.WidgetWithLogValueDisabledNoFallbackAndJsonValue;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
@@ -42,108 +45,33 @@ public class LogValueTest {
 
     @Test
     public void testLogValue() throws JsonProcessingException {
-        final String asString = _objectMapper.writeValueAsString(new LogValueBean());
-        Assert.assertEquals(asString, "\"La, La, La\"");
+        final String asString = _objectMapper.writeValueAsString(new WidgetWithLogValue("foo"));
+        Assert.assertEquals(asString, "{\"logValue\":\"foo\"}");
     }
 
     @Test
     public void testLogValuePrecedence() throws JsonProcessingException {
-        final String asString = _objectMapper.writeValueAsString(new LogValuePrecedenceBean());
-        Assert.assertEquals(asString, "\"La, La, La\"");
+        final String asString = _objectMapper.writeValueAsString(new WidgetWithLogValueAndJsonValue("foo"));
+        Assert.assertEquals(asString, "{\"logValue\":\"foo\"}");
     }
 
     @Test
     public void testLogValueDisabled() throws JsonProcessingException {
-        final String asString = _objectMapper.writeValueAsString(new LogValueDisabledBean());
-        Assert.assertEquals(asString, "{\"foo\":\"bar\"}");
+        final String asString = _objectMapper.writeValueAsString(new WidgetWithLogValueDisabled("foo"));
+        Assert.assertEquals(asString, "{\"value\":\"foo\"}");
     }
 
     @Test
     public void testLogValueFallback() throws JsonProcessingException {
-        final String asString = _objectMapper.writeValueAsString(new LogValueFallbackBean());
-        Assert.assertEquals(asString, "\"Di, Di, Di\"");
+        final String asString = _objectMapper.writeValueAsString(new WidgetWithLogValueDisabledAndJsonValue("foo"));
+        Assert.assertEquals(asString, "{\"jsonValue\":\"foo\"}");
     }
 
     @Test
     public void testLogValueNoFallback() throws JsonProcessingException {
-        final String asString = _objectMapper.writeValueAsString(new LogValueNoFallbackBean());
-        Assert.assertEquals(asString, "{\"foo\":\"bar\"}");
+        final String asString = _objectMapper.writeValueAsString(new WidgetWithLogValueDisabledNoFallbackAndJsonValue("foo"));
+        Assert.assertEquals(asString, "{\"value\":\"foo\"}");
     }
 
     private ObjectMapper _objectMapper;
-
-    private static final class LogValueBean {
-
-        public String getFoo() {
-            return "bar";
-        }
-
-        @LogValue
-        public String toString() {
-            return "La, La, La";
-        }
-    }
-
-    private static final class LogValuePrecedenceBean {
-
-        public String getFoo() {
-            return "bar";
-        }
-
-        @JsonValue
-        public String toJson() {
-            return "Di, Di, Di";
-        }
-
-        @LogValue
-        public String toString() {
-            return "La, La, La";
-        }
-    }
-
-    private static final class LogValueDisabledBean {
-
-        public String getFoo() {
-            return "bar";
-        }
-
-        @LogValue(enabled = false)
-        public String toString() {
-            return "La, La, La";
-        }
-    }
-
-    private static final class LogValueFallbackBean {
-
-        public String getFoo() {
-            return "bar";
-        }
-
-        @JsonValue
-        public String toJson() {
-            return "Di, Di, Di";
-        }
-
-        @LogValue(enabled = false)
-        public String toString() {
-            return "La, La, La";
-        }
-    }
-
-    private static final class LogValueNoFallbackBean {
-
-        public String getFoo() {
-            return "bar";
-        }
-
-        @JsonValue
-        public String toJson() {
-            return "Di, Di, Di";
-        }
-
-        @LogValue(enabled = false, fallback = false)
-        public String toString() {
-            return "La, La, La";
-        }
-    }
 }

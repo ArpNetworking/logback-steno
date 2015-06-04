@@ -38,8 +38,21 @@ import java.util.Map;
 public class Logger {
 
     /**
+     * Determine if trace level logging is enabled.
+     *
+     * @since 1.6.0
+     *
+     * @return True if and only if trace level logging is enabled.
+     */
+    public boolean isTraceEnabled() {
+        return _slf4jLogger.isTraceEnabled();
+    }
+
+    /**
      * Create a new log event at the trace level. Do not pre-build and cache
      * <code>LogBuilder</code> instances.
+     *
+     * @since 1.3.1
      *
      * @return Instance of <code>LogBuilder</code>.
      */
@@ -325,8 +338,21 @@ public class Logger {
     }
 
     /**
+     * Determine if debug level logging is enabled.
+     *
+     * @since 1.6.0
+     *
+     * @return True if and only if debug level logging is enabled.
+     */
+    public boolean isDebugEnabled() {
+        return _slf4jLogger.isDebugEnabled();
+    }
+
+    /**
      * Create a new log event at the debug level. Do not pre-build and cache
      * <code>LogBuilder</code> instances.
+     *
+     * @since 1.3.1
      *
      * @return Instance of <code>LogBuilder</code>.
      */
@@ -612,8 +638,21 @@ public class Logger {
     }
 
     /**
+     * Determine if info level logging is enabled.
+     *
+     * @since 1.6.0
+     *
+     * @return True if and only if info level logging is enabled.
+     */
+    public boolean isInfoEnabled() {
+        return _slf4jLogger.isInfoEnabled();
+    }
+
+    /**
      * Create a new log event at the info level. Do not pre-build and cache
      * <code>LogBuilder</code> instances.
+     *
+     * @since 1.3.1
      *
      * @return Instance of <code>LogBuilder</code>.
      */
@@ -899,8 +938,21 @@ public class Logger {
     }
 
     /**
+     * Determine if warn level logging is enabled.
+     *
+     * @since 1.6.0
+     *
+     * @return True if and only if warn level logging is enabled.
+     */
+    public boolean isWarnEnabled() {
+        return _slf4jLogger.isWarnEnabled();
+    }
+
+    /**
      * Create a new log event at the warn level. Do not pre-build and cache
      * <code>LogBuilder</code> instances.
+     *
+     * @since 1.3.1
      *
      * @return Instance of <code>LogBuilder</code>.
      */
@@ -1186,8 +1238,21 @@ public class Logger {
     }
 
     /**
+     * Determine if error level logging is enabled.
+     *
+     * @since 1.6.0
+     *
+     * @return True if and only if error level logging is enabled.
+     */
+    public boolean isErrorEnabled() {
+        return _slf4jLogger.isErrorEnabled();
+    }
+
+    /**
      * Create a new log event at the error level. Do not pre-build and cache
      * <code>LogBuilder</code> instances.
+     *
+     * @since 1.3.1
      *
      * @return Instance of <code>LogBuilder</code>.
      */

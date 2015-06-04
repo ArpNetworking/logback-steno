@@ -34,6 +34,18 @@ import java.util.Map;
 public class LoggerTest {
 
     @Test
+    public void testIsTraceEnabled() {
+        final org.slf4j.Logger slf4jLogger = Mockito.mock(org.slf4j.Logger.class);
+        Mockito.doReturn(Boolean.TRUE).when(slf4jLogger).isTraceEnabled();
+        Assert.assertTrue(new Logger(slf4jLogger).isTraceEnabled());
+        Mockito.verify(slf4jLogger).isTraceEnabled();
+        Mockito.reset(slf4jLogger);
+        Mockito.doReturn(Boolean.FALSE).when(slf4jLogger).isTraceEnabled();
+        Assert.assertFalse(new Logger(slf4jLogger).isTraceEnabled());
+        Mockito.verify(slf4jLogger).isTraceEnabled();
+    }
+
+    @Test
     public void testCreateTrace() {
         final org.slf4j.Logger slf4jLogger = Mockito.mock(org.slf4j.Logger.class);
         Mockito.doReturn(Boolean.TRUE).when(slf4jLogger).isTraceEnabled();
@@ -244,6 +256,18 @@ public class LoggerTest {
                 new String[]{MESSAGE_KEY, KEY1, KEY2},
                 new Object[]{TEST_MESSAGE, VALUE1, VALUE2},
                 TEST_EXCEPTION);
+    }
+
+    @Test
+    public void testIsDebugEnabled() {
+        final org.slf4j.Logger slf4jLogger = Mockito.mock(org.slf4j.Logger.class);
+        Mockito.doReturn(Boolean.TRUE).when(slf4jLogger).isDebugEnabled();
+        Assert.assertTrue(new Logger(slf4jLogger).isDebugEnabled());
+        Mockito.verify(slf4jLogger).isDebugEnabled();
+        Mockito.reset(slf4jLogger);
+        Mockito.doReturn(Boolean.FALSE).when(slf4jLogger).isDebugEnabled();
+        Assert.assertFalse(new Logger(slf4jLogger).isDebugEnabled());
+        Mockito.verify(slf4jLogger).isDebugEnabled();
     }
 
     @Test
@@ -460,6 +484,18 @@ public class LoggerTest {
     }
 
     @Test
+    public void testIsInfoEnabled() {
+        final org.slf4j.Logger slf4jLogger = Mockito.mock(org.slf4j.Logger.class);
+        Mockito.doReturn(Boolean.TRUE).when(slf4jLogger).isInfoEnabled();
+        Assert.assertTrue(new Logger(slf4jLogger).isInfoEnabled());
+        Mockito.verify(slf4jLogger).isInfoEnabled();
+        Mockito.reset(slf4jLogger);
+        Mockito.doReturn(Boolean.FALSE).when(slf4jLogger).isInfoEnabled();
+        Assert.assertFalse(new Logger(slf4jLogger).isInfoEnabled());
+        Mockito.verify(slf4jLogger).isInfoEnabled();
+    }
+
+    @Test
     public void testCreateInfo() {
         final org.slf4j.Logger slf4jLogger = Mockito.mock(org.slf4j.Logger.class);
         Mockito.doReturn(Boolean.TRUE).when(slf4jLogger).isInfoEnabled();
@@ -673,6 +709,18 @@ public class LoggerTest {
     }
 
     @Test
+    public void testIsWEnabled() {
+        final org.slf4j.Logger slf4jLogger = Mockito.mock(org.slf4j.Logger.class);
+        Mockito.doReturn(Boolean.TRUE).when(slf4jLogger).isWarnEnabled();
+        Assert.assertTrue(new Logger(slf4jLogger).isWarnEnabled());
+        Mockito.verify(slf4jLogger).isWarnEnabled();
+        Mockito.reset(slf4jLogger);
+        Mockito.doReturn(Boolean.FALSE).when(slf4jLogger).isWarnEnabled();
+        Assert.assertFalse(new Logger(slf4jLogger).isWarnEnabled());
+        Mockito.verify(slf4jLogger).isWarnEnabled();
+    }
+
+    @Test
     public void testCreateWarn() {
         final org.slf4j.Logger slf4jLogger = Mockito.mock(org.slf4j.Logger.class);
         Mockito.doReturn(Boolean.TRUE).when(slf4jLogger).isWarnEnabled();
@@ -883,6 +931,18 @@ public class LoggerTest {
                 new String[]{MESSAGE_KEY, KEY1, KEY2},
                 new Object[]{TEST_MESSAGE, VALUE1, VALUE2},
                 TEST_EXCEPTION);
+    }
+
+    @Test
+    public void testIsErrorEnabled() {
+        final org.slf4j.Logger slf4jLogger = Mockito.mock(org.slf4j.Logger.class);
+        Mockito.doReturn(Boolean.TRUE).when(slf4jLogger).isErrorEnabled();
+        Assert.assertTrue(new Logger(slf4jLogger).isErrorEnabled());
+        Mockito.verify(slf4jLogger).isErrorEnabled();
+        Mockito.reset(slf4jLogger);
+        Mockito.doReturn(Boolean.FALSE).when(slf4jLogger).isErrorEnabled();
+        Assert.assertFalse(new Logger(slf4jLogger).isErrorEnabled());
+        Mockito.verify(slf4jLogger).isErrorEnabled();
     }
 
     @Test

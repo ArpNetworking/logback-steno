@@ -1,0 +1,1 @@
+{"time":"<TIME>","name":"test","level":"info","data":{"message":"Widget.class","widget":{"value":"w1"}},"context":{"host":"<HOST>","processId":"<PROCESS_ID>","threadId":"<THREAD_ID>","logger":"ROOT"},"id":"<ID>","version":"0"}

@@ -19,7 +19,6 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.LoggingEvent;
 import ch.qos.logback.core.rolling.RollingFileAppender;
 import ch.qos.logback.core.rolling.TimeBasedRollingPolicy;
-import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -27,6 +26,7 @@ import org.mockito.Mockito;
 import java.io.File;
 import java.net.UnknownHostException;
 import java.security.SecureRandom;
+import java.time.ZonedDateTime;
 
 /**
  * Tests for <code>RandomizedTimeBasedFNATP</code>.
@@ -37,7 +37,7 @@ public class RandomizedTimeBasedFNATPTest {
 
     @Test
     public void testComputeNextCheck() throws Exception {
-        final DateTime dateTime = DateTime.parse("2014-05-05T00:00:00Z");
+        final ZonedDateTime dateTime = ZonedDateTime.parse("2014-05-05T00:00:00Z");
         final RollingFileAppender<LoggingEvent> fileAppender = new RollingFileAppender<>();
         fileAppender.setFile("application.log");
 
@@ -47,21 +47,21 @@ public class RandomizedTimeBasedFNATPTest {
         rollingPolicy.setFileNamePattern("application-%d{yyyy-MM-dd_HH}.log");
         rollingPolicy.setParent(fileAppender);
         rollingPolicy.setTimeBasedFileNamingAndTriggeringPolicy(triggeringPolicy);
-        triggeringPolicy.setCurrentTime(dateTime.getMillis());
+        triggeringPolicy.setCurrentTime(dateTime.toInstant().toEpochMilli());
         rollingPolicy.start();
 
         // This should set the nextCheck to 2014-0505T01:00:00Z + random offset
         triggeringPolicy.computeNextCheck();
         final LoggingEvent event = new LoggingEvent();
-        triggeringPolicy.setCurrentTime(DateTime.parse("2014-05-05T00:59:59Z").getMillis());
+        triggeringPolicy.setCurrentTime(ZonedDateTime.parse("2014-05-05T00:59:59Z").toInstant().toEpochMilli());
         Assert.assertFalse(triggeringPolicy.isTriggeringEvent(new File("application.log"), event));
-        triggeringPolicy.setCurrentTime(DateTime.parse("2014-05-05T02:00:00Z").getMillis());
+        triggeringPolicy.setCurrentTime(ZonedDateTime.parse("2014-05-05T02:00:00Z").toInstant().toEpochMilli());
         Assert.assertTrue(triggeringPolicy.isTriggeringEvent(new File("application.log"), event));
     }
 
     @Test
     public void testSetMaxOffset() throws Exception {
-        final DateTime dateTime = DateTime.parse("2014-05-05T00:00:00Z");
+        final ZonedDateTime dateTime = ZonedDateTime.parse("2014-05-05T00:00:00Z");
         final RollingFileAppender<LoggingEvent> fileAppender = new RollingFileAppender<>();
         fileAppender.setFile("application.log");
         final SecureRandom secureRandom = Mockito.mock(SecureRandom.class);
@@ -77,7 +77,7 @@ public class RandomizedTimeBasedFNATPTest {
         rollingPolicy.setFileNamePattern("application-%d{yyyy-MM-dd_HH}.log");
         rollingPolicy.setParent(fileAppender);
         rollingPolicy.setTimeBasedFileNamingAndTriggeringPolicy(triggeringPolicy);
-        triggeringPolicy.setCurrentTime(dateTime.getMillis());
+        triggeringPolicy.setCurrentTime(dateTime.toInstant().toEpochMilli());
         triggeringPolicy.setMaxOffsetInMillis(30000);
         Assert.assertEquals(30000, triggeringPolicy.getMaxOffsetInMillis());
         rollingPolicy.start();
@@ -88,15 +88,15 @@ public class RandomizedTimeBasedFNATPTest {
         // This should set the nextCheck to 2014-0505T01:00:00Z + random offset
         triggeringPolicy.computeNextCheck();
         final LoggingEvent event = new LoggingEvent();
-        triggeringPolicy.setCurrentTime(DateTime.parse("2014-05-05T01:00:02Z").getMillis());
+        triggeringPolicy.setCurrentTime(ZonedDateTime.parse("2014-05-05T01:00:02Z").toInstant().toEpochMilli());
         Assert.assertFalse(triggeringPolicy.isTriggeringEvent(new File("application.log"), event));
-        triggeringPolicy.setCurrentTime(DateTime.parse("2014-05-05T01:00:03Z").getMillis());
+        triggeringPolicy.setCurrentTime(ZonedDateTime.parse("2014-05-05T01:00:03Z").toInstant().toEpochMilli());
         Assert.assertTrue(triggeringPolicy.isTriggeringEvent(new File("application.log"), event));
     }
 
     @Test
     public void testUnknownHost() throws Exception {
-        final DateTime dateTime = DateTime.parse("2014-05-05T00:00:00Z");
+        final ZonedDateTime dateTime = ZonedDateTime.parse("2014-05-05T00:00:00Z");
         final RollingFileAppender<LoggingEvent> fileAppender = new RollingFileAppender<>();
         fileAppender.setFile("application.log");
         final SecureRandom secureRandom = Mockito.mock(SecureRandom.class);
@@ -117,7 +117,7 @@ public class RandomizedTimeBasedFNATPTest {
         rollingPolicy.setFileNamePattern("application-%d{yyyy-MM-dd_HH}.log");
         rollingPolicy.setParent(fileAppender);
         rollingPolicy.setTimeBasedFileNamingAndTriggeringPolicy(triggeringPolicy);
-        triggeringPolicy.setCurrentTime(dateTime.getMillis());
+        triggeringPolicy.setCurrentTime(dateTime.toInstant().toEpochMilli());
         rollingPolicy.start();
 
         Mockito.verify(secureRandomProvider).get();

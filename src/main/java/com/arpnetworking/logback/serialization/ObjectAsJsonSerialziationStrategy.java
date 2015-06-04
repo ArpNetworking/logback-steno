@@ -21,7 +21,6 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.io.IOException;
 import java.io.StringWriter;
 
 /**
@@ -30,7 +29,7 @@ import java.io.StringWriter;
  * @author Ville Koskela (vkoskela at groupon dot com)
  * @since 1.3.1
  */
-public class ObjectAsJsonSerialziationStrategy extends BaseSerializationStrategy {
+public class ObjectAsJsonSerialziationStrategy {
 
     /**
      * Public constructor.
@@ -43,7 +42,7 @@ public class ObjectAsJsonSerialziationStrategy extends BaseSerializationStrategy
             final StenoEncoder encoder,
             final JsonFactory jsonFactory,
             final ObjectMapper objectMapper) {
-        super(encoder);
+        _encoder = encoder;
         _jsonFactory = jsonFactory;
         _objectMapper = objectMapper;
     }
@@ -55,41 +54,41 @@ public class ObjectAsJsonSerialziationStrategy extends BaseSerializationStrategy
      * @param eventName The event name.
      * @param jsonData The message data as serialized JSON.
      * @return Serialization of message as a <code>String</code>.
+     * @throws Exception Serialization may throw any <code>Exception</code>.
      */
     public String serialize(
             final ILoggingEvent event,
             final String eventName,
-            final String jsonData) {
+            final String jsonData)
+            throws Exception {
 
         final StringWriter jsonWriter = new StringWriter();
-        try {
-            final JsonGenerator jsonGenerator = _jsonFactory.createGenerator(jsonWriter);
-            // Start wrapper
-            startStenoWrapper(event, eventName, jsonGenerator, _objectMapper);
+        final JsonGenerator jsonGenerator = _jsonFactory.createGenerator(jsonWriter);
 
-            // Write event data
-            jsonGenerator.writeFieldName("data");
-            if (jsonData == null) {
-                jsonGenerator.writeStartObject();
-                jsonGenerator.writeEndObject();
-            } else {
-                jsonGenerator.writeRawValue(jsonData);
-            }
-            // TODO(vkoskela): Support writing null objects as-is via configuration [MAI-333]
-            // e.g. "data":null -- although this is not supported by the current Steno specification
+        // Start wrapper
+        StenoSerializationHelper.startStenoWrapper(event, eventName, jsonGenerator, _objectMapper);
 
-            // Output throwable
-            writeThrowable(event.getThrowableProxy(), jsonGenerator, _objectMapper);
-
-            // End wrapper
-            endStenoWrapper(event, eventName, jsonGenerator, _objectMapper);
-        } catch (final IOException e) {
-            return "Unknown exception: " + e.getMessage();
+        // Write event data
+        jsonGenerator.writeFieldName("data");
+        if (jsonData == null) {
+            jsonGenerator.writeStartObject();
+            jsonGenerator.writeEndObject();
+        } else {
+            jsonGenerator.writeRawValue(jsonData);
         }
+        // TODO(vkoskela): Support writing null objects as-is via configuration [MAI-333]
+        // e.g. "data":null -- although this is not supported by the current Steno specification
+
+        // Output throwable
+        StenoSerializationHelper.writeThrowable(event.getThrowableProxy(), jsonGenerator, _objectMapper);
+
+        // End wrapper
+        StenoSerializationHelper.endStenoWrapper(event, eventName, jsonGenerator, _objectMapper, _encoder);
 
         return jsonWriter.toString();
     }
 
+    private final StenoEncoder _encoder;
     private final JsonFactory _jsonFactory;
     private final ObjectMapper _objectMapper;
 }

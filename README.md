@@ -51,8 +51,29 @@ val appDependencies = Seq(
 
 The Maven Central repository is included by default.
 
-Configuration
--------------
+Class Preparation
+-----------------
+
+Not all classes are designed for serialization. To ensure the encoder is able to successfully generate a JSON
+representation of each value it is provided the following rules will be applied.
+
+Instances of the following are logged as-is using Jackson serialization:
+* Number
+* Boolean
+* String
+
+Instances of classes declaring a method to create a serializable representation with @LogValue or @JsonValue or
+using a specific serializer with @JsonSerialize are logged in that representation. Also, instances mapping to a custom
+serializer via a registered Jackson module are also logged in the representation provided by that serializer.
+
+Finally, if the type is annotated with @Loggable it is also serialized as-is by Jackson.
+
+All other types are serialized as a the instance identifier and class name. It is possible to override this behavior and
+send all values to Jackson for natural serialization by setting the __safe__ property of the encoder to false.
+
+
+Encoder Configuration
+---------------------
 
 Example appender configuration in XML:
 
@@ -64,7 +85,9 @@ Example appender configuration in XML:
             <fileNamePattern>log/application-%d{yyyy-MM-dd}.steno.log.gz</fileNamePattern>
             <maxHistory>10</maxHistory>
         </rollingPolicy>
-        <encoder class="com.arpnetworking.logback.StenoEncoder" />
+        <encoder class="com.arpnetworking.logback.StenoEncoder" >
+            <!-- Steno Encoder Options Go Here -->
+        </encoder>
     </appender>
     <root>
         <level value="INFO"/>
@@ -86,12 +109,14 @@ The StenoEncoder encoder supports several options:
 * InjectContextFile - Add the calling file name to the context block. The default is false.  (2)
 * InjectContextMethod - Add the calling method name to the context block. The default is false. (2)
 * InjectContextLine - Add the calling line to the context block. The default is false. (2)
-* InjectContextMdc - Add the specified key pairs from MDC into the context. The default is none. Injected MDC keys   
+* InjectContextMdc - Add the specified key pairs from MDC into the context. The default is none. Injected MDC keys
 override any context keys pairs injected by the Steno encoder. (1)
-* CompressLoggerName - Compress the dotted logger name replacing each segment except the last with only its first letter. The default is false. 
+* CompressLoggerName - Compress the dotted logger name replacing each segment except the last with only its first letter. The default is false.
+* JacksonModule - Add the specified Jackson module instance to the ObjectMapper configuration.
+* Safe - Setting to false causes all types to be deferred to Jackson for serialization. Otherwise, only types that are determined to be safe are serialized as-is; see Class Preparation for details. The default is true.
 
 _Note 1_: Injecting additional key-value pairs into context is not strictly compliant with the current definition of Steno.<br>
-_Note 2_: Injecting class, file, method or line will incur a significant performance penalty. 
+_Note 2_: Injecting class, file, method or line will incur a significant performance penalty.
 
 Optionally, you may additionally wrap the FileAppender in an AsyncAppender:
 
@@ -143,7 +168,33 @@ rootLogger.setLevel(Level.INFO);
 rootLogger.addAppender(fileAppender);
 ```
 
-For more information about Logback configuration please see: http://logback.qos.ch/manual/configuration.html 
+For more information about Logback configuration please see: http://logback.qos.ch/manual/configuration.html
+ 
+Jackson Configuration
+---------------------
+
+The Jackson ObjectMapper used to serialize data and context values can be customized by registering additional Jackson
+modules.  In XML configuration such configuration looks like this: 
+
+```xml
+<encoder class="com.arpnetworking.logback.StenoEncoder" >
+    <jacksonModule class="com.fasterxml.jackson.datatype.joda.JodaModule" />
+</encoder>
+```
+
+In Java the same configuration may be achieved like this:
+
+```java
+encoder.addJacksonModule(new com.fasterxml.jackson.datatype.joda.JodaModule());
+```
+
+Note, the module must be added __before__ you invoke start on the encoder.  Common modules that you may want to register
+include:
+
+* com.fasterxml.jackson.datatype.joda.JodaModule ([Maven Central](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.fasterxml.jackson.datatype%22%20a%3A%22jackson-datatype-joda%22))
+* com.fasterxml.jackson.datatype.guava.GuavaModule ([Maven Central](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.fasterxml.jackson.datatype%22%20a%3A%22jackson-datatype-guava%22))
+* com.fasterxml.jackson.datatype.jdk7.Jdk7Module ([Maven Central](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.fasterxml.jackson.datatype%22%20a%3A%22jackson-datatype-jdk7%22))
+* com.fasterxml.jackson.datatype.jdk8.Jdk8Module ([Maven Central](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.fasterxml.jackson.datatype%22%20a%3A%22jackson-datatype-jdk8%22))
 
 Steno Logger
 ------------
@@ -157,6 +208,7 @@ Logger that you would normally use so you remain completely compatible with the 
 Code:
 
 ```java
+import com.arpnetworking.logback.annotations.Loggable;
 import com.arpnetworking.steno.Logger;
 import com.arpnetworking.steno.LoggerFactory;
 import com.google.common.collect.ImmutableMap;
@@ -166,10 +218,10 @@ public class MyClass {
 
   public void foo() {
     final Widget widget = new Widget("MyWidget");
-  
+
     // Backwards compatible with common SLF4J methods:
     LOGGER.info("foo was called");
-  
+
     // Fluent and type-safe log builder:
     LOGGER.info()
         .setEvent("foo")
@@ -177,24 +229,25 @@ public class MyClass {
         .addData("key1", 1234)
         .addData("widget", widget)
         .log();
-    
+
     // Additional data with arrays:
     LOGGER.info("foo", "foo was called", new String[]{"key1", "widget"}, new Object[]{1234, widget});
-    
+
     // Additional data with a map:
     LOGGER.info("foo", "foo was called", ImmutableMap.of("key1", 1234, "widget", widget));
-    
+
     // Additional data with an array and var args:
     LOGGER.info("foo", "foo was called", new String[]{"key1", "widget"}, 1234, widget);
   }
-  
+
+  @Loggable
   private static class Widget() {
     private final String name;
-  
+
     public Widget(String name) {
       this.name = name;
     }
-    
+
     public String getName() {
       return this.name;
     }
@@ -212,6 +265,140 @@ Output:
 {"time":"2011-11-11T00:00:00.400Z","name":"foo","level":"info","data":{"message":"foo was called","key1":1234,"widget":{"name":"MyWidget"}},"context":{"host":"<HOST>","processId":"<PROCESS>","threadId":"<THREAD>"},"id":"oRw59PrARvatGNC7fiWw4A"}
 ```
 
+### Context Weaving
+
+The library contains an Aspect for weaving additional context into all __log()__ invocations of the Steno LogBuilder.  The
+additional context includes file, class and line.  Since the additional context is woven at compile time this
+enables efficient injection of this context information versus the inefficient stack trace capture used by default in Logback.
+Finally, the file, class and line context injection should not be enabled in the encoder configuration if using context
+weaving.
+
+#### Maven
+
+To enable context weaving in your Maven project add the following to your pom:
+ 
+```xml
+<project>
+    ...
+    <build>
+        <plugins>
+            ...
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>aspectj-maven-plugin</artifactId>
+                <version>1.7</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                            <goal>test-compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                    <complianceLevel>1.8</complianceLevel>
+                    <aspectLibraries>
+                        <aspectLibrary>
+                            <groupId>com.arpnetworking.logback</groupId>
+                            <artifactId>logback-steno</artifactId>
+                        </aspectLibrary>
+                    </aspectLibraries>
+                    <showWeaveInfo>true</showWeaveInfo>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.aspectj</groupId>
+                        <artifactId>aspectjtools</artifactId>
+                        <version>1.8.5</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            ...
+        <plugins>
+    </build>
+    ...
+</project>
+```
+
+__Note:__ The example above assumes you are compiling from/to Java8.
+
+#### SBT
+
+To enable context weaving in your SBT project make the following changes:
+
+project/plugins.sbt<br/>
+```scala
+resolvers += "SBT Community repository" at "http://dl.bintray.com/sbt/sbt-plugin-releases/"
+
+addSbtPlugin("com.typesafe.sbt" % "sbt-aspectj" % "0.10.0")
+```
+
+project/Build.scala<br/>
+```scala
+import sbt._
+import Keys._
+// You probably have other imports here
+import com.typesafe.sbt.SbtAspectj._
+import com.typesafe.sbt.SbtAspectj.AspectjKeys._
+
+object ApplicationBuild extends Build {
+
+    // Add 'aspectjSettings' to any other settings here with ++:
+    val s = aspectjSettings
+    val main = Project("MyApp", file("."), settings = s).settings(
+      // Other project settings go here
+      
+      // AspectJ
+      binaries in Aspectj <++= update map { report =>
+        report.matching(moduleFilter(organization = "com.arpnetworking.logback", name = "logback-steno"))
+      },
+      inputs in Aspectj <+= compiledClasses,
+      products in Compile <<= products in Aspectj,
+      products in Runtime <<= products in Compile
+    )
+}
+```
+
+#### Gradle
+
+To enable context weaving in your Gradle project make the following changes:
+
+```groovy
+// Set to at least version 1.6.0
+def logback_steno_version = '1.6.0'
+
+project.ext {
+    aspectjVersion = '1.8.5'
+}
+
+apply plugin: 'aspectj'
+
+buildscript {
+    repositories {
+        // Other build repositories (e.g. Maven Central)
+        maven {
+            url "https://maven.eveoh.nl/content/repositories/releases"
+        }
+    }
+
+    dependencies {
+        // Other build dependencies (e.g. Protobuf)
+        classpath group: 'nl.eveoh', name: 'gradle-aspectj', version: '1.5'
+    }
+}
+
+dependencies {
+    aspectpath group: 'com.arpnetworking.logback', name: 'logback-steno', version: logback_steno_version
+    compile group: 'com.arpnetworking.logback', name: 'logback-steno', version: logback_steno_version
+    // Other dependencies
+}
+```
+
+For more information please see [https://github.com/eveoh/gradle-aspectj](https://github.com/eveoh/gradle-aspectj).
+
+
 SLF4J Logger
 ------------
 
@@ -225,6 +412,7 @@ Code:
 ```java
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.arpnetworking.logback.annotations.Loggable;
 import com.arpnetworking.logback.StenoMarker;
 import com.google.common.collect.ImmutableMap;
 
@@ -249,14 +437,15 @@ public class MyClass {
     LOGGER.info(StenoMarker.OBJECT_MARKER, "foo", widget);
     LOGGER.info(StenoMarker.OBJECT_JSON_MARKER, "foo", "{\"name\":\"MyWidget\"}");
   }
-  
+
+  @Loggable
   private static class Widget() {
     private final String name;
-  
+
     public Widget(String name) {
       this.name = name;
     }
-    
+
     public String getName() {
       return this.name;
     }
@@ -343,7 +532,7 @@ Output:
 
 ### Example 6: Embedding Object
 
-This allows insertion of an object as the value (when serialized) of the _data_ key. 
+This allows insertion of an object as the value (when serialized) of the _data_ key.
 
 Code:
 
