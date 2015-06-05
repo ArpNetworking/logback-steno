@@ -119,6 +119,7 @@
     <maven.findbugs.plugin.version>3.0.1</maven.findbugs.plugin.version>
     <maven.jacoco.plugin.version>0.7.4.201502262128</maven.jacoco.plugin.version>
     <maven.gpg.plugin.version>1.6</maven.gpg.plugin.version>
+    <maven.release.plugin.version>2.5</maven.release.plugin.version>
   </properties>
 
   <scm>
@@ -402,6 +403,11 @@
             </configuration>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-release-plugin</artifactId>
+        <version>${maven.release.plugin.version}</version>
       </plugin>
     </plugins>
   </build>
