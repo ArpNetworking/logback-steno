@@ -31,6 +31,28 @@ import java.util.Map;
 public class KeyValueEncoder extends BaseLoggingEncoder {
 
     /**
+     * Sets the default log event name.
+     *
+     * @param logEventName The log event name.
+     *
+     * @since 1.8.1
+     */
+    public void setLogEventName(final String logEventName) {
+        _logEventName = logEventName;
+    }
+
+    /**
+     * Retrieve the default log event name.
+     *
+     * @return The default log event name.
+     *
+     * @since 1.8.1
+     */
+    public String getLogEventName() {
+        return _logEventName;
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -229,8 +251,9 @@ public class KeyValueEncoder extends BaseLoggingEncoder {
      * @return The format <code>String</code>.
      */
     protected String buildFormatString(final String name, final String[] keys) {
+        final String effectiveName = name == null ? _logEventName : name;
         final StringWriter stringWriter = new StringWriter();
-        stringWriter.append("name=\"").append(name).append("\"");
+        stringWriter.append("name=\"").append(effectiveName).append("\"");
         if (keys != null && keys.length > 0) {
             for (final String key : keys) {
                 stringWriter.append(", ").append(key).append("=\"{}\"");
@@ -257,4 +280,7 @@ public class KeyValueEncoder extends BaseLoggingEncoder {
         }
         return escapedValues;
     }
+
+    private String _logEventName = STANDARD_LOG_EVENT_NAME;
+    private static final String STANDARD_LOG_EVENT_NAME = "log";
 }

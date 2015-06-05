@@ -75,6 +75,42 @@ public class KeyValueEncoderTest {
     }
 
     @Test
+    public void testEncodeArrayDefaultName() throws Exception {
+        final LoggingEvent event = new LoggingEvent();
+        event.setLevel(Level.INFO);
+        event.setMarker(StenoMarker.ARRAY_MARKER);
+        event.setThreadName("thread");
+        event.setTimeStamp(0);
+        event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
+        final Object[] argArray = new Object[2];
+        argArray[0] = new String[] {"key1", "key2"};
+        argArray[1] = new Object[] {Integer.valueOf(1234), "foo"};
+        event.setArgumentArray(argArray);
+        _encoder.doEncode(event);
+        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        assertOutput("KeyValueEncoderTest.testEncodeArrayDefaultName.log", logOutput);
+    }
+
+    @Test
+    public void testEncodeArrayCustomDefaultName() throws Exception {
+        _encoder.setLogEventName("FooBar");
+        Assert.assertEquals("FooBar", _encoder.getLogEventName());
+        final LoggingEvent event = new LoggingEvent();
+        event.setLevel(Level.INFO);
+        event.setMarker(StenoMarker.ARRAY_MARKER);
+        event.setThreadName("thread");
+        event.setTimeStamp(0);
+        event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
+        final Object[] argArray = new Object[2];
+        argArray[0] = new String[] {"key1", "key2"};
+        argArray[1] = new Object[] {Integer.valueOf(1234), "foo"};
+        event.setArgumentArray(argArray);
+        _encoder.doEncode(event);
+        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        assertOutput("KeyValueEncoderTest.testEncodeArrayCustomDefaultName.log", logOutput);
+    }
+
+    @Test
     public void testEncodeArrayJson() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);

@@ -75,6 +75,18 @@ send all values to Jackson for natural serialization by setting the __safe__ pro
 Encoder Configuration
 ---------------------
 
+This package supplies two encoders for Logback.  The first is the StenoEncoder which encodes your
+log messages in JSON.  Although fully compatible with standard SLF4J logging directives, this encoder
+supports a provided set of Markers to encode structured data with your log message.  Logging supporting
+data in this way makes it easier to parse and analyze especially if common structures are shared across
+the organization (e.g. connection established, http request received, http response sent, etc.).
+
+The second encoder is more human friendly and encodes each key-value pair of supporting data using the
+data instance's toString method.  This is intended for development.  For more information about Logback
+configuration please see: http://logback.qos.ch/manual/configuration.html
+
+#### StenoEncoder
+
 Example appender configuration in XML:
 
 ```xml
@@ -169,7 +181,38 @@ rootLogger.addAppender(fileAppender);
 ```
 
 For more information about Logback configuration please see: http://logback.qos.ch/manual/configuration.html
- 
+
+#### KeyValueEncoder
+
+Example appender configuration in XML:
+
+```xml
+<configuration>
+    <appender name="STENO_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>log/application.steno.log</File>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>log/application-%d{yyyy-MM-dd}.steno.log.gz</fileNamePattern>
+            <maxHistory>10</maxHistory>
+        </rollingPolicy>
+        <encoder class="com.arpnetworking.logback.KeyValueEncoder">
+            <layout class="ch.qos.logback.classic.PatternLayout">
+                <pattern>%date %t [%level] %logger : %message %ex%n</pattern>
+            </layout>
+        </encoder>
+    </appender>
+    <root>
+        <level value="INFO"/>
+        <appender-ref ref="STENO_FILE"/>
+    </root>
+</configuration>
+```
+
+The KeyValueEncoder encoder supports several options:
+
+* LogEventName - Set the default event name. The default is "log".
+
+Configuring the encoder from Java is similar to the StenoEncoder example above.
+
 Jackson Configuration
 ---------------------
 
