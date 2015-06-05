@@ -15,6 +15,6 @@ before_script:
 - echo "<settings><servers><server><id>ossrh</id><username>\${env.OSSRH_USER}</username><password>\${env.OSSRH_PASS}</password></server><server><id>arpnet</id><passphrase>\${env.GPG_PASS}</passphrase></server></servers></settings>"
   > ~/settings.xml
 script:
-- mvn verify install --settings ~/settings.xml -P ci
+- mvn verify install --settings ~/settings.xml -Dgpg.skip=true
 after_success:
-- if [ "${TRAVIS_BRANCH}" = "master" -a  "${TRAVIS_PULL_REQUEST}" = "false" ]; then mvn deploy --settings ~/settings.xml -P ci; fi;
+- if [ "${TRAVIS_BRANCH}" = "master" -a  "${TRAVIS_PULL_REQUEST}" = "false" ]; then mvn deploy --settings ~/settings.xml -Dgpg.skip=true; fi;

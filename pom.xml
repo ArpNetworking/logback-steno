@@ -400,6 +400,7 @@
             <configuration>
               <keyname>arpnet</keyname>
               <passphraseServerId>arpnet</passphraseServerId>
+              <skip>${gpg.skip}</skip>
             </configuration>
           </execution>
         </executions>
@@ -411,17 +412,6 @@
       </plugin>
     </plugins>
   </build>
-  <profiles>
-    <profile>
-      <id>ci</id>
-      <activation>
-        <activeByDefault>false</activeByDefault>
-      </activation>
-      <properties>
-        <gpg.skip>false</gpg.skip>
-      </properties>
-    </profile>
-  </profiles>
   <distributionManagement>
     <snapshotRepository>
       <id>ossrh</id>
