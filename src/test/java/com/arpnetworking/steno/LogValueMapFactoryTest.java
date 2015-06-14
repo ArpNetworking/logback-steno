@@ -15,6 +15,8 @@
  */
 package com.arpnetworking.steno;
 
+import com.arpnetworking.logback.widgets.Widget;
+import org.apache.commons.lang3.SerializationUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -28,6 +30,18 @@ import java.util.Map;
  * @author Ville Koskela (vkoskela at groupon dot com)
  */
 public class LogValueMapFactoryTest {
+
+    @Test
+    public void testBeanIdentifierInjection() {
+        final Widget w = new Widget("foo");
+        final Map<String, Object> expectedValue = new HashMap<>();
+        final Map<String, Object> actualValue = LogValueMapFactory.builder(w).build();
+        Assert.assertEquals(expectedValue, actualValue);
+        Assert.assertTrue(actualValue instanceof LogValueMapFactory.LogValueMap);
+        final LogValueMapFactory.LogValueMap logValueMap = (LogValueMapFactory.LogValueMap) actualValue;
+        Assert.assertTrue(logValueMap.getTarget().isPresent());
+        Assert.assertSame(w, logValueMap.getTarget().get());
+    }
 
     @Test
     public void testOneKeyValuePair() {
@@ -119,6 +133,19 @@ public class LogValueMapFactoryTest {
                 .put("k3", "v3")
                 .build();
         Assert.assertEquals(expectedValue, actualValue);
+    }
+
+    @Test
+    public void testSerialization() {
+        final Widget w = new Widget("foo");
+        final LogValueMapFactory.LogValueMap mapWithReference = (LogValueMapFactory.LogValueMap) LogValueMapFactory.builder(w).build();
+        Assert.assertTrue(mapWithReference.getTarget().isPresent());
+        Assert.assertSame(w, mapWithReference.getTarget().get());
+
+        final byte[] serializedMap = SerializationUtils.serialize(mapWithReference);
+        final LogValueMapFactory.LogValueMap deserializedMap = SerializationUtils.deserialize(serializedMap);
+
+        Assert.assertFalse(deserializedMap.getTarget().isPresent());
     }
 
     @Test

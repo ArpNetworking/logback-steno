@@ -39,7 +39,7 @@ public class LogBuilderAspect {
     public void addToContextLineAndMethod(final JoinPoint joinPoint) {
         final SourceLocation sourceLocation = joinPoint.getSourceLocation();
         final LogBuilder targetLogBuilder = (LogBuilder) joinPoint.getTarget();
-        targetLogBuilder.addContext("line", sourceLocation.getLine());
+        targetLogBuilder.addContext("line", String.valueOf(sourceLocation.getLine()));
         targetLogBuilder.addContext("file", sourceLocation.getFileName());
         targetLogBuilder.addContext("class", sourceLocation.getWithinType());
     }

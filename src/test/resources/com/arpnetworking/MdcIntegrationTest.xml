@@ -21,8 +21,8 @@
     <encoder class="com.arpnetworking.logback.StenoEncoder">
       <injectContextLogger>true</injectContextLogger>
       <compressLoggerName>true</compressLoggerName>
-      <injectContextMdc>Foo</injectContextMdc>
-      <injectContextMdc>Bar</injectContextMdc>
+      <injectContextMdc>MDC_KEY1</injectContextMdc>
+      <injectContextMdc>MDC_KEY2</injectContextMdc>
     </encoder>
   </appender>
 

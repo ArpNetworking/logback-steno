@@ -30,15 +30,15 @@ public class MdcIntegrationTest extends BaseStenoIntegrationTest {
     public void test() {
         final Logger logger = getLogger();
         MDC.clear();
-        MDC.put("Bar", "Easy");
-        logger.trace("Trace level events will be supressed");
+        MDC.put("MDC_KEY2", "Easy");
+        logger.trace("Trace level events will be suppressed");
         logger.debug("Debug level events will be suppressed");
         logger.info("This is informative");
-        MDC.put("Foo", "As");
-        MDC.put("Bar", "ABC");
+        MDC.put("MDC_KEY1", "As");
+        MDC.put("MDC_KEY2", "ABC");
         logger.warn("This is a warning");
-        MDC.put("Foo", "123");
-        MDC.remove("Bar");
+        MDC.put("MDC_KEY1", "123");
+        MDC.remove("MDC_KEY2");
         logger.error("This is an error");
         MDC.clear();
         assertOutput();

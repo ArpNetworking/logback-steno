@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.arpnetworking.logback.serialization;
+package com.arpnetworking.logback.serialization.steno;
 
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import com.arpnetworking.logback.StenoEncoder;
@@ -21,6 +21,7 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.io.Serializable;
 import java.io.StringWriter;
 import java.util.Map;
 
@@ -30,7 +31,7 @@ import java.util.Map;
  * @author Ville Koskela (vkoskela at groupon dot com)
  * @since 1.3.1
  */
-public class MapOfJsonSerialziationStrategy {
+public class MapOfJsonSerialziationStrategy implements Serializable {
 
     /**
      * Public constructor.
@@ -94,4 +95,6 @@ public class MapOfJsonSerialziationStrategy {
     private final StenoEncoder _encoder;
     private final JsonFactory _jsonFactory;
     private final ObjectMapper _objectMapper;
+
+    private static final long serialVersionUID = 6956084087076666267L;
 }

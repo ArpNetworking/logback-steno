@@ -16,8 +16,10 @@
 package com.arpnetworking.logback;
 
 import ch.qos.logback.classic.spi.ILoggingEvent;
+import com.arpnetworking.logback.serialization.keyvalue.KeyValueSerializationHelper;
 
 import java.io.StringWriter;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -56,6 +58,14 @@ public class KeyValueEncoder extends BaseLoggingEncoder {
      * {@inheritDoc}
      */
     @Override
+    protected String encodeAsString(final ILoggingEvent event, final EncodingException ee) {
+        return ee.toString() + " originalMessage=" + event.getMessage() + "\n";
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     protected String buildArrayMessage(
             final ILoggingEvent event,
             final String eventName,
@@ -63,9 +73,13 @@ public class KeyValueEncoder extends BaseLoggingEncoder {
             final Object[] values)
             throws EncodingException {
 
-        final String formatString = buildFormatString(eventName, keys);
-        final LoggingEventWrapper eventWrapper = new LoggingEventWrapper(event, formatString, values);
-        return layout.doLayout(eventWrapper);
+        try {
+            return createMessage(event, eventName, keys, values);
+            // CHECKSTYLE.OFF: IllegalCatch: Ensure any exception or error is caught to prevent Appender death.
+        } catch (final Throwable t) {
+            // CHECKSTYLE.ON: IllegalCatch
+            throw new EncodingException(createSafeContext(event), t);
+        }
     }
 
     /**
@@ -79,8 +93,14 @@ public class KeyValueEncoder extends BaseLoggingEncoder {
             final String[] jsonValues)
             throws EncodingException {
 
-        final Object[] escapedJsonValues = jsonValues == null ? null : escapeStringValues(jsonValues);
-        return buildArrayMessage(event, eventName, keys, escapedJsonValues);
+        try {
+            final Object[] escapedJsonValues = jsonValues == null ? null : escapeStringValues(jsonValues);
+            return createMessage(event, eventName, keys, escapedJsonValues);
+            // CHECKSTYLE.OFF: IllegalCatch: Ensure any exception or error is caught to prevent Appender death.
+        } catch (final Throwable t) {
+            // CHECKSTYLE.ON: IllegalCatch
+            throw new EncodingException(createSafeContext(event), t);
+        }
     }
 
     /**
@@ -93,22 +113,28 @@ public class KeyValueEncoder extends BaseLoggingEncoder {
             final Map<String, ? extends Object> map)
             throws EncodingException {
 
-        final String[] keys = map == null ? null : new String[map.size()];
-        final Object[] values = map == null ? null : new Object[map.size()];
-        if (map != null) {
-            int index = 0;
-            for (final Map.Entry<String, ? extends Object> entry : map.entrySet()) {
-                keys[index] = entry.getKey();
-                values[index] = entry.getValue();
-                ++index;
+        try {
+            final String[] keys = map == null ? null : new String[map.size()];
+            final Object[] values = map == null ? null : new Object[map.size()];
+            if (map != null) {
+                int index = 0;
+                for (final Map.Entry<String, ? extends Object> entry : map.entrySet()) {
+                    keys[index] = entry.getKey();
+                    values[index] = entry.getValue();
+                    ++index;
+                }
             }
-        }
 
-        return buildArrayMessage(
-            event,
-            eventName,
-            keys,
-            values);
+            return createMessage(
+                    event,
+                    eventName,
+                    keys,
+                    values);
+            // CHECKSTYLE.OFF: IllegalCatch: Ensure any exception or error is caught to prevent Appender death.
+        } catch (final Throwable t) {
+            // CHECKSTYLE.ON: IllegalCatch
+            throw new EncodingException(createSafeContext(event), t);
+        }
     }
 
     /**
@@ -121,22 +147,28 @@ public class KeyValueEncoder extends BaseLoggingEncoder {
             final Map<String, String> map)
             throws EncodingException {
 
-        final String[] keys = map == null ? null : new String[map.size()];
-        final Object[] values = map == null ? null : new Object[map.size()];
-        if (map != null) {
-            int index = 0;
-            for (final Map.Entry<String, ? extends Object> entry : map.entrySet()) {
-                keys[index] = entry.getKey();
-                values[index] = entry.getValue();
-                ++index;
+        try {
+            final String[] keys = map == null ? null : new String[map.size()];
+            final Object[] values = map == null ? null : new Object[map.size()];
+            if (map != null) {
+                int index = 0;
+                for (final Map.Entry<String, ? extends Object> entry : map.entrySet()) {
+                    keys[index] = entry.getKey();
+                    values[index] = entry.getValue();
+                    ++index;
+                }
             }
-        }
 
-        return buildArrayMessage(
-                event,
-                eventName,
-                keys,
-                values == null ? null : escapeStringValues(values));
+            return createMessage(
+                    event,
+                    eventName,
+                    keys,
+                    values == null ? null : escapeStringValues(values));
+            // CHECKSTYLE.OFF: IllegalCatch: Ensure any exception or error is caught to prevent Appender death.
+        } catch (final Throwable t) {
+            // CHECKSTYLE.ON: IllegalCatch
+            throw new EncodingException(createSafeContext(event), t);
+        }
     }
 
     /**
@@ -149,10 +181,17 @@ public class KeyValueEncoder extends BaseLoggingEncoder {
             final Object data)
             throws EncodingException {
 
-        return buildObjectJsonMessage(
-                event,
-                eventName,
-                data == null ? null : data.toString());
+        try {
+            return createMessage(
+                    event,
+                    eventName,
+                    new String[]{"data"},
+                    escapeStringValues(new Object[]{data == null ? null : data.toString()}));
+            // CHECKSTYLE.OFF: IllegalCatch: Ensure any exception or error is caught to prevent Appender death.
+        } catch (final Throwable t) {
+            // CHECKSTYLE.ON: IllegalCatch
+            throw new EncodingException(createSafeContext(event), t);
+        }
     }
 
     /**
@@ -165,11 +204,17 @@ public class KeyValueEncoder extends BaseLoggingEncoder {
             final String jsonData)
             throws EncodingException {
 
-        return buildArrayMessage(
-                event,
-                eventName,
-                new String[] {"data"},
-                escapeStringValues(new Object[] {jsonData}));
+        try {
+            return createMessage(
+                    event,
+                    eventName,
+                    new String[]{"data"},
+                    escapeStringValues(new Object[]{jsonData}));
+            // CHECKSTYLE.OFF: IllegalCatch: Ensure any exception or error is caught to prevent Appender death.
+        } catch (final Throwable t) {
+            // CHECKSTYLE.ON: IllegalCatch
+            throw new EncodingException(createSafeContext(event), t);
+        }
     }
 
     /**
@@ -185,54 +230,60 @@ public class KeyValueEncoder extends BaseLoggingEncoder {
             final List<Object> contextValues)
             throws EncodingException {
 
-        final int dataKeysSize = dataKeys == null ? 0 : dataKeys.size();
-        final int contextKeysSize = contextKeys == null ? 0 : contextKeys.size();
-        final int dataValuesSize = dataValues == null ? 0 : dataValues.size();
-        final int contextValuesSize = contextValues == null ? 0 : contextValues.size();
+        try {
+            final int dataKeysSize = dataKeys == null ? 0 : dataKeys.size();
+            final int contextKeysSize = contextKeys == null ? 0 : contextKeys.size();
+            final int dataValuesSize = dataValues == null ? 0 : dataValues.size();
+            final int contextValuesSize = contextValues == null ? 0 : contextValues.size();
 
-        final int size = dataKeysSize + contextKeysSize;
+            final int size = dataKeysSize + contextKeysSize;
 
-        final String[] keys = new String[size];
-        final Object[] values = new Object[size];
+            final String[] keys = new String[size];
+            final Object[] values = new Object[size];
 
-        int index = 0;
-        if (contextKeys != null) {
-            for (final String key : contextKeys) {
-                keys[index++] = key;
+            int index = 0;
+            if (contextKeys != null) {
+                for (final String key : contextKeys) {
+                    keys[index++] = key;
+                }
             }
-        }
-        if (dataKeys != null) {
-            for (final String key : dataKeys) {
-                keys[index++] = key;
+            if (dataKeys != null) {
+                for (final String key : dataKeys) {
+                    keys[index++] = key;
+                }
             }
-        }
-        index = 0;
-        int valueCount = 0;
-        for (int i = 0; i < contextKeysSize; ++i) {
-            if (valueCount < contextValuesSize) {
-                values[index] = contextValues.get(i);
-            } else {
-                values[index] = null;
+            index = 0;
+            int valueCount = 0;
+            for (int i = 0; i < contextKeysSize; ++i) {
+                if (valueCount < contextValuesSize) {
+                    values[index] = contextValues.get(i);
+                } else {
+                    values[index] = null;
+                }
+                ++index;
+                ++valueCount;
             }
-            ++index;
-            ++valueCount;
-        }
-        valueCount = 0;
-        for (int i = 0; i < dataKeysSize; ++i) {
-            if (valueCount < dataValuesSize) {
-                values[index] = dataValues.get(i);
-            } else {
-                values[index] = null;
+            valueCount = 0;
+            for (int i = 0; i < dataKeysSize; ++i) {
+                if (valueCount < dataValuesSize) {
+                    values[index] = dataValues.get(i);
+                } else {
+                    values[index] = null;
+                }
+                ++index;
+                ++valueCount;
             }
-            ++index;
-            ++valueCount;
-        }
 
-        return buildArrayMessage(
-                event,
-                eventName,
-                keys,
-                escapeStringValues(values));
+            return createMessage(
+                    event,
+                    eventName,
+                    keys,
+                    escapeStringValues(values));
+            // CHECKSTYLE.OFF: IllegalCatch: Ensure any exception or error is caught to prevent Appender death.
+        } catch (final Throwable t) {
+            // CHECKSTYLE.ON: IllegalCatch
+            throw new EncodingException(createSafeContext(event, contextKeys, contextValues), t);
+        }
     }
 
     /**
@@ -240,7 +291,13 @@ public class KeyValueEncoder extends BaseLoggingEncoder {
      */
     @Override
     protected String buildStandardMessage(final ILoggingEvent event) throws EncodingException {
-        return layout.doLayout(event);
+        try {
+            return getLayout().doLayout(event);
+            // CHECKSTYLE.OFF: IllegalCatch: Ensure any exception or error is caught to prevent Appender death.
+        } catch (final Throwable t) {
+            // CHECKSTYLE.ON: IllegalCatch
+            throw new EncodingException(createSafeContext(event), t);
+        }
     }
 
     /**
@@ -279,6 +336,28 @@ public class KeyValueEncoder extends BaseLoggingEncoder {
             escapedValues[i] = value;
         }
         return escapedValues;
+    }
+
+    /* package private */ String createMessage(
+            final ILoggingEvent event,
+            final String eventName,
+            final String[] keys,
+            final Object[] values) {
+
+        final String formatString = buildFormatString(eventName, keys);
+        final LoggingEventWrapper eventWrapper = new LoggingEventWrapper(event, formatString, values);
+        return layout.doLayout(eventWrapper);
+    }
+
+    /* package private */ Map<String, Object> createSafeContext(final ILoggingEvent event) {
+        return createSafeContext(event, Collections.emptyList(), Collections.emptyList());
+    }
+
+    /* package private */ Map<String, Object> createSafeContext(
+            final ILoggingEvent event,
+            final List<String> contextKeys,
+            final List<Object> contextValues) {
+        return KeyValueSerializationHelper.createContext(this, event, contextKeys, contextValues);
     }
 
     private String _logEventName = STANDARD_LOG_EVENT_NAME;

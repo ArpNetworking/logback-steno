@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.arpnetworking.logback.serialization;
+package com.arpnetworking.logback.serialization.steno;
 
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import com.arpnetworking.logback.StenoEncoder;
@@ -21,16 +21,16 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.io.Serializable;
 import java.io.StringWriter;
-import java.util.List;
 
 /**
- * Serialization strategy for lists based message specifications.
+ * Serialization strategy for JSON object based message specifications.
  *
  * @author Ville Koskela (vkoskela at groupon dot com)
  * @since 1.3.1
  */
-public class ListsSerialziationStrategy {
+public class ObjectAsJsonSerialziationStrategy implements Serializable {
 
     /**
      * Public constructor.
@@ -39,7 +39,7 @@ public class ListsSerialziationStrategy {
      * @param jsonFactory Instance of <code>JsonFactory</code>.
      * @param objectMapper Instance of <code>ObjectMapper</code>.
      */
-    public ListsSerialziationStrategy(
+    public ObjectAsJsonSerialziationStrategy(
             final StenoEncoder encoder,
             final JsonFactory jsonFactory,
             final ObjectMapper objectMapper) {
@@ -53,20 +53,14 @@ public class ListsSerialziationStrategy {
      *
      * @param event The event.
      * @param eventName The event name.
-     * @param dataKeys The message data keys.
-     * @param dataValues The message data values.
-     * @param contextKeys The message context keys.
-     * @param contextValues The message context values.
+     * @param jsonData The message data as serialized JSON.
      * @return Serialization of message as a <code>String</code>.
      * @throws Exception Serialization may throw any <code>Exception</code>.
      */
     public String serialize(
             final ILoggingEvent event,
             final String eventName,
-            final List<String> dataKeys,
-            final List<Object> dataValues,
-            final List<String> contextKeys,
-            final List<Object> contextValues)
+            final String jsonData)
             throws Exception {
 
         final StringWriter jsonWriter = new StringWriter();
@@ -76,15 +70,21 @@ public class ListsSerialziationStrategy {
         StenoSerializationHelper.startStenoWrapper(event, eventName, jsonGenerator, _objectMapper);
 
         // Write event data
-        jsonGenerator.writeObjectFieldStart("data");
-        StenoSerializationHelper.writeKeyValuePairs(dataKeys, dataValues, jsonGenerator, _objectMapper, _encoder);
-        jsonGenerator.writeEndObject(); // End 'data' field
+        jsonGenerator.writeFieldName("data");
+        if (jsonData == null) {
+            jsonGenerator.writeStartObject();
+            jsonGenerator.writeEndObject();
+        } else {
+            jsonGenerator.writeRawValue(jsonData);
+        }
+        // TODO(vkoskela): Support writing null objects as-is via configuration [ISSUE-4]
+        // e.g. "data":null -- although this is not supported by the current Steno specification
 
         // Output throwable
         StenoSerializationHelper.writeThrowable(event.getThrowableProxy(), jsonGenerator, _objectMapper);
 
         // End wrapper
-        StenoSerializationHelper.endStenoWrapper(event, eventName, contextKeys, contextValues, jsonGenerator, _objectMapper, _encoder);
+        StenoSerializationHelper.endStenoWrapper(event, eventName, jsonGenerator, _objectMapper, _encoder);
 
         return jsonWriter.toString();
     }
@@ -92,4 +92,6 @@ public class ListsSerialziationStrategy {
     private final StenoEncoder _encoder;
     private final JsonFactory _jsonFactory;
     private final ObjectMapper _objectMapper;
+
+    private static final long serialVersionUID = -9117316012859601728L;
 }

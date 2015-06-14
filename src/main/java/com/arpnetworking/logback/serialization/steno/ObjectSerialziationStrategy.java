@@ -13,12 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.arpnetworking.logback.serialization;
+package com.arpnetworking.logback.serialization.steno;
 
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import com.arpnetworking.logback.StenoEncoder;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.io.Serializable;
 
 /**
  * Serialization strategy for object based message specifications.
@@ -26,7 +28,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * @author Ville Koskela (vkoskela at groupon dot com)
  * @since 1.3.1
  */
-public class ObjectSerialziationStrategy {
+public class ObjectSerialziationStrategy implements Serializable {
 
     /**
      * Public constructor.
@@ -66,4 +68,6 @@ public class ObjectSerialziationStrategy {
 
     private final ObjectMapper _objectMapper;
     private final ObjectAsJsonSerialziationStrategy _objectAsJsonStrategy;
+
+    private static final long serialVersionUID = 5931045066524060672L;
 }

@@ -1,0 +1,1 @@
+EncodingException context={host=<HOST>, processId=<PROCESS_ID>, threadId=<THREAD_ID>} cause=java.lang.RuntimeException: Mocked Failure originalMessage=logEvent

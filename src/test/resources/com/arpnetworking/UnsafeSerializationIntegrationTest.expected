@@ -1,1 +1,3 @@
 {"time":"<TIME>","name":"test","level":"info","data":{"message":"Widget.class","widget":{"value":"w1"}},"context":{"host":"<HOST>","processId":"<PROCESS_ID>","threadId":"<THREAD_ID>","logger":"ROOT"},"id":"<ID>","version":"0"}
+{"time":"<TIME>","name":"test","level":"info","data":{"message":"WidgetWithLoggable.class","widget":{"value":"w2"}},"context":{"host":"<HOST>","processId":"<PROCESS_ID>","threadId":"<THREAD_ID>","logger":"ROOT"},"id":"<ID>","version":"0"}
+{"time":"<TIME>","name":"test","level":"info","data":{"message":"WidgetWithLoggableContainingWidget.class","widget":{"value":"w3","subWidget":{"value":"sub-w3"}}},"context":{"host":"<HOST>","processId":"<PROCESS_ID>","threadId":"<THREAD_ID>","logger":"ROOT"},"id":"<ID>","version":"0"}

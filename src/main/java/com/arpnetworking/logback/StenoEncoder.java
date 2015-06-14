@@ -16,26 +16,36 @@
 package com.arpnetworking.logback;
 
 import ch.qos.logback.classic.spi.ILoggingEvent;
+import com.arpnetworking.logback.jackson.LogValueMapSerializer;
 import com.arpnetworking.logback.jackson.RedactionFilter;
 import com.arpnetworking.logback.jackson.StenoAnnotationIntrospector;
-import com.arpnetworking.logback.serialization.ArrayOfJsonSerialziationStrategy;
-import com.arpnetworking.logback.serialization.ArraySerialziationStrategy;
-import com.arpnetworking.logback.serialization.ListsSerialziationStrategy;
-import com.arpnetworking.logback.serialization.MapOfJsonSerialziationStrategy;
-import com.arpnetworking.logback.serialization.MapSerialziationStrategy;
-import com.arpnetworking.logback.serialization.ObjectAsJsonSerialziationStrategy;
-import com.arpnetworking.logback.serialization.ObjectSerialziationStrategy;
-import com.arpnetworking.logback.serialization.StandardSerializationStrategy;
-import com.arpnetworking.logback.serialization.StenoSerializationHelper;
+import com.arpnetworking.logback.jackson.StenoBeanSerializerModifier;
+import com.arpnetworking.logback.serialization.steno.ArrayOfJsonSerialziationStrategy;
+import com.arpnetworking.logback.serialization.steno.ArraySerialziationStrategy;
+import com.arpnetworking.logback.serialization.steno.ListsSerialziationStrategy;
+import com.arpnetworking.logback.serialization.steno.MapOfJsonSerialziationStrategy;
+import com.arpnetworking.logback.serialization.steno.MapSerialziationStrategy;
+import com.arpnetworking.logback.serialization.steno.ObjectAsJsonSerialziationStrategy;
+import com.arpnetworking.logback.serialization.steno.ObjectSerialziationStrategy;
+import com.arpnetworking.logback.serialization.steno.StandardSerializationStrategy;
+import com.arpnetworking.logback.serialization.steno.StenoSerializationHelper;
+import com.arpnetworking.steno.LogReferenceOnly;
+import com.arpnetworking.steno.LogValueMapFactory;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.node.TextNode;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
 import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
 
+import java.io.Serializable;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -128,7 +138,7 @@ import java.util.Set;
  * @author Ville Koskela (vkoskela at groupon dot com)
  * @since 1.0.0
  */
-public class StenoEncoder extends BaseLoggingEncoder {
+public class StenoEncoder extends BaseLoggingEncoder implements Serializable {
 
     /**
      * Public constructor.
@@ -155,6 +165,12 @@ public class StenoEncoder extends BaseLoggingEncoder {
         _objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         _objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
         _objectMapper.setDateFormat(new ISO8601DateFormat());
+
+        // Simple module with customizations
+        final SimpleModule module = new SimpleModule();
+        module.setSerializerModifier(new StenoBeanSerializerModifier(this));
+        module.addSerializer(LogValueMapFactory.LogValueMap.class, new LogValueMapSerializer(this));
+        _objectMapper.registerModule(module);
 
         // After burner to improve data-bind performance
         _objectMapper.registerModule(new AfterburnerModule());
@@ -590,6 +606,53 @@ public class StenoEncoder extends BaseLoggingEncoder {
     }
 
     /**
+     * Inject bean identifier attributes. This controls whether the the instance identifier and class name are
+     * always injected into each serialized data or context value. The values are always injected for non-loggable
+     * types and this setting allows injection for all types. By default this is false.
+     *
+     * @since 1.9.0
+     *
+     * @param value Whether to inject the bean identifier attributes for all beans irregardless of loggability.
+     */
+    public void setInjectBeanIdentifier(final boolean value) {
+        _injectBeanIdentifier = value;
+    }
+
+    /**
+     * Whether bean identifier attributes are injected. By default this is false.
+     *
+     * @since 1.9.0
+     *
+     * @return True if and only if bean identifier attributes are injected.
+     */
+    public boolean isInjectBeanIdentifier() {
+        return _injectBeanIdentifier;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected String encodeAsString(final ILoggingEvent event, final EncodingException ee) {
+        final StringBuilder encoder = new StringBuilder()
+                .append("{\"time\":\"")
+                .append(ISO_DATE_TIME_FORMATTER.format(Instant.ofEpochMilli(event.getTimeStamp())))
+                .append("\",\"name\":\"EncodingException\",\"level\":\"warn\",\"data\":{\"originalMessage\":");
+        safeEncodeValue(encoder, event.getMessage());
+        // TODO(vkoskela): Populate stacktrace [ISSUE-12]
+        encoder.append("},\"exception\":{\"type\":\"")
+                .append(ee.getClass().getName())
+                .append("\",\"message\":");
+        safeEncodeValue(encoder, ee.getMessage());
+        encoder.append(",\"backtrace\":[],\"data\":{}},\"context\":");
+        safeEncodeValue(encoder, ee.getContext());
+        encoder.append(",\"id\":\"")
+                .append(StenoSerializationHelper.createId())
+                .append("\",\"version\":\"0\"}\n");
+        return encoder.toString();
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -775,7 +838,46 @@ public class StenoEncoder extends BaseLoggingEncoder {
             final ILoggingEvent event,
             final List<String> contextKeys,
             final List<Object> contextValues) {
-        return StenoSerializationHelper.createContext(this, event, _objectMapper, contextKeys, contextValues, true);
+        return StenoSerializationHelper.createContext(this, event, _objectMapper, contextKeys, contextValues);
+    }
+
+    /* package private */ static void safeEncodeValue(final StringBuilder encoder, final Object value) {
+        // TODO(vkoskela): Support array encoding [ISSUE-9]
+        if (value == null) {
+            encoder.append("null");
+        } else if (value instanceof Map) {
+            final Map<?, ?> valueAsMap = (Map<?, ?>) value;
+            encoder.append("{");
+            for (Map.Entry<?, ?> entry : valueAsMap.entrySet()) {
+                encoder.append("\"")
+                        .append(entry.getKey().toString())
+                        .append("\":");
+                safeEncodeValue(encoder, entry.getValue());
+                encoder.append(",");
+            }
+            if (valueAsMap.isEmpty()) {
+                encoder.append("}");
+            } else {
+                encoder.setCharAt(encoder.length() - 1, '}');
+            }
+        } else if (value instanceof List) {
+            final List<?> valueAsList = (List<?>) value;
+            encoder.append("[");
+            for (Object listValue : valueAsList) {
+                safeEncodeValue(encoder, listValue);
+                encoder.append(",");
+            }
+            if (valueAsList.isEmpty()) {
+                encoder.append("]");
+            } else {
+                encoder.setCharAt(encoder.length() - 1, ']');
+            }
+        } else if (StenoSerializationHelper.isSimpleType(value)) {
+            // TODO(vkoskela): Support natural json representation for boolean and number [ISSUE-10]
+            encoder.append(new TextNode(value.toString()).toString());
+        } else {
+            safeEncodeValue(encoder, LogReferenceOnly.of(value).toLogValue());
+        }
     }
 
     /* package private */ static <T> T firstNonNull(final T first, final T second) {
@@ -812,8 +914,12 @@ public class StenoEncoder extends BaseLoggingEncoder {
     private Set<String> _injectMdcProperties = new LinkedHashSet<>();
     private Set<Module> _jacksonModules = new LinkedHashSet<>();
     private boolean _safe = true;
+    private boolean _injectBeanIdentifier = false;
 
     private static final boolean DEFAULT_REDACT_NULL = true;
     private static final String STANDARD_LOG_EVENT_NAME = "log";
     private static final JsonFactory JSON_FACTORY = new JsonFactory();
+    private static final DateTimeFormatter ISO_DATE_TIME_FORMATTER =
+            DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ").withZone(ZoneId.of("UTC"));
+    private static final long serialVersionUID = -1803222342605243667L;
 }

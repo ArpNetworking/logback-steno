@@ -140,6 +140,7 @@ public class BaseLoggingEncoderTest {
      * Implementation of <code>BaseLoggingEncoder</code> for tests.
      */
     public static class TestLoggingEncoder extends BaseLoggingEncoder {
+
         @Override
         protected String buildArrayMessage(
             final ILoggingEvent event,
@@ -211,6 +212,11 @@ public class BaseLoggingEncoderTest {
         @Override
         protected String buildStandardMessage(final ILoggingEvent event) {
             return "standard message";
+        }
+
+        @Override
+        protected String encodeAsString(final ILoggingEvent event, final EncodingException ee) {
+            return ee.toString();
         }
     }
 }

@@ -15,6 +15,7 @@
  */
 package com.arpnetworking.logback;
 
+import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -33,8 +34,12 @@ import java.util.Map;
      * @param cause The failure encountered during encoding.
      */
     public EncodingException(final Map<String, Object> context, final Throwable cause) {
-        super("EncodingException", cause);
+        super("Encoding Exception", cause);
         _context = context;
+    }
+
+    public Map<String, Object> getContext() {
+        return Collections.unmodifiableMap(_context);
     }
 
     /**
