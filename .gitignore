@@ -7,6 +7,8 @@ target
 .classpath
 .settings
 pom.xml.versionsBackup
+pom.xml.releaseBackup
+release.properties
 jacoco.exec
 .DS_Store
 
