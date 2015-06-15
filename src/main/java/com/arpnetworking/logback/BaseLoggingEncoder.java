@@ -43,8 +43,8 @@ public abstract class BaseLoggingEncoder extends LayoutWrappingEncoder<ILoggingE
         String output;
         try {
             output = encodeAsString(event, marker, name, argumentArray);
-        } catch (final EncodingException e) {
-            output = e.toString();
+        } catch (final EncodingException ee) {
+            output = encodeAsString(event, ee);
         }
 
         outputStream.write(output.getBytes("UTF8"));
@@ -53,6 +53,17 @@ public abstract class BaseLoggingEncoder extends LayoutWrappingEncoder<ILoggingE
             outputStream.flush();
         }
     }
+
+    /**
+     * Safely encode an instance of <code>EncodingException</code>.
+     *
+     * @since 1.9.0
+     *
+     * @param event Instance of <code>ILoggingEvent</code>.
+     * @param ee Instance of <code>EncodingException</code> to encode.
+     * @return Encoded version of <code>EncodingException</code>.
+     */
+    protected abstract String encodeAsString(final ILoggingEvent event, final EncodingException ee);
 
     /**
      * Encode an array based message into a <code>String</code>.

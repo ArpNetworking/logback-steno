@@ -16,6 +16,8 @@
 package com.arpnetworking;
 
 import com.arpnetworking.logback.widgets.Widget;
+import com.arpnetworking.logback.widgets.WidgetWithLoggable;
+import com.arpnetworking.logback.widgets.WidgetWithLoggableContainingWidget;
 import org.junit.Test;
 
 /**
@@ -33,6 +35,20 @@ public class UnsafeSerializationIntegrationTest extends BaseStenoIntegrationTest
                 "Widget.class",
                 "widget",
                 new Widget("w1"));
+
+        // Loggable widget; logged as-is.
+        getStenoLogger().info(
+                "test",
+                "WidgetWithLoggable.class",
+                "widget",
+                new WidgetWithLoggable("w2"));
+
+        // Loggable widget containing widget; logged as-is and with reference respectively.
+        getStenoLogger().info(
+                "test",
+                "WidgetWithLoggableContainingWidget.class",
+                "widget",
+                new WidgetWithLoggableContainingWidget("w3"));
 
         assertOutput();
     }

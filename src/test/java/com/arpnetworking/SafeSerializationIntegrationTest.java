@@ -23,7 +23,9 @@ import com.arpnetworking.logback.widgets.WidgetWithLogValueAndJsonValue;
 import com.arpnetworking.logback.widgets.WidgetWithLogValueDisabled;
 import com.arpnetworking.logback.widgets.WidgetWithLogValueDisabledAndJsonValue;
 import com.arpnetworking.logback.widgets.WidgetWithLogValueDisabledNoFallbackAndJsonValue;
+import com.arpnetworking.logback.widgets.WidgetWithLogValueProvidingReference;
 import com.arpnetworking.logback.widgets.WidgetWithLoggable;
+import com.arpnetworking.logback.widgets.WidgetWithLoggableContainingWidget;
 import com.arpnetworking.logback.widgets.WidgetWithSerializer;
 import org.junit.Test;
 
@@ -93,6 +95,18 @@ public class SafeSerializationIntegrationTest extends BaseStenoIntegrationTest {
                 "WidgetWithLogValueDisabledNoFallbackAndJsonValue.class",
                 "widget",
                 new WidgetWithLogValueDisabledNoFallbackAndJsonValue("w10"));
+        getStenoLogger().info(
+                "test",
+                "WidgetWithLogValueProvidingReference.class",
+                "widget",
+                new WidgetWithLogValueProvidingReference("w11"));
+
+        // Loggable widget containing widget; logged as-is and with reference respectively.
+        getStenoLogger().info(
+                "test",
+                "WidgetWithLoggableContainingWidget.class",
+                "widget",
+                new WidgetWithLoggableContainingWidget("w12"));
 
         assertOutput();
     }

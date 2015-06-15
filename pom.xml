@@ -23,7 +23,7 @@
   <name>logback-steno</name>
   <description>A logback encoder for the steno format</description>
   <url>https://github.com/arpnetworking/logback-steno</url>
-  <version>1.8.1-SNAPSHOT</version>
+  <version>1.9.0-SNAPSHOT</version>
 
   <licenses>
     <license>
@@ -105,6 +105,7 @@
     <junit.version>4.12</junit.version>
     <mockito.version>1.10.19</mockito.version>
     <findbugs.annotations.version>3.0.0</findbugs.annotations.version>
+    <apache.commons.lang3.version>3.4</apache.commons.lang3.version>
     <json-schema-validator.version>2.2.6</json-schema-validator.version>
 
     <!--Plugin versions-->
@@ -197,6 +198,12 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>${apache.commons.lang3.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.jacoco</groupId>
       <artifactId>org.jacoco.agent</artifactId>
       <classifier>runtime</classifier>
@@ -240,14 +247,24 @@
           <showWeaveInfo>true</showWeaveInfo>
           <testSources>
             <scanner implementation="org.codehaus.plexus.util.DirectoryScanner">
-              <basedir>${basedir}/src/test/java/com/arpnetworking/steno/aspect</basedir>
+              <basedir>${basedir}</basedir>
+              <includes>
+                <include>
+                  src/test/java/com/arpnetworking/steno/aspect/**/*
+                </include>
+              </includes>
+            </scanner>
+          </testSources>
+          <sources>
+            <scanner implementation="org.codehaus.plexus.util.DirectoryScanner">
+              <basedir>${basedir}/src/main/aspect</basedir>
               <includes>
                 <include>
                   **/*
                 </include>
               </includes>
             </scanner>
-          </testSources>
+          </sources>
           <warn>constructorName,packageDefaultMethod,deprecation,maskedCatchBlocks,unusedImports</warn>
         </configuration>
         <dependencies>
@@ -273,6 +290,11 @@
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>${maven.surefire.plugin.version}</version>
+        <configuration>
+          <systemPropertyVariables>
+            <jacoco-agent.destfile>target/jacoco.exec</jacoco-agent.destfile>
+          </systemPropertyVariables>
+        </configuration>
       </plugin>
       <plugin>
         <artifactId>maven-javadoc-plugin</artifactId>

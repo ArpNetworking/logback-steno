@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.arpnetworking.logback.serialization;
+package com.arpnetworking.logback.serialization.steno;
 
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import com.arpnetworking.logback.StenoEncoder;
@@ -21,15 +21,16 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.io.Serializable;
 import java.io.StringWriter;
 
 /**
- * Serialization strategy for array based message specifications.
+ * Serialization strategy for JSON array based message specifications.
  *
  * @author Ville Koskela (vkoskela at groupon dot com)
  * @since 1.3.1
  */
-public class ArraySerialziationStrategy {
+public class ArrayOfJsonSerialziationStrategy implements Serializable {
 
     /**
      * Public constructor.
@@ -38,7 +39,7 @@ public class ArraySerialziationStrategy {
      * @param jsonFactory Instance of <code>JsonFactory</code>.
      * @param objectMapper Instance of <code>ObjectMapper</code>.
      */
-    public ArraySerialziationStrategy(
+    public ArrayOfJsonSerialziationStrategy(
             final StenoEncoder encoder,
             final JsonFactory jsonFactory,
             final ObjectMapper objectMapper) {
@@ -53,7 +54,7 @@ public class ArraySerialziationStrategy {
      * @param event The event.
      * @param eventName The event name.
      * @param keys The message keys.
-     * @param values The message values.
+     * @param jsonValues The message json values.
      * @return Serialization of message as a <code>String</code>.
      * @throws Exception Serialization may throw any <code>Exception</code>.
      */
@@ -61,9 +62,8 @@ public class ArraySerialziationStrategy {
             final ILoggingEvent event,
             final String eventName,
             final String[] keys,
-            final Object[] values)
+            final String[] jsonValues)
             throws Exception {
-
         final StringWriter jsonWriter = new StringWriter();
         final JsonGenerator jsonGenerator = _jsonFactory.createGenerator(jsonWriter);
 
@@ -72,21 +72,14 @@ public class ArraySerialziationStrategy {
 
         // Write event data
         jsonGenerator.writeObjectFieldStart("data");
-        final int argsLength = values == null ? 0 : values.length;
+        final int argsLength = jsonValues == null ? 0 : jsonValues.length;
         if (keys != null) {
             for (int i = 0; i < keys.length; i++) {
                 if (i >= argsLength) {
                     jsonGenerator.writeObjectField(keys[i], null);
-                } else if (StenoSerializationHelper.isSimpleType(values[i])) {
-                    jsonGenerator.writeObjectField(keys[i], values[i]);
                 } else {
                     jsonGenerator.writeFieldName(keys[i]);
-                    _objectMapper.writeValue(
-                            jsonGenerator,
-                            StenoSerializationHelper.prepareForSerialization(
-                                    _objectMapper,
-                                    _encoder,
-                                    values[i]));
+                    jsonGenerator.writeRawValue(jsonValues[i]);
                 }
             }
         }
@@ -104,4 +97,6 @@ public class ArraySerialziationStrategy {
     private final StenoEncoder _encoder;
     private final JsonFactory _jsonFactory;
     private final ObjectMapper _objectMapper;
+
+    private static final long serialVersionUID = 7573804802842216301L;
 }

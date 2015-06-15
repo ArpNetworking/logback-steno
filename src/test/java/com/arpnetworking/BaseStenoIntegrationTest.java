@@ -15,6 +15,19 @@
  */
 package com.arpnetworking;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.github.fge.jackson.JsonLoader;
+import com.github.fge.jsonschema.core.exceptions.ProcessingException;
+import com.github.fge.jsonschema.core.report.ProcessingReport;
+import com.github.fge.jsonschema.main.JsonSchemaFactory;
+import com.github.fge.jsonschema.main.JsonValidator;
+import com.google.common.base.Throwables;
+import org.junit.Assert;
+
+import java.io.IOException;
+
 /**
  * Base integration test for <code>StenoEncoder</code>.
  *
@@ -23,12 +36,68 @@ package com.arpnetworking;
 public abstract class BaseStenoIntegrationTest extends BaseIntegrationTest {
 
     @Override
+    protected void assertOutput(final String expected, final String actual) {
+        // Compare line by line
+        final String[] expectedLines = expected.split("\n");
+        final String[] actualLines = actual.split("\n");
+        if (expectedLines.length != actualLines.length) {
+            Assert.assertEquals(expected, actual);
+            Assert.fail("Number of lines differed but content was identical?");
+        }
+
+        for (int i = 0; i < expectedLines.length; ++i) {
+            final String expectedLine = expectedLines[i];
+            final String actualLine = actualLines[i];
+            final String sanitizedActualLine = sanitizeOutput(actualLine);
+
+            // Validate actual against JSON schema
+            try {
+                final ObjectNode rootNode = (ObjectNode) JsonLoader.fromString(actualLine);
+                final ObjectNode contextNode = (ObjectNode) rootNode.get("context");
+                if (contextNode != null) {
+                    contextNode.remove("logger");
+                    contextNode.remove("MDC_KEY1");
+                    contextNode.remove("MDC_KEY2");
+                }
+                final ProcessingReport report = VALIDATOR.validate(STENO_SCHEMA, rootNode);
+                Assert.assertTrue("Line: " + i + " " + report.toString(), report.isSuccess());
+            } catch (final IOException | ProcessingException e) {
+                Assert.fail("Failed with exception: " + e);
+            }
+
+            // Compare actual and expected as json nodes
+            try {
+                final JsonNode expectedJsonNode = OBJECT_MAPPER.readTree(expectedLine);
+                final JsonNode actualJsonNode = OBJECT_MAPPER.readTree(sanitizedActualLine);
+                Assert.assertEquals("Line: " + i, expectedJsonNode, actualJsonNode);
+            } catch (final IOException e) {
+                Assert.fail("Failed with exception: " + e);
+            }
+        }
+    }
+
+    @Override
     protected String sanitizeOutput(final String output) {
         return output.replaceAll("\"time\":\"[^\"]+\"", "\"time\":\"<TIME>\"")
                 .replaceAll("\"id\":\"[^\"]+\"", "\"id\":\"<ID>\"")
                 .replaceAll("\"host\":\"[^\"]+\"", "\"host\":\"<HOST>\"")
                 .replaceAll("\"processId\":\"[^\"]+\"", "\"processId\":\"<PROCESS_ID>\"")
                 .replaceAll("\"threadId\":\"[^\"]+\"", "\"threadId\":\"<THREAD_ID>\"")
-                .replaceAll("\"backtrace\":\\[[^\\]]+\\]", "\"backtrace\":[]");
+                .replaceAll("\"backtrace\":\\[[^\\]]+\\]", "\"backtrace\":[]")
+                .replaceAll("\"_id\":\"[^\"]+\"", "\"_id\":\"<ID>\"");
+    }
+
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static final JsonValidator VALIDATOR = JsonSchemaFactory.byDefault().getValidator();
+    private static final JsonNode STENO_SCHEMA;
+
+    static {
+        JsonNode jsonNode = null;
+        try {
+            jsonNode = JsonLoader.fromResource("/steno.schema.json");
+        } catch (final IOException e) {
+            Throwables.propagate(e);
+        }
+        STENO_SCHEMA = jsonNode;
     }
 }

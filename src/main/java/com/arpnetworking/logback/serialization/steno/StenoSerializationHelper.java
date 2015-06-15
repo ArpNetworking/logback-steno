@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.arpnetworking.logback.serialization;
+package com.arpnetworking.logback.serialization.steno;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.pattern.ClassOfCallerConverter;
@@ -29,16 +29,8 @@ import ch.qos.logback.classic.spi.StackTraceElementProxy;
 import com.arpnetworking.logback.HostConverter;
 import com.arpnetworking.logback.ProcessConverter;
 import com.arpnetworking.logback.StenoEncoder;
-import com.arpnetworking.logback.annotations.Loggable;
-import com.arpnetworking.steno.LogReferenceOnly;
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.ser.BeanSerializer;
-import com.fasterxml.jackson.databind.ser.DefaultSerializerProvider;
 
 import java.io.IOException;
 import java.time.Instant;
@@ -158,102 +150,6 @@ public final class StenoSerializationHelper {
     }
 
     /**
-     * Prepare an object for serialization. The following are serialized as-is:
-     * <ul>
-     *     <li>Null</li>
-     *     <li>Simple types: String, Number and Boolean</li>
-     *     <li>JsonNode</li>
-     * </ul>
-     *
-     * If safety is disabled in <code>StenoEncoder</code> then all other types are also serialized as-is. This is not
-     * recommended as serialization of many types can fail. Therefore safety is enabled by default and the instance is
-     * only serialized as-is if:
-     * <ul>
-     *     <li>Custom serializer is found (e.g. not Jackson's BeanSerializer)</li>
-     *     <li>Instance's class is annotated with @Loggable</li>
-     *     <li>Instance's class hierarchy has a usable @LogValue or @JsonValue (*)</li>
-     * </ul>
-     *
-     * Otherwise the instance is wrapped in <code>LogReferenceOnly</code> and returned.
-     *
-     * (*) The rules for selecting a @LogValue or @JsonValue annotated method are described in detail in the @LogValue
-     * implementation and implemented in <code>StenoAnnotationIntrospector</code>.
-     *
-     * @since 1.8.0
-     *
-     * @param objectMapper <code>ObjectMapper</code> instance.
-     * @param encoder Instance of <code>StenoEncoder</code>.
-     * @param o <code>Object</code> instance to prepare.
-     * @return Prepared <code>Object</code> instance to serialize.
-     */
-    public static Object prepareForSerialization(
-            final ObjectMapper objectMapper,
-            final StenoEncoder encoder,
-            final Object o) {
-        if (o == null) {
-            // Null can be serialized as-is
-            return o;
-        } else if (StenoSerializationHelper.isSimpleType(o)) {
-            // Simple types, String, Number and Boolean, can be serialized as-is
-            return o;
-        } else if (o instanceof JsonNode) {
-            // Any JsonNode can be serialized as-is
-            return o;
-        } else if (!encoder.isSafe()) {
-            // In un-safe mode do no further analysis
-            return o;
-        } else {
-            // If the class has a custom serializer then use it; this covers:
-            // - Classes annotated with @JsonSerializer
-            // - Serializer for the type registered through a module
-            // - Json value serializer declared with @JsonValue
-            // - Json value serializer declared with @LogValue
-            // NOTE: See StenoAnnotationIntrospector and @LogValue for details regarding the resolution rules
-            final SerializerProvider provider = new DefaultSerializerProvider.Impl().createInstance(
-                    objectMapper.getSerializationConfig(),
-                    objectMapper.getSerializerFactory());
-            boolean isDefaultSerializer;
-            try {
-                final JsonSerializer<?> serializer = provider.findValueSerializer(o.getClass());
-                isDefaultSerializer = serializer instanceof BeanSerializer;
-            } catch (final JsonMappingException e) {
-                // If determining the serializer fails we just pretend the serializer is the default
-                // serializer which may resort to reference only serialization.
-                isDefaultSerializer = true;
-            }
-            if (!isDefaultSerializer) {
-                return o;
-            }
-
-            // If the class is annotated with Loggable then serialize it as-is
-            Boolean isLoggable = LOGGABLE_CLASSES.get(o.getClass());
-            if (isLoggable == null) {
-                isLoggable = o.getClass().getAnnotation(Loggable.class) != null;
-                LOGGABLE_CLASSES.put(o.getClass(), isLoggable);
-            }
-            if (isLoggable) {
-                return o;
-            }
-
-            // Alternative way to determine if @LogValue and/or @JsonValue apply:
-            /*
-            final ClassIntrospector classIntrospector = objectMapper.getSerializationConfig().getClassIntrospector();
-            final BeanDescription beanDescription = classIntrospector.forSerialization(
-                    objectMapper.getSerializationConfig(),
-                    SimpleType.construct(o.getClass()),
-                    objectMapper.getSerializationConfig());
-            if (beanDescription.findJsonValueMethod() != null) {
-                return o;
-            }
-            */
-        }
-
-        // The object's type is neither naturally safe to serialize nor does it have explicit serialization or loggability
-        // associated with it. Therefore, log the value as a reference only.
-        return LogReferenceOnly.of(o);
-    }
-
-    /**
      * Write specified key-value pairs into the current block.
      *
      * @since 1.7.0
@@ -285,10 +181,7 @@ public final class StenoSerializationHelper {
                         jsonGenerator.writeFieldName(key);
                         objectMapper.writeValue(
                                 jsonGenerator,
-                                StenoSerializationHelper.prepareForSerialization(
-                                        objectMapper,
-                                        encoder,
-                                        value));
+                                value);
                     }
                 }
             }
@@ -368,37 +261,14 @@ public final class StenoSerializationHelper {
      * @param contextKeys The additional user provided context keys.
      * @param contextValues The additional user provided context values matching the keys.
      * @return <code>Map</code> with event context.
-     * @throws IOException If writing creating context fails.
      */
     public static Map<String, Object> createContext(
             final StenoEncoder encoder,
             final ILoggingEvent event,
             final ObjectMapper objectMapper,
             final List<String> contextKeys,
-            final List<Object> contextValues)
-            throws IOException {
-        return createContext(encoder, event, objectMapper, contextKeys, contextValues, false);
-    }
+            final List<Object> contextValues) {
 
-    /**
-     * Create a context based on the <code>StenoEncoder</code> configuration.
-     *
-     * @since 1.7.0
-     * @param encoder The <code>StenoEncoder</code> instance.
-     * @param event The <code>ILoggingEvent</code> instance.
-     * @param objectMapper <code>ObjectMapper</code> instance.
-     * @param contextKeys The additional user provided context keys.
-     * @param contextValues The additional user provided context values matching the keys.
-     * @param forceSafe If true encode user provided values as Strings regardless of encoder safe setting.
-     * @return <code>Map</code> with event context.
-     */
-    public static Map<String, Object> createContext(
-            final StenoEncoder encoder,
-            final ILoggingEvent event,
-            final ObjectMapper objectMapper,
-            final List<String> contextKeys,
-            final List<Object> contextValues,
-            final boolean forceSafe) {
         final Map<String, Object> context = new LinkedHashMap<>();
         if (encoder.isInjectContextHost()) {
             context.put("host", StenoSerializationHelper.HOST_CONVERTER.convert(event));
@@ -439,34 +309,7 @@ public final class StenoSerializationHelper {
             for (int i = 0; i < contextKeys.size(); ++i) {
                 final String key = contextKeys.get(i);
                 final Object value = i < contextValuesLength ? contextValues.get(i) : null;
-                if (StenoSerializationHelper.isSimpleType(value)) {
-                    // Don't mess with simple types
-                    context.put(key, value);
-                } else if (!forceSafe) {
-                    // Prepare complex types when not forcing safety. This is the only code that should throw
-                    // and it is only invoked when forceSafe is false (and thus allowed to throw).
-                    context.put(
-                            key,
-                            StenoSerializationHelper.prepareForSerialization(
-                                    objectMapper,
-                                    encoder,
-                                    value));
-                } else {
-                    // For this method to be "safe" we don't trust serialization. This includes the
-                    // toString implementation on the value. Where classes implement toString using
-                    // toLogValue it is especially possible that if toLogValue causes encoding to fail
-                    // that toString will also fail.
-                    //
-                    // Thus, invoking toString on a complex value may suppress the message about
-                    // encoding failure and disable the encoder. That result can be disastrous with
-                    // asynchronous encoders as the encoder thread is responsible for draining the
-                    // event queue potentially permanently blocking all threads that log.
-                    //
-                    // Consequently, when forcing safety complex objects are wrapped in a LogReferenceOnly
-                    // instance when executing with safe equal to true. This outputs only the instance id
-                    // and class.
-                    context.put(key, LogReferenceOnly.of(value).toString());
-                }
+                context.put(key, value);
             }
         }
         return context;

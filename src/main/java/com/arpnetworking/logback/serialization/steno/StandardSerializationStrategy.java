@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.arpnetworking.logback.serialization;
+package com.arpnetworking.logback.serialization.steno;
 
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import com.arpnetworking.logback.StenoEncoder;
@@ -21,16 +21,16 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.io.Serializable;
 import java.io.StringWriter;
-import java.util.Map;
 
 /**
- * Serialization strategy for map based message specifications.
+ * Serialization strategy for standard message specification.
  *
  * @author Ville Koskela (vkoskela at groupon dot com)
  * @since 1.3.1
  */
-public class MapSerialziationStrategy {
+public class StandardSerializationStrategy implements Serializable {
 
     /**
      * Public constructor.
@@ -39,7 +39,7 @@ public class MapSerialziationStrategy {
      * @param jsonFactory Instance of <code>JsonFactory</code>.
      * @param objectMapper Instance of <code>ObjectMapper</code>.
      */
-    public MapSerialziationStrategy(
+    public StandardSerializationStrategy(
             final StenoEncoder encoder,
             final JsonFactory jsonFactory,
             final ObjectMapper objectMapper) {
@@ -53,15 +53,13 @@ public class MapSerialziationStrategy {
      *
      * @param event The event.
      * @param eventName The event name.
-     * @param map The message key to value pairs.
      * @return Serialization of message as a <code>String</code>.
      * @throws Exception Serialization may throw any <code>Exception</code>.
      */
     public String serialize(
-            final ILoggingEvent event,
-            final String eventName,
-            final Map<String, ? extends Object> map)
-            throws Exception {
+        final ILoggingEvent event,
+        final String eventName) throws Exception {
+
         final StringWriter jsonWriter = new StringWriter();
         final JsonGenerator jsonGenerator = _jsonFactory.createGenerator(jsonWriter);
 
@@ -70,21 +68,7 @@ public class MapSerialziationStrategy {
 
         // Write event data
         jsonGenerator.writeObjectFieldStart("data");
-        if (map != null) {
-            for (final Map.Entry<String, ? extends Object> entry : map.entrySet()) {
-                if (StenoSerializationHelper.isSimpleType(entry.getValue())) {
-                    jsonGenerator.writeObjectField(entry.getKey(), entry.getValue());
-                } else {
-                    jsonGenerator.writeFieldName(entry.getKey());
-                    _objectMapper.writeValue(
-                            jsonGenerator,
-                            StenoSerializationHelper.prepareForSerialization(
-                                    _objectMapper,
-                                    _encoder,
-                                    entry.getValue()));
-                }
-            }
-        }
+        jsonGenerator.writeObjectField("message", event.getFormattedMessage());
         jsonGenerator.writeEndObject(); // End 'data' field
 
         // Output throwable
@@ -99,4 +83,6 @@ public class MapSerialziationStrategy {
     private final StenoEncoder _encoder;
     private final JsonFactory _jsonFactory;
     private final ObjectMapper _objectMapper;
+
+    private static final long serialVersionUID = 6173546671328187044L;
 }

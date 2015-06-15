@@ -15,9 +15,11 @@
  */
 package com.arpnetworking.steno;
 
-import java.util.Collections;
-import java.util.HashMap;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Factory for creating <code>ImmutableMap</code> instances from key-value
@@ -26,26 +28,42 @@ import java.util.Map;
  * keys or values and adds keys "_nullKeys" and/or "_nullValues" with value
  * true. If no null keys/values are found then no additional data is inserted.
  *
- * @since 1.7.0
- *
  * @author Ville Koskela (vkoskela at groupon dot com)
+ * @since 1.7.0
  */
 public final class LogValueMapFactory {
 
     /**
-     * Create a <code>Builder</code> for a null-safe immutable map.
+     * Create a <code>Builder</code> for a null-safe immutable map. It is strongly recommended
+     * that you use the static factory accepting the target instance unless that is not applicable.
      *
      * @since 1.7.0
+     *
      * @return New <code>Builder</code> instance.
      */
     public static Builder builder() {
-        return new Builder();
+        return new Builder(Optional.empty());
     }
 
     /**
-     * Construct an immutable map from one key-value pair.
+     * Create a <code>Builder</code> for a null-safe immutable map with a reference to the target
+     * instance being logged. This permits injection of bean identifier attributes if so configured.
+     *
+     * @since 1.9.0
+     *
+     * @param o Instance of the <code>Object</code> being logged.
+     * @return New <code>Builder</code> instance.
+     */
+    public static Builder builder(final Object o) {
+        return new Builder(Optional.ofNullable(o));
+    }
+
+    /**
+     * Construct an immutable map from one key-value pair. Although this is more convenient than the
+     * static factory methods this method does not capture the instance being logged.
      *
      * @since 1.7.0
+     *
      * @param k1 Key one.
      * @param v1 Value one.
      * @return New immutable map.
@@ -57,9 +75,11 @@ public final class LogValueMapFactory {
     }
 
     /**
-     * Construct an immutable map from one key-value pair.
+     * Construct an immutable map from one key-value pair. Although this is more convenient than the
+     * static factory methods this method does not capture the instance being logged.
      *
      * @since 1.7.0
+     *
      * @param k1 Key one.
      * @param v1 Value one.
      * @param k2 Key two.
@@ -76,9 +96,11 @@ public final class LogValueMapFactory {
     }
 
     /**
-     * Construct an immutable map from one key-value pair.
+     * Construct an immutable map from one key-value pair. Although this is more convenient than the
+     * static factory methods this method does not capture the instance being logged.
      *
      * @since 1.7.0
+     *
      * @param k1 Key one.
      * @param v1 Value one.
      * @param k2 Key two.
@@ -99,9 +121,11 @@ public final class LogValueMapFactory {
     }
 
     /**
-     * Construct an immutable map from one key-value pair.
+     * Construct an immutable map from one key-value pair. Although this is more convenient than the
+     * static factory methods this method does not capture the instance being logged.
      *
      * @since 1.7.0
+     *
      * @param k1 Key one.
      * @param v1 Value one.
      * @param k2 Key two.
@@ -128,9 +152,11 @@ public final class LogValueMapFactory {
     // CHECKSTYLE.ON: ParameterNumber
 
     /**
-     * Construct an immutable map from one key-value pair.
+     * Construct an immutable map from one key-value pair. Although this is more convenient than the
+     * static factory methods this method does not capture the instance being logged.
      *
      * @since 1.7.0
+     *
      * @param k1 Key one.
      * @param v1 Value one.
      * @param k2 Key two.
@@ -163,6 +189,36 @@ public final class LogValueMapFactory {
     private LogValueMapFactory() {}
 
     /**
+     * Custom <code>Map</code> implementation for custom serialization.
+     *
+     * @since 1.9.0
+     */
+    public static final class LogValueMap extends LinkedHashMap<String, Object> {
+
+        /**
+         * Public constructor.
+         *
+         * @param target The instance being represented for logging.
+         */
+        public LogValueMap(final Optional<Object> target) {
+            _target = target;
+        }
+
+        public Optional<Object> getTarget() {
+            return _target;
+        }
+
+        private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
+            in.defaultReadObject();
+            _target = Optional.empty();
+        }
+
+        private transient Optional<Object> _target = Optional.empty();
+
+        private static final long serialVersionUID = -2817278417438085513L;
+    }
+
+    /**
      * Builder for null-safe log value immutable map.
      *
      * @since 1.7.0
@@ -170,9 +226,21 @@ public final class LogValueMapFactory {
     public static final class Builder {
 
         /**
+         * Public constructor. This permits injection of bean identifier attributes if so configured.
+         *
+         * @since 1.9.0
+         *
+         * @param target The target instance to build a log value map for.
+         */
+        private Builder(final Optional<Object> target) {
+            _map = new LogValueMap(target);
+        }
+
+        /**
          * Construct the map for the log value.
          *
          * @since 1.7.0
+         *
          * @return New map for the log value.
          */
         public Map<String, Object> build() {
@@ -182,7 +250,7 @@ public final class LogValueMapFactory {
             if (_nullValues) {
                 put("_nullValues", true);
             }
-            return Collections.unmodifiableMap(_map);
+            return _map;
         }
 
         /**
@@ -193,6 +261,7 @@ public final class LogValueMapFactory {
          * keys or values respectively.
          *
          * @since 1.7.0
+         *
          * @param key The entry key.
          * @param value The entry value.
          * @return This <code>Builder</code> instance.
@@ -210,7 +279,7 @@ public final class LogValueMapFactory {
             return this;
         }
 
-        private final Map<String, Object> _map = new HashMap<>();
+        private final Map<String, Object> _map;
         private boolean _nullKeys = false;
         private boolean _nullValues = false;
     }

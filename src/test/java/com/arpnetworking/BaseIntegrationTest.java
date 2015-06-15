@@ -74,19 +74,25 @@ public abstract class BaseIntegrationTest {
                 this.getClass(),
                 this.getClass().getSimpleName() + ".expected");
         final File actualFile = new File("target/integration-test-logs/" + this.getClass().getSimpleName() + ".log");
+        final String actualOutput;
         final String redactedOutput;
         try {
             // CHECKSTYLE.OFF: IllegalInstantiation - This is valid case.
-            redactedOutput = sanitizeOutput(new String(Files.readAllBytes(actualFile.toPath()), Charsets.UTF_8));
+            actualOutput = new String(Files.readAllBytes(actualFile.toPath()), Charsets.UTF_8);
             // CHECKSTYLE.ON: IllegalInstantiation
         } catch (final IOException e) {
             throw Throwables.propagate(e);
         }
         try {
-            Assert.assertEquals(Resources.toString(expectedResource, StandardCharsets.UTF_8), redactedOutput);
+            assertOutput(Resources.toString(expectedResource, StandardCharsets.UTF_8), actualOutput);
         } catch (final IOException e) {
             Assert.fail("Failed with exception: " + e);
         }
+    }
+
+    protected void assertOutput(final String expected, final String actual) {
+        final String redacted = sanitizeOutput(actual);
+        Assert.assertEquals(expected, redacted);
     }
 
     protected String sanitizeOutput(final String output) {

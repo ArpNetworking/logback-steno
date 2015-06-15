@@ -66,10 +66,11 @@ Instances of classes declaring a method to create a serializable representation 
 using a specific serializer with @JsonSerialize are logged in that representation. Also, instances mapping to a custom
 serializer via a registered Jackson module are also logged in the representation provided by that serializer.
 
-Finally, if the type is annotated with @Loggable it is also serialized as-is by Jackson.
-
-All other types are serialized as a the instance identifier and class name. It is possible to override this behavior and
+Next, if the type is annotated with @Loggable it is also serialized as-is by Jackson. Finally, all other types are
+serialized as a the instance identifier and class name. It is possible to override this behavior and
 send all values to Jackson for natural serialization by setting the __safe__ property of the encoder to false.
+
+These rules are applied recursively to any objects encountered during serialization.
 
 
 Encoder Configuration
@@ -123,6 +124,7 @@ The StenoEncoder encoder supports several options:
 * InjectContextLine - Add the calling line to the context block. The default is false. (2)
 * InjectContextMdc - Add the specified key pairs from MDC into the context. The default is none. Injected MDC keys
 override any context keys pairs injected by the Steno encoder. (1)
+* InjectBeanIdentifier - Add the "_id" and "_class" attributes to all objects serialized with Jackson's BeanSerializer. In safe mode these are objects annotated with @Loggable. Also any classes with @LogValue or @JsonValue returning a LogValueValueMap with a reference to the instance being logged receive these identifying attributes. The default is false. 
 * CompressLoggerName - Compress the dotted logger name replacing each segment except the last with only its first letter. The default is false.
 * JacksonModule - Add the specified Jackson module instance to the ObjectMapper configuration.
 * Safe - Setting to false causes all types to be deferred to Jackson for serialization. Otherwise, only types that are determined to be safe are serialized as-is; see Class Preparation for details. The default is true.
@@ -207,7 +209,7 @@ Example appender configuration in XML:
 </configuration>
 ```
 
-The KeyValueEncoder encoder supports several options:
+The KeyValueEncoder encoder supports a smaller set of options:
 
 * LogEventName - Set the default event name. The default is "log".
 
@@ -313,7 +315,7 @@ Output:
 The library contains an Aspect for weaving additional context into all __log()__ invocations of the Steno LogBuilder.  The
 additional context includes file, class and line.  Since the additional context is woven at compile time this
 enables efficient injection of this context information versus the inefficient stack trace capture used by default in Logback.
-Finally, the file, class and line context injection should not be enabled in the encoder configuration if using context
+Finally, the file, class and line context injection should __not__ be enabled in the encoder configuration if using context
 weaving.
 
 #### Maven
@@ -637,13 +639,14 @@ Logging Non-Pojo/Bean Classes
 -----------------------------
 
 To log a representation of an object other than what is defined by its fields/accessors you can annotate a method with
-@LogValue to return an alternate representation.  Typically, this is a String, but it can be any object which is then
-serialized in place of the original.
+@LogValue to return an alternate representation.  Typically, this is built with LogValueMapFactory but it can be any 
+object which is serialized in place of the original.  If you wish to enable bean identifier injection you should provide
+the LogValueMapFactory with the object being logged through the appropriate __builder__ static factory method. 
 
-This is the same functionality as provided by @JsonValue which is honored in the absence of @LogValue.  However, the
-separate @LogValue annotation permits an alternate logged form to the serialized form.  You may also disable both
-@LogValue and @LogJson and revert an instance to bean serialization by including both annotations and setting its value
-and fallback both to false.
+The @LogValue annotation provides the same functionality as @JsonValue which is honored in the absence of @LogValue.  
+However, the separate @LogValue annotation permits an alternate logged form to the serialized form.  You may also 
+disable both @LogValue and @LogJson and revert an instance to bean serialization by including both annotations and 
+setting the value and fallback attributes both to false.
 
 The following table summarizes the configuration options:
 
@@ -681,7 +684,7 @@ To use the local version in your project you must first install it locally:
  
     logback-steno> mvn install
 
-You can determine the version of the local build from the pom file.  Using the local version is intended only for testing or development.
+You can determine the version of the local build from the pom.xml file.  Using the local version is intended only for testing or development.
 
 You may also need to add the local repository to your build in order to pick-up the local version:
 

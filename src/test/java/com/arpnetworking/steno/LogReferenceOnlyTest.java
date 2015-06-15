@@ -34,9 +34,9 @@ public class LogReferenceOnlyTest {
 
         @SuppressWarnings("unchecked")
         final Map<String, Object> logValue = (Map<String, Object>) valueReference.toLogValue();
-        Assert.assertTrue("Missing id", logValue.containsKey("id"));
-        Assert.assertTrue("Missing class", logValue.containsKey("class"));
-        Assert.assertEquals("Wrong class", String.class.getName(), logValue.get("class"));
+        Assert.assertTrue("Missing id", logValue.containsKey("_id"));
+        Assert.assertTrue("Missing class", logValue.containsKey("_class"));
+        Assert.assertEquals("Wrong class", String.class.getName(), logValue.get("_class"));
 
         final String asString = valueReference.toString();
         Assert.assertNotNull(asString);

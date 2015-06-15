@@ -25,6 +25,8 @@ import com.arpnetworking.logback.annotations.LogRedact;
 import com.arpnetworking.logback.annotations.Loggable;
 import com.arpnetworking.logback.widgets.Widget;
 import com.arpnetworking.logback.widgets.WidgetWithLogValue;
+import com.arpnetworking.logback.widgets.WidgetWithLogValueProvidingReference;
+import com.arpnetworking.logback.widgets.WidgetWithLoggable;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -52,18 +54,16 @@ import org.slf4j.MDC;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.Writer;
-import java.lang.management.ManagementFactory;
-import java.net.InetAddress;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.time.DayOfWeek;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Tests for <code>StenoEncoder</code>.
@@ -266,8 +266,8 @@ public class StenoEncoderTest {
         _encoder.init(_baos);
         _encoder.doEncode(event);
         final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
-        Assert.assertTrue(logOutput, logOutput.matches(
-                "^EncodingException context=\\{[^}]+\\} cause=java.io.IOException: Mock Failure$"));
+        assertOutput("StenoEncoderTest.testEncodeArrayThrowsIOException.json", logOutput);
+        assertMatchesJsonSchema(logOutput);
     }
 
     @Test
@@ -343,8 +343,8 @@ public class StenoEncoderTest {
         _encoder.init(_baos);
         _encoder.doEncode(event);
         final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
-        Assert.assertTrue(logOutput, logOutput.matches(
-                "^EncodingException context=\\{[^}]+\\} cause=java.io.IOException: Mock Failure$"));
+        assertOutput("StenoEncoderTest.testEncodeArrayJsonThrowsIOException.json", logOutput);
+        assertMatchesJsonSchema(logOutput);
     }
 
     @Test
@@ -445,8 +445,8 @@ public class StenoEncoderTest {
         _encoder.init(_baos);
         _encoder.doEncode(event);
         final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
-        Assert.assertTrue(logOutput, logOutput.matches(
-                "^EncodingException context=\\{[^}]+\\} cause=java.io.IOException: Mock Failure$"));
+        assertOutput("StenoEncoderTest.testEncodeMapThrowsIOException.json", logOutput);
+        assertMatchesJsonSchema(logOutput);
     }
 
     @Test
@@ -527,8 +527,8 @@ public class StenoEncoderTest {
         _encoder.init(_baos);
         _encoder.doEncode(event);
         final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
-        Assert.assertTrue(logOutput, logOutput.matches(
-                "^EncodingException context=\\{[^}]+\\} cause=java.io.IOException: Mock Failure$"));
+        assertOutput("StenoEncoderTest.testEncodeMapJsonThrowsIOException.json", logOutput);
+        assertMatchesJsonSchema(logOutput);
     }
 
     @Test
@@ -545,6 +545,143 @@ public class StenoEncoderTest {
         _encoder.doEncode(event);
         final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
         assertOutput("StenoEncoderTest.testEncodeObject.json", logOutput);
+        assertMatchesJsonSchema(logOutput);
+    }
+
+    @Test
+    public void testEncodeObjectUnsafe() throws Exception {
+        final LoggingEvent event = new LoggingEvent();
+        event.setLevel(Level.INFO);
+        event.setMarker(StenoMarker.OBJECT_MARKER);
+        event.setMessage("logEvent");
+        event.setTimeStamp(0);
+        event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
+        final Object[] argArray = new Object[1];
+        argArray[0] = new Widget("foo");
+        event.setArgumentArray(argArray);
+        Assert.assertTrue(_encoder.isSafe());
+        _encoder.setSafe(false);
+        Assert.assertFalse(_encoder.isSafe());
+        _encoder.doEncode(event);
+        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        assertOutput("StenoEncoderTest.testEncodeObjectUnsafe.json", logOutput);
+        assertMatchesJsonSchema(logOutput);
+    }
+
+    @Test
+    public void testEncodeObjectWithInjectBeanIdentity() throws Exception {
+        final LoggingEvent event = new LoggingEvent();
+        event.setLevel(Level.INFO);
+        event.setMarker(StenoMarker.OBJECT_MARKER);
+        event.setMessage("logEvent");
+        event.setTimeStamp(0);
+        event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
+        final Object[] argArray = new Object[1];
+        argArray[0] = new Widget("foo");
+        event.setArgumentArray(argArray);
+        Assert.assertFalse(_encoder.isInjectBeanIdentifier());
+        _encoder.setInjectBeanIdentifier(true);
+        Assert.assertTrue(_encoder.isInjectBeanIdentifier());
+        _encoder.doEncode(event);
+        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        assertOutput("StenoEncoderTest.testEncodeObjectWithInjectBeanIdentity.json", logOutput);
+        assertMatchesJsonSchema(logOutput);
+    }
+
+    @Test
+    public void testEncodeObjectWithInjectBeanIdentityUnsafe() throws Exception {
+        final LoggingEvent event = new LoggingEvent();
+        event.setLevel(Level.INFO);
+        event.setMarker(StenoMarker.OBJECT_MARKER);
+        event.setMessage("logEvent");
+        event.setTimeStamp(0);
+        event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
+        final Object[] argArray = new Object[1];
+        argArray[0] = new Widget("foo");
+        event.setArgumentArray(argArray);
+        Assert.assertFalse(_encoder.isInjectBeanIdentifier());
+        _encoder.setInjectBeanIdentifier(true);
+        Assert.assertTrue(_encoder.isInjectBeanIdentifier());
+        Assert.assertTrue(_encoder.isSafe());
+        _encoder.setSafe(false);
+        Assert.assertFalse(_encoder.isSafe());
+        _encoder.doEncode(event);
+        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        assertOutput("StenoEncoderTest.testEncodeObjectWithInjectBeanIdentityUnsafe.json", logOutput);
+        assertMatchesJsonSchema(logOutput);
+    }
+
+    @Test
+    public void testEncodeLoggableObject() throws Exception {
+        final LoggingEvent event = new LoggingEvent();
+        event.setLevel(Level.INFO);
+        event.setMarker(StenoMarker.OBJECT_MARKER);
+        event.setMessage("logEvent");
+        event.setTimeStamp(0);
+        event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
+        final Object[] argArray = new Object[1];
+        argArray[0] = new WidgetWithLoggable("foo");
+        event.setArgumentArray(argArray);
+        _encoder.doEncode(event);
+        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        assertOutput("StenoEncoderTest.testEncodeLoggableObject.json", logOutput);
+        assertMatchesJsonSchema(logOutput);
+    }
+
+    @Test
+    public void testEncodeLoggableObjectWithInjectBeanIdentity() throws Exception {
+        final LoggingEvent event = new LoggingEvent();
+        event.setLevel(Level.INFO);
+        event.setMarker(StenoMarker.OBJECT_MARKER);
+        event.setMessage("logEvent");
+        event.setTimeStamp(0);
+        event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
+        final Object[] argArray = new Object[1];
+        argArray[0] = new WidgetWithLoggable("foo");
+        event.setArgumentArray(argArray);
+        Assert.assertFalse(_encoder.isInjectBeanIdentifier());
+        _encoder.setInjectBeanIdentifier(true);
+        Assert.assertTrue(_encoder.isInjectBeanIdentifier());
+        _encoder.doEncode(event);
+        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        assertOutput("StenoEncoderTest.testEncodeLoggableObjectWithInjectBeanIdentity.json", logOutput);
+        assertMatchesJsonSchema(logOutput);
+    }
+
+    @Test
+    public void testEncodeLogValueObject() throws Exception {
+        final LoggingEvent event = new LoggingEvent();
+        event.setLevel(Level.INFO);
+        event.setMarker(StenoMarker.OBJECT_MARKER);
+        event.setMessage("logEvent");
+        event.setTimeStamp(0);
+        event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
+        final Object[] argArray = new Object[1];
+        argArray[0] = new WidgetWithLogValue("foo");
+        event.setArgumentArray(argArray);
+        _encoder.doEncode(event);
+        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        assertOutput("StenoEncoderTest.testEncodeLogValueObject.json", logOutput);
+        assertMatchesJsonSchema(logOutput);
+    }
+
+    @Test
+    public void testEncodeLogValueObjectWithInjectBeanIdentity() throws Exception {
+        final LoggingEvent event = new LoggingEvent();
+        event.setLevel(Level.INFO);
+        event.setMarker(StenoMarker.OBJECT_MARKER);
+        event.setMessage("logEvent");
+        event.setTimeStamp(0);
+        event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
+        final Object[] argArray = new Object[1];
+        argArray[0] = new WidgetWithLogValueProvidingReference("foo");
+        event.setArgumentArray(argArray);
+        Assert.assertFalse(_encoder.isInjectBeanIdentifier());
+        _encoder.setInjectBeanIdentifier(true);
+        Assert.assertTrue(_encoder.isInjectBeanIdentifier());
+        _encoder.doEncode(event);
+        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        assertOutput("StenoEncoderTest.testEncodeLogValueObjectWithInjectBeanIdentity.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
 
@@ -566,8 +703,8 @@ public class StenoEncoderTest {
         _encoder.init(_baos);
         _encoder.doEncode(event);
         final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
-        Assert.assertTrue(logOutput, logOutput.matches(
-                "^EncodingException context=\\{[^}]+\\} cause=com.fasterxml.jackson.core.JsonGenerationException: Mock Failure$"));
+        assertOutput("StenoEncoderTest.testEncodeObjectThrowsIOException.json", logOutput);
+        assertMatchesJsonSchema(logOutput);
     }
 
     @Test
@@ -622,8 +759,8 @@ public class StenoEncoderTest {
         _encoder.init(_baos);
         _encoder.doEncode(event);
         final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
-        Assert.assertTrue(logOutput, logOutput.matches(
-                "^EncodingException context=\\{[^}]+\\} cause=java.io.IOException: Mock Failure$"));
+        assertOutput("StenoEncoderTest.testEncodeObjectJsonThrowsIOException.json", logOutput);
+        assertMatchesJsonSchema(logOutput);
     }
 
     @Test
@@ -684,8 +821,8 @@ public class StenoEncoderTest {
         _encoder.init(_baos);
         _encoder.doEncode(event);
         final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
-        Assert.assertTrue(logOutput, logOutput.matches(
-                "^EncodingException context=\\{[^}]+\\} cause=java.io.IOException: Mock Failure$"));
+        assertOutput("StenoEncoderTest.testEncodeListsThrowsIOException.json", logOutput);
+        assertMatchesJsonSchema(logOutput);
     }
 
     @Test
@@ -824,8 +961,8 @@ public class StenoEncoderTest {
         _encoder.init(_baos);
         _encoder.doEncode(event);
         final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
-        Assert.assertTrue(logOutput, logOutput.matches(
-                "^EncodingException context=\\{[^}]+\\} cause=java.io.IOException: Mock Failure$"));
+        assertOutput("StenoEncoderTest.testEncodeStandardEventThrowsIOException.json", logOutput);
+        assertMatchesJsonSchema(logOutput);
     }
 
     @Test
@@ -1038,6 +1175,44 @@ public class StenoEncoderTest {
     }
 
     @Test
+    public void testEncodeEnumeration() throws Exception {
+        final LoggingEvent event = new LoggingEvent();
+        event.setLevel(Level.INFO);
+        event.setMarker(StenoMarker.ARRAY_MARKER);
+        event.setMessage("logEvent");
+        event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
+        event.setTimeStamp(0);
+        final Object[] argArray = new Object[2];
+        argArray[0] = new String[]{"enum"};
+        argArray[1] = new Object[]{DayOfWeek.FRIDAY};
+        event.setArgumentArray(argArray);
+        _encoder.doEncode(event);
+        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        assertOutput("StenoEncoderTest.testEncodeEnumeration.json", logOutput);
+        assertMatchesJsonSchema(logOutput);
+    }
+
+    @Test
+    public void testEncodeJsonNode() throws Exception {
+        final ObjectNode jsonNode = OBJECT_MAPPER.createObjectNode();
+        jsonNode.put("foo", "bar");
+        final LoggingEvent event = new LoggingEvent();
+        event.setLevel(Level.INFO);
+        event.setMarker(StenoMarker.ARRAY_MARKER);
+        event.setMessage("logEvent");
+        event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
+        event.setTimeStamp(0);
+        final Object[] argArray = new Object[2];
+        argArray[0] = new String[]{"jsonNode"};
+        argArray[1] = new Object[]{jsonNode};
+        event.setArgumentArray(argArray);
+        _encoder.doEncode(event);
+        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        assertOutput("StenoEncoderTest.testEncodeJsonNode.json", logOutput);
+        assertMatchesJsonSchema(logOutput);
+    }
+
+    @Test
     public void testFirstNonNull() {
         final String a = "a";
         final String b = "b";
@@ -1073,8 +1248,8 @@ public class StenoEncoderTest {
         _encoder.setInjectContextThread(false);
         _encoder.doEncode(event);
         final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
-        Assert.assertTrue(logOutput, logOutput.matches(
-                "^EncodingException context=\\{\\} cause=java.lang.RuntimeException: Mock Failure$"));
+        assertOutput("StenoEncoderTest.testSafeContextWithSuppressDefaultContext.json", logOutput);
+        assertMatchesJsonSchema(logOutput);
     }
 
     @Test
@@ -1101,12 +1276,12 @@ public class StenoEncoderTest {
         _encoder.addInjectContextMdc("MDC_KEY");
         _encoder.doEncode(event);
         final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
-        Assert.assertTrue(logOutput, logOutput.matches(
-                "^EncodingException context=\\{MDC_KEY=MDC_VALUE\\} cause=java.lang.RuntimeException: Mock Failure$"));
+        assertOutput("StenoEncoderTest.testSafeContextWithMdcProperties.json", logOutput);
+        assertMatchesJsonSchema(logOutput);
     }
 
     @Test
-    public void testSafeContextWithIncludeOptionalContext() throws Exception {
+     public void testSafeContextWithIncludeOptionalContext() throws Exception {
         final Logger logger = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(StenoEncoderTest.class);
         final Object[] argArray = new Object[1];
         argArray[0] = "bar";
@@ -1137,10 +1312,8 @@ public class StenoEncoderTest {
         _encoder.setInjectContextMethod(true);
         _encoder.doEncode(event);
         final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
-        Assert.assertTrue(logOutput, logOutput.matches(
-                "^EncodingException context=\\{logger=loggerName, file=NativeMethodAccessorImpl.java, "
-                + "class=sun.reflect.NativeMethodAccessorImpl, method=invoke0, line=-2\\} "
-                + "cause=java.lang.RuntimeException: Mock Failure$"));
+        assertOutput("StenoEncoderTest.testSafeContextWithIncludeOptionalContext.json", logOutput);
+        assertMatchesJsonSchema(logOutput);
     }
 
     @Test
@@ -1154,8 +1327,8 @@ public class StenoEncoderTest {
         final Object[] argArray = new Object[4];
         argArray[0] = ImmutableList.of("key1", "key2");
         argArray[1] = ImmutableList.of(Integer.valueOf(1234), "foo");
-        argArray[2] = ImmutableList.of("CONTEXT_KEY1", "CONTEXT_KEY2");
-        argArray[3] = ImmutableList.of(1.23f, new WidgetWithLogValue("bar"));
+        argArray[2] = ImmutableList.of("CONTEXT_KEY1", "CONTEXT_KEY2", "CONTEXT_KEY3", "CONTEXT_KEY4", "CONTEXT_KEY5");
+        argArray[3] = Arrays.asList(1.23f, new WidgetWithLogValue("bar"), Arrays.asList("A", "B", "C"), Collections.emptyList(), null);
         event.setArgumentArray(argArray);
         final ObjectMapper objectMapper = Mockito.mock(ObjectMapper.class);
         final JsonFactory jsonFactory = Mockito.mock(JsonFactory.class);
@@ -1168,10 +1341,37 @@ public class StenoEncoderTest {
         _encoder.init(_baos);
         _encoder.doEncode(event);
         final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
-        Assert.assertTrue(logOutput, logOutput.matches(
-                "^EncodingException context=\\{CONTEXT_KEY1=1.23, CONTEXT_KEY2=\\{id=[^,]+, "
-                + "class=com\\.arpnetworking\\.logback\\.widgets\\.WidgetWithLogValue\\}\\} "
-                + "cause=java.lang.RuntimeException: Mock Failure$"));
+        assertOutput("StenoEncoderTest.testSafeContextWithUserDefinedContext.json", logOutput);
+        assertMatchesJsonSchema(logOutput);
+    }
+
+    @Test
+    public void testSafeContextWithUserDefinedContextWithEncoding() throws Exception {
+        final LoggingEvent event = new LoggingEvent();
+        event.setLevel(Level.INFO);
+        event.setMarker(StenoMarker.LISTS_MARKER);
+        event.setMessage("logEvent");
+        event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
+        event.setTimeStamp(0);
+        final Object[] argArray = new Object[4];
+        argArray[0] = ImmutableList.of("key1", "key2");
+        argArray[1] = ImmutableList.of(Integer.valueOf(1234), "foo");
+        argArray[2] = ImmutableList.of("CONTEXT_KEY1", "CONTEXT_KEY2", "CONTEXT_KEY3");
+        argArray[3] = Arrays.asList("\"This is quoted\"", "Back \\ Slash", "New\nLine");
+        event.setArgumentArray(argArray);
+        final ObjectMapper objectMapper = Mockito.mock(ObjectMapper.class);
+        final JsonFactory jsonFactory = Mockito.mock(JsonFactory.class);
+        Mockito.doThrow(new RuntimeException("Mock Failure")).when(jsonFactory).createGenerator(Mockito.any(Writer.class));
+        _encoder = new StenoEncoder(jsonFactory, objectMapper);
+        _encoder.setInjectContextHost(false);
+        _encoder.setInjectContextProcess(false);
+        _encoder.setInjectContextThread(false);
+        _encoder.setInjectContextHost(false);
+        _encoder.init(_baos);
+        _encoder.doEncode(event);
+        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        assertOutput("StenoEncoderTest.testSafeContextWithUserDefinedContextWithEncoding.json", logOutput);
+        assertMatchesJsonSchema(logOutput);
     }
 
     private static void assertOutput(final String expectedResource, final String actualOutput) {
@@ -1180,7 +1380,8 @@ public class StenoEncoderTest {
                 .replaceAll("\"host\":\"[^\"]+\"", "\"host\":\"<HOST>\"")
                 .replaceAll("\"processId\":\"[^\"]+\"", "\"processId\":\"<PROCESS_ID>\"")
                 .replaceAll("\"threadId\":\"[^\"]+\"", "\"threadId\":\"<THREAD_ID>\"")
-                .replaceAll("\"backtrace\":\\[[^\\]]+\\]", "\"backtrace\":[]");
+                .replaceAll("\"backtrace\":\\[[^\\]]+\\]", "\"backtrace\":[]")
+                .replaceAll("\"_id\":\"[^\"]+\"", "\"_id\":\"<ID>\"");
         try {
             final URL resource = Resources.getResource("com/arpnetworking/logback/" + expectedResource);
             Assert.assertEquals(Resources.toString(resource, StandardCharsets.UTF_8), redactedOutput);
@@ -1198,6 +1399,9 @@ public class StenoEncoderTest {
                 contextNode.remove("MDC_KEY");
                 contextNode.remove("CONTEXT_KEY1");
                 contextNode.remove("CONTEXT_KEY2");
+                contextNode.remove("CONTEXT_KEY3");
+                contextNode.remove("CONTEXT_KEY4");
+                contextNode.remove("CONTEXT_KEY5");
             }
             final ProcessingReport report = VALIDATOR.validate(STENO_SCHEMA, rootNode);
             Assert.assertTrue(report.toString(), report.isSuccess());
@@ -1211,39 +1415,11 @@ public class StenoEncoderTest {
     private ByteArrayOutputStream _baos;
     private LoggerContext _context;
 
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     private static final JsonValidator VALIDATOR = JsonSchemaFactory.byDefault().getValidator();
     private static final JsonNode STENO_SCHEMA;
-    private static final String HOST_NAME;
-    private static final String PROCESS_ID;
 
     static {
-        final Pattern processIdPattern = Pattern.compile("^([\\d]+)@.*$");
-        String processId;
-        try {
-            processId = ManagementFactory.getRuntimeMXBean().getName();
-            final Matcher matcher = processIdPattern.matcher(processId);
-            if (matcher.matches()) {
-                processId = matcher.group(1);
-            }
-            // CHECKSTYLE.OFF: IllegalCatch - Prevent all failures
-        } catch (final Exception t) {
-            // CHECKSTYLE.ON: IllegalCatch
-            System.out.println("Unable to determine process id: " + t);
-            processId = "<UNKNOWN>";
-        }
-        PROCESS_ID = processId;
-
-        String hostName;
-        try {
-            hostName = InetAddress.getLocalHost().getHostName();
-            // CHECKSTYLE.OFF: IllegalCatch - Prevent all failures
-        } catch (final Exception t) {
-            // CHECKSTYLE.ON: IllegalCatch
-            System.out.println("Unable to determine hostname: " + t);
-            hostName = "<UNKNOWN>";
-        }
-        HOST_NAME = hostName;
-
         JsonNode jsonNode = null;
         try {
             jsonNode = JsonLoader.fromResource("/steno.schema.json");
