@@ -218,7 +218,6 @@ public final class LogValueMapFactory {
             if (_target.isPresent()) {
                 builder.append("_id=")
                         .append(Integer.toHexString(System.identityHashCode(_target.get())))
-                        .append(" ")
                         .append(" _class=")
                         .append(_target.get().getClass().getName())
                         .append(" ");
