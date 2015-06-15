@@ -208,6 +208,34 @@ public final class LogValueMapFactory {
             return _target;
         }
 
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String toString() {
+            final StringBuilder builder = new StringBuilder();
+            builder.append("{");
+            if (_target.isPresent()) {
+                builder.append("_id=")
+                        .append(Integer.toHexString(System.identityHashCode(_target.get())))
+                        .append(" ")
+                        .append(" _class=")
+                        .append(_target.get().getClass().getName())
+                        .append(" ");
+            }
+            for (final Map.Entry<String, Object> entry : entrySet()) {
+                builder.append(entry.getKey())
+                        .append("=")
+                        .append(entry.getValue().toString())
+                        .append(" ");
+            }
+            if (_target.isPresent() || !isEmpty()) {
+                builder.setLength(builder.length() - 1);
+            }
+            builder.append("}");
+            return builder.toString();
+        }
+
         private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
             in.defaultReadObject();
             _target = Optional.empty();

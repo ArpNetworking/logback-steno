@@ -149,6 +149,19 @@ public class LogValueMapFactoryTest {
     }
 
     @Test
+    public void testToString() {
+        final String asString = LogValueMapFactory.builder().build().toString();
+        Assert.assertNotNull(asString);
+        Assert.assertFalse(asString.isEmpty());
+
+        final String asStringWithReference = LogValueMapFactory.builder(new Widget("foo")).build().toString();
+        Assert.assertNotNull(asStringWithReference);
+        Assert.assertFalse(asStringWithReference.isEmpty());
+        Assert.assertTrue(asStringWithReference.contains("_id="));
+        Assert.assertTrue(asStringWithReference.contains("_class=com.arpnetworking.logback.widgets.Widget"));
+    }
+
+    @Test
     public void testPrivateConstructor() throws Exception {
         final Constructor<LogValueMapFactory> constructor =
                 LogValueMapFactory.class.getDeclaredConstructor();
