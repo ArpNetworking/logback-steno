@@ -146,7 +146,13 @@ public class StenoEncoder extends BaseLoggingEncoder implements Serializable {
     public StenoEncoder() {
         // Each instance of StenoEncoder requires its own ObjectMapper instance
         // in order to apply the correct filtering settings to support redaction.
-        this(JSON_FACTORY, new ObjectMapper());
+        this(new ObjectMapper());
+    }
+
+    /* package private */ StenoEncoder(final ObjectMapper objectMapper) {
+        // Each instance of StenoEncoder requires its own ObjectMapper instance
+        // in order to apply the correct filtering settings to support redaction.
+        this(objectMapper.getFactory(), objectMapper);
     }
 
     /* package private */ StenoEncoder(final JsonFactory jsonFactory, final ObjectMapper objectMapper) {
@@ -918,7 +924,6 @@ public class StenoEncoder extends BaseLoggingEncoder implements Serializable {
 
     private static final boolean DEFAULT_REDACT_NULL = true;
     private static final String STANDARD_LOG_EVENT_NAME = "log";
-    private static final JsonFactory JSON_FACTORY = new JsonFactory();
     private static final DateTimeFormatter ISO_DATE_TIME_FORMATTER =
             DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ").withZone(ZoneId.of("UTC"));
     private static final long serialVersionUID = -1803222342605243667L;
