@@ -18,8 +18,6 @@ package com.arpnetworking.steno;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.Map;
-
 /**
  * Tests for <code>LogReferenceOnly</code>.
  *
@@ -33,10 +31,10 @@ public class LogReferenceOnlyTest {
         final LogReferenceOnly valueReference = LogReferenceOnly.of(value);
 
         @SuppressWarnings("unchecked")
-        final Map<String, Object> logValue = (Map<String, Object>) valueReference.toLogValue();
-        Assert.assertTrue("Missing id", logValue.containsKey("_id"));
-        Assert.assertTrue("Missing class", logValue.containsKey("_class"));
-        Assert.assertEquals("Wrong class", String.class.getName(), logValue.get("_class"));
+        final LogValueMapFactory.LogValueMap logValue = (LogValueMapFactory.LogValueMap) valueReference.toLogValue();
+        Assert.assertTrue(logValue.getData().isEmpty());
+        Assert.assertTrue(logValue.getTarget().isPresent());
+        Assert.assertEquals("Wrong class", String.class, logValue.getTarget().get().getClass());
 
         final String asString = valueReference.toString();
         Assert.assertNotNull(asString);

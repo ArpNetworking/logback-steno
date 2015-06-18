@@ -15,6 +15,7 @@
  */
 package com.arpnetworking.logback.jackson;
 
+import com.arpnetworking.logback.StenoEncoder;
 import com.arpnetworking.logback.widgets.WidgetWithLogValue;
 import com.arpnetworking.logback.widgets.WidgetWithLogValueAndJsonValue;
 import com.arpnetworking.logback.widgets.WidgetWithLogValueDisabled;
@@ -22,10 +23,14 @@ import com.arpnetworking.logback.widgets.WidgetWithLogValueDisabledAndJsonValue;
 import com.arpnetworking.logback.widgets.WidgetWithLogValueDisabledNoFallbackAndJsonValue;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
 /**
  * Tests for <code>LogValue</code>.
@@ -36,11 +41,16 @@ public class LogValueTest {
 
     @Before
     public void setUp() {
+        MockitoAnnotations.initMocks(this);
+        Mockito.doReturn(Boolean.FALSE).when(_encoder).isInjectBeanIdentifier();
         _objectMapper = new ObjectMapper();
         _objectMapper.setAnnotationIntrospector(new StenoAnnotationIntrospector());
         final SimpleFilterProvider simpleFilterProvider = new SimpleFilterProvider();
         simpleFilterProvider.addFilter(RedactionFilter.REDACTION_FILTER_ID, new RedactionFilter(false));
         _objectMapper.setFilters(simpleFilterProvider);
+        final SimpleModule module = new SimpleModule();
+        module.setSerializerModifier(new StenoBeanSerializerModifier(_encoder));
+        _objectMapper.registerModule(module);
     }
 
     @Test
@@ -74,4 +84,6 @@ public class LogValueTest {
     }
 
     private ObjectMapper _objectMapper;
+    @Mock
+    private StenoEncoder _encoder;
 }

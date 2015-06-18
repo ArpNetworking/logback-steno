@@ -15,8 +15,13 @@
  */
 package com.arpnetworking.steno;
 
+import com.arpnetworking.logback.annotations.Loggable;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -62,13 +67,13 @@ public final class LogValueMapFactory {
      * Construct an immutable map from one key-value pair. Although this is more convenient than the
      * static factory methods this method does not capture the instance being logged.
      *
-     * @since 1.7.0
+     * @since 1.9.2
      *
      * @param k1 Key one.
      * @param v1 Value one.
-     * @return New immutable map.
+     * @return New <code>LogValueMap</code>.
      */
-    public static Map<String, Object> of(final String k1, final Object v1) {
+    public static LogValueMap of(final String k1, final Object v1) {
         return builder()
                 .put(k1, v1)
                 .build();
@@ -78,15 +83,15 @@ public final class LogValueMapFactory {
      * Construct an immutable map from one key-value pair. Although this is more convenient than the
      * static factory methods this method does not capture the instance being logged.
      *
-     * @since 1.7.0
+     * @since 1.9.2
      *
      * @param k1 Key one.
      * @param v1 Value one.
      * @param k2 Key two.
      * @param v2 Value two.
-     * @return New immutable map.
+     * @return New <code>LogValueMap</code>.
      */
-    public static Map<String, Object> of(
+    public static LogValueMap of(
             final String k1, final Object v1,
             final String k2, final Object v2) {
         return builder()
@@ -99,7 +104,7 @@ public final class LogValueMapFactory {
      * Construct an immutable map from one key-value pair. Although this is more convenient than the
      * static factory methods this method does not capture the instance being logged.
      *
-     * @since 1.7.0
+     * @since 1.9.2
      *
      * @param k1 Key one.
      * @param v1 Value one.
@@ -107,9 +112,9 @@ public final class LogValueMapFactory {
      * @param v2 Value two.
      * @param k3 Key three.
      * @param v3 Value three.
-     * @return New immutable map.
+     * @return New <code>LogValueMap</code>.
      */
-    public static Map<String, Object> of(
+    public static LogValueMap of(
             final String k1, final Object v1,
             final String k2, final Object v2,
             final String k3, final Object v3) {
@@ -124,7 +129,7 @@ public final class LogValueMapFactory {
      * Construct an immutable map from one key-value pair. Although this is more convenient than the
      * static factory methods this method does not capture the instance being logged.
      *
-     * @since 1.7.0
+     * @since 1.9.2
      *
      * @param k1 Key one.
      * @param v1 Value one.
@@ -134,10 +139,10 @@ public final class LogValueMapFactory {
      * @param v3 Value three.
      * @param k4 Key four.
      * @param v4 Value four.
-     * @return New immutable map.
+     * @return New <code>LogValueMap</code>.
      */
     // CHECKSTYLE.OFF: ParameterNumber - Provided for compatibility wth ImmutableMap.of
-    public static Map<String, Object> of(
+    public static LogValueMap of(
             final String k1, final Object v1,
             final String k2, final Object v2,
             final String k3, final Object v3,
@@ -155,7 +160,7 @@ public final class LogValueMapFactory {
      * Construct an immutable map from one key-value pair. Although this is more convenient than the
      * static factory methods this method does not capture the instance being logged.
      *
-     * @since 1.7.0
+     * @since 1.9.2
      *
      * @param k1 Key one.
      * @param v1 Value one.
@@ -167,10 +172,10 @@ public final class LogValueMapFactory {
      * @param v4 Value four.
      * @param k5 Key five.
      * @param v5 Value five.
-     * @return New immutable map.
+     * @return New <code>LogValueMap</code>.
      */
     // CHECKSTYLE.OFF: ParameterNumber - Provided for compatibility wth ImmutableMap.of
-    public static Map<String, Object> of(
+    public static LogValueMap of(
             final String k1, final Object v1,
             final String k2, final Object v2,
             final String k3, final Object v3,
@@ -193,19 +198,28 @@ public final class LogValueMapFactory {
      *
      * @since 1.9.0
      */
-    public static final class LogValueMap extends LinkedHashMap<String, Object> {
+    @Loggable
+    public static final class LogValueMap implements Serializable {
 
         /**
          * Public constructor.
          *
          * @param target The instance being represented for logging.
+         * @param data The representation of the target instance for logging.
          */
-        public LogValueMap(final Optional<Object> target) {
+        public LogValueMap(final Optional<Object> target, final Map<String, Object> data) {
             _target = target;
+            _data = data;
         }
 
+        @JsonIgnore
         public Optional<Object> getTarget() {
             return _target;
+        }
+
+        @JsonAnyGetter
+        public Map<String, Object> getData() {
+            return _data;
         }
 
         /**
@@ -222,13 +236,13 @@ public final class LogValueMapFactory {
                         .append(_target.get().getClass().getName())
                         .append(" ");
             }
-            for (final Map.Entry<String, Object> entry : entrySet()) {
+            for (final Map.Entry<String, Object> entry : _data.entrySet()) {
                 builder.append(entry.getKey())
                         .append("=")
                         .append(entry.getValue().toString())
                         .append(" ");
             }
-            if (_target.isPresent() || !isEmpty()) {
+            if (_target.isPresent() || !_data.isEmpty()) {
                 builder.setLength(builder.length() - 1);
             }
             builder.append("}");
@@ -241,6 +255,7 @@ public final class LogValueMapFactory {
         }
 
         private transient Optional<Object> _target = Optional.empty();
+        private final Map<String, Object> _data;
 
         private static final long serialVersionUID = -2817278417438085513L;
     }
@@ -260,7 +275,7 @@ public final class LogValueMapFactory {
          * @param target The target instance to build a log value map for.
          */
         private Builder(final Optional<Object> target) {
-            _map = new LogValueMap(target);
+            _target = target;
         }
 
         /**
@@ -270,14 +285,14 @@ public final class LogValueMapFactory {
          *
          * @return New map for the log value.
          */
-        public Map<String, Object> build() {
+        public LogValueMap build() {
             if (_nullKeys) {
                 put("_nullKeys", true);
             }
             if (_nullValues) {
                 put("_nullValues", true);
             }
-            return _map;
+            return new LogValueMap(_target, _data);
         }
 
         /**
@@ -302,11 +317,12 @@ public final class LogValueMapFactory {
                 _nullValues = true;
                 return this;
             }
-            _map.put(key, value);
+            _data.put(key, value);
             return this;
         }
 
-        private final Map<String, Object> _map;
+        private final Optional<Object> _target;
+        private final Map<String, Object> _data = new LinkedHashMap<>();
         private boolean _nullKeys = false;
         private boolean _nullValues = false;
     }

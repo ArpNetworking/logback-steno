@@ -17,6 +17,7 @@ package com.arpnetworking.logback.jackson;
 
 import com.arpnetworking.logback.StenoEncoder;
 import com.arpnetworking.logback.annotations.Loggable;
+import com.arpnetworking.steno.LogValueMapFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.BeanDescription;
 import com.fasterxml.jackson.databind.JavaType;
@@ -123,7 +124,18 @@ public final class StenoBeanSerializerModifier extends BeanSerializerModifier {
 
         @Override
         public void serializeAsField(final Object bean, final JsonGenerator gen, final SerializerProvider prov) throws Exception {
-            gen.writeStringField("_id", Integer.toHexString(System.identityHashCode(this)));
+            if (bean instanceof LogValueMapFactory.LogValueMap) {
+                // LogValueMap representations are identified by the target
+                final LogValueMapFactory.LogValueMap logValueMap = (LogValueMapFactory.LogValueMap) bean;
+                if (logValueMap.getTarget().isPresent()) {
+                    gen.writeStringField("_id", Integer.toHexString(System.identityHashCode(logValueMap.getTarget().get())));
+                } else {
+                    gen.writeNullField("_id");
+                }
+            } else {
+                // Standard beans are identified by the instance
+                gen.writeStringField("_id", Integer.toHexString(System.identityHashCode(this)));
+            }
         }
 
         @Override
@@ -170,7 +182,18 @@ public final class StenoBeanSerializerModifier extends BeanSerializerModifier {
 
         @Override
         public void serializeAsField(final Object bean, final JsonGenerator gen, final SerializerProvider prov) throws Exception {
-            gen.writeStringField("_class", bean.getClass().getName());
+            if (bean instanceof LogValueMapFactory.LogValueMap) {
+                // LogValueMap representations are identified by the target
+                final LogValueMapFactory.LogValueMap logValueMap = (LogValueMapFactory.LogValueMap) bean;
+                if (logValueMap.getTarget().isPresent()) {
+                    gen.writeStringField("_class", logValueMap.getTarget().get().getClass().getName());
+                } else {
+                    gen.writeNullField("_class");
+                }
+            } else {
+                // Standard beans are identified by the instance
+                gen.writeStringField("_class", bean.getClass().getName());
+            }
         }
 
         @Override

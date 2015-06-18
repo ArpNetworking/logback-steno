@@ -16,7 +16,6 @@
 package com.arpnetworking.logback;
 
 import ch.qos.logback.classic.spi.ILoggingEvent;
-import com.arpnetworking.logback.jackson.LogValueMapSerializer;
 import com.arpnetworking.logback.jackson.RedactionFilter;
 import com.arpnetworking.logback.jackson.StenoAnnotationIntrospector;
 import com.arpnetworking.logback.jackson.StenoBeanSerializerModifier;
@@ -48,9 +47,11 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -175,7 +176,6 @@ public class StenoEncoder extends BaseLoggingEncoder implements Serializable {
         // Simple module with customizations
         final SimpleModule module = new SimpleModule();
         module.setSerializerModifier(new StenoBeanSerializerModifier(this));
-        module.addSerializer(LogValueMapFactory.LogValueMap.class, new LogValueMapSerializer(this));
         _objectMapper.registerModule(module);
 
         // After burner to improve data-bind performance
@@ -878,6 +878,13 @@ public class StenoEncoder extends BaseLoggingEncoder implements Serializable {
             } else {
                 encoder.setCharAt(encoder.length() - 1, ']');
             }
+        } else if (value instanceof LogValueMapFactory.LogValueMap) {
+            final LogValueMapFactory.LogValueMap logValueMap = (LogValueMapFactory.LogValueMap) value;
+            final Map<String, Object> safeLogValueMap = new LinkedHashMap<>();
+            final Optional<Object> target = logValueMap.getTarget();
+            safeLogValueMap.put("_id", target.isPresent() ? Integer.toHexString(System.identityHashCode(target.get())) : null);
+            safeLogValueMap.put("_class", target.isPresent() ? target.get().getClass().getName() : null);
+            safeEncodeValue(encoder, safeLogValueMap);
         } else if (StenoSerializationHelper.isSimpleType(value)) {
             // TODO(vkoskela): Support natural json representation for boolean and number [ISSUE-10]
             encoder.append(new TextNode(value.toString()).toString());
