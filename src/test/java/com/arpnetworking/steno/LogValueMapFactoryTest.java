@@ -35,10 +35,9 @@ public class LogValueMapFactoryTest {
     public void testBeanIdentifierInjection() {
         final Widget w = new Widget("foo");
         final Map<String, Object> expectedValue = new HashMap<>();
-        final Map<String, Object> actualValue = LogValueMapFactory.builder(w).build();
+        final LogValueMapFactory.LogValueMap logValueMap = LogValueMapFactory.builder(w).build();
+        final Map<String, Object> actualValue = logValueMap.getData();
         Assert.assertEquals(expectedValue, actualValue);
-        Assert.assertTrue(actualValue instanceof LogValueMapFactory.LogValueMap);
-        final LogValueMapFactory.LogValueMap logValueMap = (LogValueMapFactory.LogValueMap) actualValue;
         Assert.assertTrue(logValueMap.getTarget().isPresent());
         Assert.assertSame(w, logValueMap.getTarget().get());
     }
@@ -47,7 +46,7 @@ public class LogValueMapFactoryTest {
     public void testOneKeyValuePair() {
         final Map<String, Object> expectedValue = new HashMap<>();
         expectedValue.put("k1", "v1");
-        final Map<String, Object> actualValue = LogValueMapFactory.of("k1", "v1");
+        final Map<String, Object> actualValue = LogValueMapFactory.of("k1", "v1").getData();
         Assert.assertEquals(expectedValue, actualValue);
     }
 
@@ -58,7 +57,8 @@ public class LogValueMapFactoryTest {
         expectedValue.put("k2", "v2");
         final Map<String, Object> actualValue = LogValueMapFactory.of(
                 "k1", "v1",
-                "k2", "v2");
+                "k2", "v2")
+                .getData();
         Assert.assertEquals(expectedValue, actualValue);
     }
 
@@ -71,7 +71,8 @@ public class LogValueMapFactoryTest {
         final Map<String, Object> actualValue = LogValueMapFactory.of(
                 "k1", "v1",
                 "k2", "v2",
-                "k3", "v3");
+                "k3", "v3")
+                .getData();
         Assert.assertEquals(expectedValue, actualValue);
     }
 
@@ -86,7 +87,8 @@ public class LogValueMapFactoryTest {
                 "k1", "v1",
                 "k2", "v2",
                 "k3", "v3",
-                "k4", "v4");
+                "k4", "v4")
+                .getData();
         Assert.assertEquals(expectedValue, actualValue);
     }
 
@@ -103,7 +105,8 @@ public class LogValueMapFactoryTest {
                 "k2", "v2",
                 "k3", "v3",
                 "k4", "v4",
-                "k5", "v5");
+                "k5", "v5")
+                .getData();
         Assert.assertEquals(expectedValue, actualValue);
     }
 
@@ -117,7 +120,8 @@ public class LogValueMapFactoryTest {
                 .put("k1", "v1")
                 .put(null, "v2")
                 .put("k3", "v3")
-                .build();
+                .build()
+                .getData();
         Assert.assertEquals(expectedValue, actualValue);
     }
 
@@ -131,14 +135,15 @@ public class LogValueMapFactoryTest {
                 .put("k1", "v1")
                 .put("k2", null)
                 .put("k3", "v3")
-                .build();
+                .build()
+                .getData();
         Assert.assertEquals(expectedValue, actualValue);
     }
 
     @Test
     public void testSerialization() {
         final Widget w = new Widget("foo");
-        final LogValueMapFactory.LogValueMap mapWithReference = (LogValueMapFactory.LogValueMap) LogValueMapFactory.builder(w).build();
+        final LogValueMapFactory.LogValueMap mapWithReference = LogValueMapFactory.builder(w).build();
         Assert.assertTrue(mapWithReference.getTarget().isPresent());
         Assert.assertSame(w, mapWithReference.getTarget().get());
 

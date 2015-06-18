@@ -45,7 +45,9 @@ public final class WidgetWithLogValue {
      */
     @LogValue
     public Object toLogValue() {
-        return LogValueMapFactory.of("logValue", _value);
+        return LogValueMapFactory.builder(this)
+                .put("logValue", _value)
+                .build();
     }
 
     /**

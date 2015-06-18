@@ -48,9 +48,7 @@ public final class LogReferenceOnly {
      */
     @LogValue
     public Object toLogValue() {
-        return LogValueMapFactory.of(
-                "_id", Integer.toHexString(System.identityHashCode(_object)),
-                "_class", _object.getClass().getName());
+        return LogValueMapFactory.builder(_object).build();
     }
 
     /**

@@ -27,6 +27,7 @@ import com.arpnetworking.logback.widgets.Widget;
 import com.arpnetworking.logback.widgets.WidgetWithLogValue;
 import com.arpnetworking.logback.widgets.WidgetWithLogValueProvidingReference;
 import com.arpnetworking.logback.widgets.WidgetWithLoggable;
+import com.arpnetworking.steno.LogValueMapFactory;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -1327,8 +1328,20 @@ public class StenoEncoderTest {
         final Object[] argArray = new Object[4];
         argArray[0] = ImmutableList.of("key1", "key2");
         argArray[1] = ImmutableList.of(Integer.valueOf(1234), "foo");
-        argArray[2] = ImmutableList.of("CONTEXT_KEY1", "CONTEXT_KEY2", "CONTEXT_KEY3", "CONTEXT_KEY4", "CONTEXT_KEY5");
-        argArray[3] = Arrays.asList(1.23f, new WidgetWithLogValue("bar"), Arrays.asList("A", "B", "C"), Collections.emptyList(), null);
+        argArray[2] = ImmutableList.of(
+                "CONTEXT_KEY1",
+                "CONTEXT_KEY2",
+                "CONTEXT_KEY3",
+                "CONTEXT_KEY4",
+                "CONTEXT_KEY5",
+                "CONTEXT_KEY6");
+        argArray[3] = Arrays.asList(
+                1.23f,
+                new WidgetWithLogValue("bar"),
+                Arrays.asList("A", "B", "C"),
+                Collections.emptyList(),
+                LogValueMapFactory.builder().build(),
+                null);
         event.setArgumentArray(argArray);
         final ObjectMapper objectMapper = Mockito.mock(ObjectMapper.class);
         final JsonFactory jsonFactory = Mockito.mock(JsonFactory.class);
@@ -1402,6 +1415,7 @@ public class StenoEncoderTest {
                 contextNode.remove("CONTEXT_KEY3");
                 contextNode.remove("CONTEXT_KEY4");
                 contextNode.remove("CONTEXT_KEY5");
+                contextNode.remove("CONTEXT_KEY6");
             }
             final ProcessingReport report = VALIDATOR.validate(STENO_SCHEMA, rootNode);
             Assert.assertTrue(report.toString(), report.isSuccess());
