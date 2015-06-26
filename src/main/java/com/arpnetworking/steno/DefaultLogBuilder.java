@@ -16,7 +16,9 @@
 package com.arpnetworking.steno;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Class facilitates type-safe construction of a Steno log message. Instances
@@ -60,12 +62,10 @@ public class DefaultLogBuilder implements LogBuilder {
      */
     @Override
     public DefaultLogBuilder addData(final String name, final Object value) {
-        if (_dataKeys == null) {
-            _dataKeys = new ArrayList<String>();
-            _dataValues = new ArrayList<Object>();
+        if (_data == null) {
+            _data = new LinkedHashMap<>();
         }
-        _dataKeys.add(name);
-        _dataValues.add(value);
+        _data.put(name, value);
         return this;
     }
 
@@ -74,12 +74,10 @@ public class DefaultLogBuilder implements LogBuilder {
      */
     @Override
     public DefaultLogBuilder addContext(final String name, final Object value) {
-        if (_contextKeys == null) {
-            _contextKeys = new ArrayList<String>();
-            _contextValues = new ArrayList<Object>();
+        if (_context == null) {
+            _context = new LinkedHashMap<>();
         }
-        _contextKeys.add(name);
-        _contextValues.add(value);
+        _context.put(name, value);
         return this;
     }
 
@@ -88,13 +86,30 @@ public class DefaultLogBuilder implements LogBuilder {
      */
     @Override
     public void log() {
+        // TODO(vkoskela): Add STENO_MAPS_MARKER and convert to it. [ISSUE-12]
+        List<String> dataKeys = null;
+        List<Object> dataValues = null;
+        List<String> contextKeys = null;
+        List<Object> contextValues = null;
+
+        if (_data != null) {
+            dataKeys = new ArrayList<>();
+            dataValues = new ArrayList<>();
+            populateKeyValueLists(_data, dataKeys, dataValues);
+        }
+        if (_context != null) {
+            contextKeys = new ArrayList<>();
+            contextValues = new ArrayList<>();
+            populateKeyValueLists(_context, contextKeys, contextValues);
+        }
+
         _logger.log(
                 _level,
                 _event,
-                _dataKeys,
-                _dataValues,
-                _contextKeys,
-                _contextValues,
+                dataKeys,
+                dataValues,
+                contextKeys,
+                contextValues,
                 _throwable);
     }
 
@@ -107,11 +122,16 @@ public class DefaultLogBuilder implements LogBuilder {
                 + ", Level=" + _level
                 + ", Event=" + _event
                 + ", Throwable=" + _throwable
-                + ", DataKeys=" + _dataKeys
-                + ", DataValues=" + _dataValues
-                + ", ContextKeys=" + _contextKeys
-                + ", ContextValues=" + _contextValues
+                + ", Data=" + _data
+                + ", Context=" + _context
                 + "}";
+    }
+
+    private void populateKeyValueLists(final Map<String, Object> map, final List<String> keys, final List<Object> values) {
+        for (final Map.Entry<String, Object> entry : map.entrySet()) {
+            keys.add(entry.getKey());
+            values.add(entry.getValue());
+        }
     }
 
     /* package private */ DefaultLogBuilder(final Logger logger, final LogLevel level) {
@@ -123,8 +143,6 @@ public class DefaultLogBuilder implements LogBuilder {
     private final LogLevel _level;
     private String _event = null;
     private Throwable _throwable = null;
-    private List<String> _dataKeys = null;
-    private List<Object> _dataValues = null;
-    private List<String> _contextKeys = null;
-    private List<Object> _contextValues = null;
+    private Map<String, Object> _data = null;
+    private Map<String, Object> _context = null;
 }
