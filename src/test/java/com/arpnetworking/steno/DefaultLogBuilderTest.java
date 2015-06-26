@@ -50,6 +50,23 @@ public class DefaultLogBuilderTest {
     }
 
     @Test
+    public void testBuilderNoData() {
+        final Logger logger = Mockito.mock(Logger.class);
+        new DefaultLogBuilder(logger, LogLevel.DEBUG)
+                .setEvent("MyEvent")
+                .setThrowable(EXCEPTION)
+                .log();
+        Mockito.verify(logger).log(
+                LogLevel.DEBUG,
+                "MyEvent",
+                null,
+                null,
+                null,
+                null,
+                EXCEPTION);
+    }
+
+    @Test
     public void testBuilderWithData() {
         final Logger logger = Mockito.mock(Logger.class);
         final List<String> dataKeys = Lists.newArrayList(Logger.MESSAGE_DATA_KEY, "KEY1", "KEY2");
@@ -84,6 +101,36 @@ public class DefaultLogBuilderTest {
                 .setThrowable(EXCEPTION)
                 .addContext("KEY1", "VALUE1")
                 .addContext("KEY2", "VALUE2")
+                .log();
+        Mockito.verify(logger).log(
+                LogLevel.DEBUG,
+                "MyEvent",
+                dataKeys,
+                dataValues,
+                contextKeys,
+                contextValues,
+                EXCEPTION);
+    }
+
+    @Test
+    public void testBuilderWithDuplicateKeys() {
+        final Logger logger = Mockito.mock(Logger.class);
+        final List<String> dataKeys = Lists.newArrayList(Logger.MESSAGE_DATA_KEY, "D-KEY1", "D-KEY2");
+        final List<Object> dataValues = Lists.newArrayList("MyMessage", "D-VALUE1B", "D-VALUE2B");
+        final List<String> contextKeys = Lists.newArrayList("C-KEY1", "C-KEY2");
+        final List<Object> contextValues = Lists.newArrayList("C-VALUE1B", "C-VALUE2B");
+        new DefaultLogBuilder(logger, LogLevel.DEBUG)
+                .setEvent("MyEvent")
+                .setMessage("MyMessage")
+                .setThrowable(EXCEPTION)
+                .addData("D-KEY1", "D-VALUE1A")
+                .addContext("C-KEY1", "C-VALUE1A")
+                .addData("D-KEY2", "D-VALUE2A")
+                .addContext("C-KEY2", "C-VALUE2A")
+                .addData("D-KEY1", "D-VALUE1B")
+                .addContext("C-KEY1", "C-VALUE1B")
+                .addData("D-KEY2", "D-VALUE2B")
+                .addContext("C-KEY2", "C-VALUE2B")
                 .log();
         Mockito.verify(logger).log(
                 LogLevel.DEBUG,
