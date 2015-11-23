@@ -1,9 +1,22 @@
 logback-steno
 =============
 
+<a href="https://raw.githubusercontent.com/ArpNetworking/logback-steno/master/LICENSE">
+    <img src="https://img.shields.io/hexpm/l/plug.svg"
+         alt="License: Apache 2">
+</a>
+<a href="https://travis-ci.org/ArpNetworking/logback-steno/">
+    <img src="https://travis-ci.org/ArpNetworking/logback-steno.png"
+         alt="Travis Build">
+</a>
+<a href="http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.arpnetworking.logback%22%20a%3A%22logback-steno%22">
+    <img src="https://img.shields.io/maven-central/v/com.arpnetworking.logback/logback-steno.svg"
+         alt="Maven Artifact">
+</a>
+
 Logback encoders for handling Steno and other formats.  Steno is a JSON based container that standardizes the way log
 messages are encoded.  In particular it defines a standard set of meta-data that may be used for routing, indexing and
-other automated log processing operations.  This package includes an encoder for the popular Logback logging 
+other automated log processing operations.  This package includes an encoder for the popular Logback logging
 implementation which automatically encodes log messages in a Steno compatible format.
 
 Dependency
@@ -66,9 +79,11 @@ Instances of classes declaring a method to create a serializable representation 
 using a specific serializer with @JsonSerialize are logged in that representation. Also, instances mapping to a custom
 serializer via a registered Jackson module are also logged in the representation provided by that serializer.
 
-Next, if the type is annotated with @Loggable it is also serialized as-is by Jackson. Finally, all other types are
-serialized as a the instance identifier and class name. It is possible to override this behavior and
-send all values to Jackson for natural serialization by setting the __safe__ property of the encoder to false.
+Next, if the type is annotated with @Loggable it is also serialized as-is by Jackson.
+
+Finally, all other types are serialized as a the instance identifier and class name. It is possible to override this
+behavior and send all values to Jackson for natural serialization by setting the __safe__ property of the encoder to false.
+It is recommended that you do __not__ do this and instead provide serialization by one of the three means described above.
 
 These rules are applied recursively to any objects encountered during serialization.
 
@@ -116,7 +131,7 @@ The StenoEncoder encoder supports several options:
 * RedactNull - Redact fields with @LogRedact even if the value is null. The default is true.
 * InjectContextProcess - Add the process identifier to the context block. The default is true.
 * InjectContextHost - Add the host name to the context block. The default is true.
-* InjectContextThread - Add the thread name to the context block. The default is true. 
+* InjectContextThread - Add the thread name to the context block. The default is true.
 * InjectContextLogger - Add the logger name to the context block. The default is false. (1)
 * InjectContextClass - Add the calling class name to the context block. The default is false. (2)
 * InjectContextFile - Add the calling file name to the context block. The default is false.  (2)
@@ -124,7 +139,7 @@ The StenoEncoder encoder supports several options:
 * InjectContextLine - Add the calling line to the context block. The default is false. (2)
 * InjectContextMdc - Add the specified key pairs from MDC into the context. The default is none. Injected MDC keys
 override any context keys pairs injected by the Steno encoder. (1)
-* InjectBeanIdentifier - Add the "_id" and "_class" attributes to all objects serialized with Jackson's BeanSerializer. In safe mode these are objects annotated with @Loggable. Also any classes with @LogValue or @JsonValue returning a LogValueValueMap with a reference to the instance being logged receive these identifying attributes. The default is false. 
+* InjectBeanIdentifier - Add the "_id" and "_class" attributes to all objects serialized with Jackson's BeanSerializer. In safe mode these are objects annotated with @Loggable. Also any classes with @LogValue or @JsonValue returning a LogValueValueMap with a reference to the instance being logged receive these identifying attributes. The default is false.
 * CompressLoggerName - Compress the dotted logger name replacing each segment except the last with only its first letter. The default is false.
 * JacksonModule - Add the specified Jackson module instance to the ObjectMapper configuration.
 * Safe - Setting to false causes all types to be deferred to Jackson for serialization. Otherwise, only types that are determined to be safe are serialized as-is; see Class Preparation for details. The default is true.
@@ -219,7 +234,7 @@ Jackson Configuration
 ---------------------
 
 The Jackson ObjectMapper used to serialize data and context values can be customized by registering additional Jackson
-modules.  In XML configuration such configuration looks like this: 
+modules.  In XML configuration such configuration looks like this:
 
 ```xml
 <encoder class="com.arpnetworking.logback.StenoEncoder" >
@@ -321,7 +336,7 @@ weaving.
 #### Maven
 
 To enable context weaving in your Maven project add the following to your pom:
- 
+
 ```xml
 <project>
     ...
@@ -394,7 +409,7 @@ object ApplicationBuild extends Build {
     val s = aspectjSettings
     val main = Project("MyApp", file("."), settings = s).settings(
       // Other project settings go here
-      
+
       // AspectJ
       binaries in Aspectj <++= update map { report =>
         report.matching(moduleFilter(organization = "com.arpnetworking.logback", name = "logback-steno"))
@@ -447,7 +462,7 @@ For more information please see [https://github.com/eveoh/gradle-aspectj](https:
 SLF4J Logger
 ------------
 
-The Steno encoder uses SLF4Js marker methods to pass structured data to the encoder.  However, all log messages will be 
+The Steno encoder uses SLF4Js marker methods to pass structured data to the encoder.  However, all log messages will be
 Steno encoded although calls not using the marker method will not be able to attach additional data to each message.
 
 ### Example 1: Complete Example with SLF4J
@@ -466,18 +481,18 @@ public class MyClass {
 
   public void foo() {
     final Widget widget = new Widget("MyWidget");
-  
+
     // Default:
     LOGGER.info("foo was called");
-    
+
     // Serialized Key-Values:
     LOGGER.info(StenoMarker.ARRAY_MARKER, "foo", new String[] {"message","key1","widget"}, new Object[] {"foo was called",1234,widget});
     LOGGER.info(StenoMarker.MAP_MARKER, "foo", ImmutableMap.of("message","foo was called","key1",1234,"widget",widget));
-    
+
     // Raw Json Key-Values:
     LOGGER.info(StenoMarker.ARRAY_JSON_MARKER, "foo", new String[] {"message","key1","widget"}, new Object[] {"\"foo was called\"",1234,"{\"name\":\"MyWidget\"}"});
     LOGGER.info(StenoMarker.MAP_JSON_MARKER, "foo", ImmutableMap.of("message","\"foo was called\"","key1",1234,"widget","{\"name\":\"MyWidget\"}"));
-    
+
     // Objects:
     LOGGER.info(StenoMarker.OBJECT_MARKER, "foo", widget);
     LOGGER.info(StenoMarker.OBJECT_JSON_MARKER, "foo", "{\"name\":\"MyWidget\"}");
@@ -603,7 +618,7 @@ Output:
 
 ### Example 7: Embedding Json Object
 
-This allows insertion of a raw json object as the value of the _data_ key. 
+This allows insertion of a raw json object as the value of the _data_ key.
 
 Code:
 
@@ -631,21 +646,21 @@ entirely.  Redaction is supported with the @LogRedact annotation.  Any bean prop
 emit the key but replace the value with *<REDACTED>*.  The annotation may be placed on a member or its getter; however,
 if a getter exists the member must match the getter name (e.g. _private String foo;_ and _public String getFoo() {...}_).
 
-Redaction may be disabled by setting the RedactEnabled encoder property to false (it defaults to true).  Further, 
-redaction of null values may be disabled by setting the RedactNull encoder property to false (it defaults to true). 
+Redaction may be disabled by setting the RedactEnabled encoder property to false (it defaults to true).  Further,
+redaction of null values may be disabled by setting the RedactNull encoder property to false (it defaults to true).
 Suppression is supported with Jackson's @JsonIgnore.
 
 Logging Non-Pojo/Bean Classes
 -----------------------------
 
 To log a representation of an object other than what is defined by its fields/accessors you can annotate a method with
-@LogValue to return an alternate representation.  Typically, this is built with LogValueMapFactory but it can be any 
+@LogValue to return an alternate representation.  Typically, this is built with LogValueMapFactory but it can be any
 object which is serialized in place of the original.  If you wish to enable bean identifier injection you should provide
-the LogValueMapFactory with the object being logged through the appropriate __builder__ static factory method. 
+the LogValueMapFactory with the object being logged through the appropriate __builder__ static factory method.
 
-The @LogValue annotation provides the same functionality as @JsonValue which is honored in the absence of @LogValue.  
-However, the separate @LogValue annotation permits an alternate logged form to the serialized form.  You may also 
-disable both @LogValue and @LogJson and revert an instance to bean serialization by including both annotations and 
+The @LogValue annotation provides the same functionality as @JsonValue which is honored in the absence of @LogValue.
+However, the separate @LogValue annotation permits an alternate logged form to the serialized form.  You may also
+disable both @LogValue and @LogJson and revert an instance to bean serialization by including both annotations and
 setting the value and fallback attributes both to false.
 
 The following table summarizes the configuration options:
@@ -667,6 +682,28 @@ The three possible outcomes are:
 | @JV        | @JsonValue Serialization                                                                            |
 | @LV        | @LogValue Serialization                                                                             |
 
+Rolling Policies
+----------------
+
+The package contains two additional log file rolling policies: __RandomizedTimeBasedFNATP__ and __SizeAndRandomizedTimeBasedFNATP__.  Both of these policies randomize the roll of the log with respect to time.  The benefit of this policy in a distributed environment is that every machine does not attempt to roll its log at the same time.  The second policy augments randomized time based rolling with a maximum file size.
+
+Example of RandomizedTimeBasedFNATP configuration:
+
+```xml
+<timeBasedFileNamingAndTriggeringPolicy class="com.arpnetworking.logback.RandomizedTimeBasedFNATP">
+    <maxOffsetInMillis>900000</maxOffsetInMillis>
+</timeBasedFileNamingAndTriggeringPolicy>
+```
+
+Example of SizeAndRandomizedTimeBasedFNATP configuration:
+
+```xml
+<timeBasedFileNamingAndTriggeringPolicy class="com.arpnetworking.logback.SizeAndRandomizedTimeBasedFNATP">
+    <maxOffsetInMillis>900000</maxOffsetInMillis>
+    <maxFileSize>100MB</maxFileSize>
+</timeBasedFileNamingAndTriggeringPolicy>
+```
+
 Development
 -----------
 
@@ -678,11 +715,11 @@ Next, fork the repository, clone and build:
 
 Building:
 
-    logback-steno> mvn verify
+    logback-steno> ./mvnw verify
 
 To use the local version in your project you must first install it locally:
- 
-    logback-steno> mvn install
+
+    logback-steno> ./mvnw install
 
 You can determine the version of the local build from the pom.xml file.  Using the local version is intended only for testing or development.
 
