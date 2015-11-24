@@ -16,14 +16,13 @@
 package com.arpnetworking.steno;
 
 import com.arpnetworking.logback.StenoMarker;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -58,10 +57,10 @@ public class LoggerTest {
         Mockito.verify(slf4jLogger).trace(
                 StenoMarker.LISTS_MARKER,
                 TEST_EVENT,
-                Lists.newArrayList(MESSAGE_KEY, KEY1),
-                Lists.newArrayList(TEST_MESSAGE, VALUE1),
-                Lists.newArrayList(KEY2),
-                Lists.newArrayList(VALUE2));
+                Arrays.asList(MESSAGE_KEY, KEY1),
+                Arrays.asList(TEST_MESSAGE, VALUE1),
+                Collections.singletonList(KEY2),
+                Collections.singletonList(VALUE2));
     }
 
     @Test
@@ -78,10 +77,10 @@ public class LoggerTest {
         Mockito.verify(slf4jLogger).trace(
                 StenoMarker.LISTS_MARKER,
                 TEST_EVENT,
-                Lists.newArrayList(MESSAGE_KEY, KEY1),
-                Lists.newArrayList(TEST_MESSAGE, VALUE1),
-                Lists.newArrayList(KEY2),
-                Lists.newArrayList(VALUE2),
+                Arrays.asList(MESSAGE_KEY, KEY1),
+                Arrays.asList(TEST_MESSAGE, VALUE1),
+                Collections.singletonList(KEY2),
+                Collections.singletonList(VALUE2),
                 TEST_EXCEPTION);
     }
 
@@ -149,7 +148,7 @@ public class LoggerTest {
         public void testTraceWithMap() {
             final org.slf4j.Logger slf4jLogger = Mockito.mock(org.slf4j.Logger.class);
             Mockito.doReturn(Boolean.TRUE).when(slf4jLogger).isTraceEnabled();
-            new Logger(slf4jLogger).trace(TEST_EVENT, TEST_MESSAGE, ImmutableMap.of(KEY1, VALUE1));
+            new Logger(slf4jLogger).trace(TEST_EVENT, TEST_MESSAGE, MAP_KEY1_VALUE1);
             Mockito.verify(slf4jLogger).trace(
                     StenoMarker.ARRAY_MARKER,
                     TEST_EVENT,
@@ -161,7 +160,7 @@ public class LoggerTest {
     public void testTraceWithMapAndThrowable() {
         final org.slf4j.Logger slf4jLogger = Mockito.mock(org.slf4j.Logger.class);
         Mockito.doReturn(Boolean.TRUE).when(slf4jLogger).isTraceEnabled();
-        new Logger(slf4jLogger).trace(TEST_EVENT, TEST_MESSAGE, ImmutableMap.of(KEY1, VALUE1), TEST_EXCEPTION);
+        new Logger(slf4jLogger).trace(TEST_EVENT, TEST_MESSAGE, MAP_KEY1_VALUE1, TEST_EXCEPTION);
         Mockito.verify(slf4jLogger).trace(
                 StenoMarker.ARRAY_MARKER,
                 TEST_EVENT,
@@ -283,10 +282,10 @@ public class LoggerTest {
         Mockito.verify(slf4jLogger).debug(
                 StenoMarker.LISTS_MARKER,
                 TEST_EVENT,
-                Lists.newArrayList(MESSAGE_KEY, KEY1),
-                Lists.newArrayList(TEST_MESSAGE, VALUE1),
-                Lists.newArrayList(KEY2),
-                Lists.newArrayList(VALUE2));
+                Arrays.asList(MESSAGE_KEY, KEY1),
+                Arrays.asList(TEST_MESSAGE, VALUE1),
+                Collections.singletonList(KEY2),
+                Collections.singletonList(VALUE2));
     }
 
     @Test
@@ -303,10 +302,10 @@ public class LoggerTest {
         Mockito.verify(slf4jLogger).debug(
                 StenoMarker.LISTS_MARKER,
                 TEST_EVENT,
-                Lists.newArrayList(MESSAGE_KEY, KEY1),
-                Lists.newArrayList(TEST_MESSAGE, VALUE1),
-                Lists.newArrayList(KEY2),
-                Lists.newArrayList(VALUE2),
+                Arrays.asList(MESSAGE_KEY, KEY1),
+                Arrays.asList(TEST_MESSAGE, VALUE1),
+                Collections.singletonList(KEY2),
+                Collections.singletonList(VALUE2),
                 TEST_EXCEPTION);
     }
 
@@ -374,7 +373,7 @@ public class LoggerTest {
     public void testDebugWithMap() {
         final org.slf4j.Logger slf4jLogger = Mockito.mock(org.slf4j.Logger.class);
         Mockito.doReturn(Boolean.TRUE).when(slf4jLogger).isDebugEnabled();
-        new Logger(slf4jLogger).debug(TEST_EVENT, TEST_MESSAGE, ImmutableMap.of(KEY1, VALUE1));
+        new Logger(slf4jLogger).debug(TEST_EVENT, TEST_MESSAGE, MAP_KEY1_VALUE1);
         Mockito.verify(slf4jLogger).debug(
                 StenoMarker.ARRAY_MARKER,
                 TEST_EVENT,
@@ -386,7 +385,7 @@ public class LoggerTest {
     public void testDebugWithMapAndThrowable() {
         final org.slf4j.Logger slf4jLogger = Mockito.mock(org.slf4j.Logger.class);
         Mockito.doReturn(Boolean.TRUE).when(slf4jLogger).isDebugEnabled();
-        new Logger(slf4jLogger).debug(TEST_EVENT, TEST_MESSAGE, ImmutableMap.of(KEY1, VALUE1), TEST_EXCEPTION);
+        new Logger(slf4jLogger).debug(TEST_EVENT, TEST_MESSAGE, MAP_KEY1_VALUE1, TEST_EXCEPTION);
         Mockito.verify(slf4jLogger).debug(
                 StenoMarker.ARRAY_MARKER,
                 TEST_EVENT,
@@ -508,10 +507,10 @@ public class LoggerTest {
         Mockito.verify(slf4jLogger).info(
                 StenoMarker.LISTS_MARKER,
                 TEST_EVENT,
-                Lists.newArrayList(MESSAGE_KEY, KEY1),
-                Lists.newArrayList(TEST_MESSAGE, VALUE1),
-                Lists.newArrayList(KEY2),
-                Lists.newArrayList(VALUE2));
+                Arrays.asList(MESSAGE_KEY, KEY1),
+                Arrays.asList(TEST_MESSAGE, VALUE1),
+                Collections.singletonList(KEY2),
+                Collections.singletonList(VALUE2));
     }
 
     @Test
@@ -528,10 +527,10 @@ public class LoggerTest {
         Mockito.verify(slf4jLogger).info(
                 StenoMarker.LISTS_MARKER,
                 TEST_EVENT,
-                Lists.newArrayList(MESSAGE_KEY, KEY1),
-                Lists.newArrayList(TEST_MESSAGE, VALUE1),
-                Lists.newArrayList(KEY2),
-                Lists.newArrayList(VALUE2),
+                Arrays.asList(MESSAGE_KEY, KEY1),
+                Arrays.asList(TEST_MESSAGE, VALUE1),
+                Collections.singletonList(KEY2),
+                Collections.singletonList(VALUE2),
                 TEST_EXCEPTION);
     }
 
@@ -599,7 +598,7 @@ public class LoggerTest {
     public void testInfoWithMap() {
         final org.slf4j.Logger slf4jLogger = Mockito.mock(org.slf4j.Logger.class);
         Mockito.doReturn(Boolean.TRUE).when(slf4jLogger).isInfoEnabled();
-        new Logger(slf4jLogger).info(TEST_EVENT, TEST_MESSAGE, ImmutableMap.of(KEY1, VALUE1));
+        new Logger(slf4jLogger).info(TEST_EVENT, TEST_MESSAGE, MAP_KEY1_VALUE1);
         Mockito.verify(slf4jLogger).info(
                 StenoMarker.ARRAY_MARKER,
                 TEST_EVENT,
@@ -611,7 +610,7 @@ public class LoggerTest {
     public void testInfoWithMapAndThrowable() {
         final org.slf4j.Logger slf4jLogger = Mockito.mock(org.slf4j.Logger.class);
         Mockito.doReturn(Boolean.TRUE).when(slf4jLogger).isInfoEnabled();
-        new Logger(slf4jLogger).info(TEST_EVENT, TEST_MESSAGE, ImmutableMap.of(KEY1, VALUE1), TEST_EXCEPTION);
+        new Logger(slf4jLogger).info(TEST_EVENT, TEST_MESSAGE, MAP_KEY1_VALUE1, TEST_EXCEPTION);
         Mockito.verify(slf4jLogger).info(
                 StenoMarker.ARRAY_MARKER,
                 TEST_EVENT,
@@ -733,10 +732,10 @@ public class LoggerTest {
         Mockito.verify(slf4jLogger).warn(
                 StenoMarker.LISTS_MARKER,
                 TEST_EVENT,
-                Lists.newArrayList(MESSAGE_KEY, KEY1),
-                Lists.newArrayList(TEST_MESSAGE, VALUE1),
-                Lists.newArrayList(KEY2),
-                Lists.newArrayList(VALUE2));
+                Arrays.asList(MESSAGE_KEY, KEY1),
+                Arrays.asList(TEST_MESSAGE, VALUE1),
+                Collections.singletonList(KEY2),
+                Collections.singletonList(VALUE2));
     }
 
     @Test
@@ -753,10 +752,10 @@ public class LoggerTest {
         Mockito.verify(slf4jLogger).warn(
                 StenoMarker.LISTS_MARKER,
                 TEST_EVENT,
-                Lists.newArrayList(MESSAGE_KEY, KEY1),
-                Lists.newArrayList(TEST_MESSAGE, VALUE1),
-                Lists.newArrayList(KEY2),
-                Lists.newArrayList(VALUE2),
+                Arrays.asList(MESSAGE_KEY, KEY1),
+                Arrays.asList(TEST_MESSAGE, VALUE1),
+                Collections.singletonList(KEY2),
+                Collections.singletonList(VALUE2),
                 TEST_EXCEPTION);
     }
 
@@ -824,7 +823,7 @@ public class LoggerTest {
     public void testWarnWithMap() {
         final org.slf4j.Logger slf4jLogger = Mockito.mock(org.slf4j.Logger.class);
         Mockito.doReturn(Boolean.TRUE).when(slf4jLogger).isWarnEnabled();
-        new Logger(slf4jLogger).warn(TEST_EVENT, TEST_MESSAGE, ImmutableMap.of(KEY1, VALUE1));
+        new Logger(slf4jLogger).warn(TEST_EVENT, TEST_MESSAGE, MAP_KEY1_VALUE1);
         Mockito.verify(slf4jLogger).warn(
                 StenoMarker.ARRAY_MARKER,
                 TEST_EVENT,
@@ -836,7 +835,7 @@ public class LoggerTest {
     public void testWarnWithMapAndThrowable() {
         final org.slf4j.Logger slf4jLogger = Mockito.mock(org.slf4j.Logger.class);
         Mockito.doReturn(Boolean.TRUE).when(slf4jLogger).isWarnEnabled();
-        new Logger(slf4jLogger).warn(TEST_EVENT, TEST_MESSAGE, ImmutableMap.of(KEY1, VALUE1), TEST_EXCEPTION);
+        new Logger(slf4jLogger).warn(TEST_EVENT, TEST_MESSAGE, MAP_KEY1_VALUE1, TEST_EXCEPTION);
         Mockito.verify(slf4jLogger).warn(
                 StenoMarker.ARRAY_MARKER,
                 TEST_EVENT,
@@ -958,10 +957,10 @@ public class LoggerTest {
         Mockito.verify(slf4jLogger).error(
                 StenoMarker.LISTS_MARKER,
                 TEST_EVENT,
-                Lists.newArrayList(MESSAGE_KEY, KEY1),
-                Lists.newArrayList(TEST_MESSAGE, VALUE1),
-                Lists.newArrayList(KEY2),
-                Lists.newArrayList(VALUE2));
+                Arrays.asList(MESSAGE_KEY, KEY1),
+                Arrays.asList(TEST_MESSAGE, VALUE1),
+                Collections.singletonList(KEY2),
+                Collections.singletonList(VALUE2));
     }
 
     @Test
@@ -978,10 +977,10 @@ public class LoggerTest {
         Mockito.verify(slf4jLogger).error(
                 StenoMarker.LISTS_MARKER,
                 TEST_EVENT,
-                Lists.newArrayList(MESSAGE_KEY, KEY1),
-                Lists.newArrayList(TEST_MESSAGE, VALUE1),
-                Lists.newArrayList(KEY2),
-                Lists.newArrayList(VALUE2),
+                Arrays.asList(MESSAGE_KEY, KEY1),
+                Arrays.asList(TEST_MESSAGE, VALUE1),
+                Collections.singletonList(KEY2),
+                Collections.singletonList(VALUE2),
                 TEST_EXCEPTION);
     }
 
@@ -1049,7 +1048,7 @@ public class LoggerTest {
     public void testErrorWithMap() {
         final org.slf4j.Logger slf4jLogger = Mockito.mock(org.slf4j.Logger.class);
         Mockito.doReturn(Boolean.TRUE).when(slf4jLogger).isErrorEnabled();
-        new Logger(slf4jLogger).error(TEST_EVENT, TEST_MESSAGE, ImmutableMap.of(KEY1, VALUE1));
+        new Logger(slf4jLogger).error(TEST_EVENT, TEST_MESSAGE, MAP_KEY1_VALUE1);
         Mockito.verify(slf4jLogger).error(
                 StenoMarker.ARRAY_MARKER,
                 TEST_EVENT,
@@ -1061,7 +1060,7 @@ public class LoggerTest {
     public void testErrorWithMapAndThrowable() {
         final org.slf4j.Logger slf4jLogger = Mockito.mock(org.slf4j.Logger.class);
         Mockito.doReturn(Boolean.TRUE).when(slf4jLogger).isErrorEnabled();
-        new Logger(slf4jLogger).error(TEST_EVENT, TEST_MESSAGE, ImmutableMap.of(KEY1, VALUE1), TEST_EXCEPTION);
+        new Logger(slf4jLogger).error(TEST_EVENT, TEST_MESSAGE, MAP_KEY1_VALUE1, TEST_EXCEPTION);
         Mockito.verify(slf4jLogger).error(
                 StenoMarker.ARRAY_MARKER,
                 TEST_EVENT,
@@ -1171,7 +1170,7 @@ public class LoggerTest {
     public void testDisabledTraceWithMapAndThrowable() {
         final org.slf4j.Logger slf4jLogger = Mockito.mock(org.slf4j.Logger.class);
         Mockito.doReturn(Boolean.FALSE).when(slf4jLogger).isTraceEnabled();
-        new Logger(slf4jLogger).trace(TEST_EVENT, TEST_MESSAGE, ImmutableMap.of(KEY1, VALUE1), TEST_EXCEPTION);
+        new Logger(slf4jLogger).trace(TEST_EVENT, TEST_MESSAGE, MAP_KEY1_VALUE1, TEST_EXCEPTION);
         Mockito.verify(slf4jLogger).isTraceEnabled();
         Mockito.verifyNoMoreInteractions(slf4jLogger);
     }
@@ -1207,7 +1206,7 @@ public class LoggerTest {
     public void testDisabledDebugWithMapAndThrowable() {
         final org.slf4j.Logger slf4jLogger = Mockito.mock(org.slf4j.Logger.class);
         Mockito.doReturn(Boolean.FALSE).when(slf4jLogger).isDebugEnabled();
-        new Logger(slf4jLogger).debug(TEST_EVENT, TEST_MESSAGE, ImmutableMap.of(KEY1, VALUE1), TEST_EXCEPTION);
+        new Logger(slf4jLogger).debug(TEST_EVENT, TEST_MESSAGE, MAP_KEY1_VALUE1, TEST_EXCEPTION);
         Mockito.verify(slf4jLogger).isDebugEnabled();
         Mockito.verifyNoMoreInteractions(slf4jLogger);
     }
@@ -1243,7 +1242,7 @@ public class LoggerTest {
     public void testDisabledInfoWithMapAndThrowable() {
         final org.slf4j.Logger slf4jLogger = Mockito.mock(org.slf4j.Logger.class);
         Mockito.doReturn(Boolean.FALSE).when(slf4jLogger).isInfoEnabled();
-        new Logger(slf4jLogger).info(TEST_EVENT, TEST_MESSAGE, ImmutableMap.of(KEY1, VALUE1), TEST_EXCEPTION);
+        new Logger(slf4jLogger).info(TEST_EVENT, TEST_MESSAGE, MAP_KEY1_VALUE1, TEST_EXCEPTION);
         Mockito.verify(slf4jLogger).isInfoEnabled();
         Mockito.verifyNoMoreInteractions(slf4jLogger);
     }
@@ -1279,7 +1278,7 @@ public class LoggerTest {
     public void testDisabledWarnWithMapAndThrowable() {
         final org.slf4j.Logger slf4jLogger = Mockito.mock(org.slf4j.Logger.class);
         Mockito.doReturn(Boolean.FALSE).when(slf4jLogger).isWarnEnabled();
-        new Logger(slf4jLogger).warn(TEST_EVENT, TEST_MESSAGE, ImmutableMap.of(KEY1, VALUE1), TEST_EXCEPTION);
+        new Logger(slf4jLogger).warn(TEST_EVENT, TEST_MESSAGE, MAP_KEY1_VALUE1, TEST_EXCEPTION);
         Mockito.verify(slf4jLogger).isWarnEnabled();
         Mockito.verifyNoMoreInteractions(slf4jLogger);
     }
@@ -1315,7 +1314,7 @@ public class LoggerTest {
     public void testDisabledErrorWithMapAndThrowable() {
         final org.slf4j.Logger slf4jLogger = Mockito.mock(org.slf4j.Logger.class);
         Mockito.doReturn(Boolean.FALSE).when(slf4jLogger).isErrorEnabled();
-        new Logger(slf4jLogger).error(TEST_EVENT, TEST_MESSAGE, ImmutableMap.of(KEY1, VALUE1), TEST_EXCEPTION);
+        new Logger(slf4jLogger).error(TEST_EVENT, TEST_MESSAGE, MAP_KEY1_VALUE1, TEST_EXCEPTION);
         Mockito.verify(slf4jLogger).isErrorEnabled();
         Mockito.verifyNoMoreInteractions(slf4jLogger);
     }
@@ -1933,8 +1932,16 @@ public class LoggerTest {
     private static final Exception TEST_EXCEPTION = new NullPointerException("NPE!");
     private static final String KEY1 = "key1";
     private static final Object VALUE1 = "value1";
+    private static final Map<String, Object> MAP_KEY1_VALUE1;
     private static final String KEY2 = "key2";
     private static final Object VALUE2 = "value2";
 
     public static final String MESSAGE_KEY = "message";
+
+    static {
+        // CHECKSTYLE.OFF: IllegalInstantiation - No Guava dependency here.
+        MAP_KEY1_VALUE1 = new HashMap<>();
+        // CHECKSTYLE.ON: IllegalInstantiation
+        MAP_KEY1_VALUE1.put(KEY1, VALUE1);
+    }
 }

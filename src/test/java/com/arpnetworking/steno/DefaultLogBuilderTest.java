@@ -15,11 +15,12 @@
  */
 package com.arpnetworking.steno;
 
-import com.google.common.collect.Lists;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -32,8 +33,8 @@ public class DefaultLogBuilderTest {
     @Test
     public void testBuilder() {
         final Logger logger = Mockito.mock(Logger.class);
-        final List<String> dataKeys = Lists.newArrayList(Logger.MESSAGE_DATA_KEY);
-        final List<Object> dataValues = Lists.newArrayList("MyMessage");
+        final List<String> dataKeys = Collections.singletonList(Logger.MESSAGE_DATA_KEY);
+        final List<Object> dataValues = Collections.singletonList("MyMessage");
         new DefaultLogBuilder(logger, LogLevel.DEBUG)
                 .setEvent("MyEvent")
                 .setMessage("MyMessage")
@@ -69,8 +70,8 @@ public class DefaultLogBuilderTest {
     @Test
     public void testBuilderWithData() {
         final Logger logger = Mockito.mock(Logger.class);
-        final List<String> dataKeys = Lists.newArrayList(Logger.MESSAGE_DATA_KEY, "KEY1", "KEY2");
-        final List<Object> dataValues = Lists.newArrayList("MyMessage", "VALUE1", "VALUE2");
+        final List<String> dataKeys = Arrays.asList(Logger.MESSAGE_DATA_KEY, "KEY1", "KEY2");
+        final List<Object> dataValues = Arrays.asList("MyMessage", "VALUE1", "VALUE2");
         new DefaultLogBuilder(logger, LogLevel.DEBUG)
                 .setEvent("MyEvent")
                 .setMessage("MyMessage")
@@ -91,10 +92,10 @@ public class DefaultLogBuilderTest {
     @Test
     public void testBuilderWithContext() {
         final Logger logger = Mockito.mock(Logger.class);
-        final List<String> dataKeys = Lists.newArrayList(Logger.MESSAGE_DATA_KEY);
-        final List<Object> dataValues = Lists.newArrayList("MyMessage");
-        final List<String> contextKeys = Lists.newArrayList("KEY1", "KEY2");
-        final List<Object> contextValues = Lists.newArrayList("VALUE1", "VALUE2");
+        final List<String> dataKeys = Collections.singletonList(Logger.MESSAGE_DATA_KEY);
+        final List<Object> dataValues = Collections.singletonList("MyMessage");
+        final List<String> contextKeys = Arrays.asList("KEY1", "KEY2");
+        final List<Object> contextValues = Arrays.asList("VALUE1", "VALUE2");
         new DefaultLogBuilder(logger, LogLevel.DEBUG)
                 .setEvent("MyEvent")
                 .setMessage("MyMessage")
@@ -115,10 +116,10 @@ public class DefaultLogBuilderTest {
     @Test
     public void testBuilderWithDuplicateKeys() {
         final Logger logger = Mockito.mock(Logger.class);
-        final List<String> dataKeys = Lists.newArrayList(Logger.MESSAGE_DATA_KEY, "D-KEY1", "D-KEY2");
-        final List<Object> dataValues = Lists.newArrayList("MyMessage", "D-VALUE1B", "D-VALUE2B");
-        final List<String> contextKeys = Lists.newArrayList("C-KEY1", "C-KEY2");
-        final List<Object> contextValues = Lists.newArrayList("C-VALUE1B", "C-VALUE2B");
+        final List<String> dataKeys = Arrays.asList(Logger.MESSAGE_DATA_KEY, "D-KEY1", "D-KEY2");
+        final List<Object> dataValues = Arrays.asList("MyMessage", "D-VALUE1B", "D-VALUE2B");
+        final List<String> contextKeys = Arrays.asList("C-KEY1", "C-KEY2");
+        final List<Object> contextValues = Arrays.asList("C-VALUE1B", "C-VALUE2B");
         new DefaultLogBuilder(logger, LogLevel.DEBUG)
                 .setEvent("MyEvent")
                 .setMessage("MyMessage")

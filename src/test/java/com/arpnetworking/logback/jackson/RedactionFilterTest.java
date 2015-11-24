@@ -25,7 +25,6 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.BeanPropertyWriter;
 import com.fasterxml.jackson.databind.ser.PropertyWriter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
-import com.google.common.io.Resources;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -50,11 +49,15 @@ public class RedactionFilterTest {
     public void setUp() {
         _objectMapper = new ObjectMapper();
         _objectMapper.setAnnotationIntrospector(new StenoAnnotationIntrospector());
+        // CHECKSTYLE.OFF: IllegalInstantiation - No Guava dependency here.
         final Map<String, Object> filterMap = new HashMap<>();
+        // CHECKSTYLE.ON: IllegalInstantiation
         filterMap.put(RedactionFilter.REDACTION_FILTER_ID, new RedactionFilter(false));
-        _objectMapper.setFilters(new SimpleFilterProvider(filterMap));
+        _objectMapper.setFilterProvider(new SimpleFilterProvider(filterMap));
 
+        // CHECKSTYLE.OFF: IllegalInstantiation - No Guava dependency here.
         final Map<String, Object> beanMap = new HashMap<>();
+        // CHECKSTYLE.ON: IllegalInstantiation
         beanMap.put("foo", "bar");
         _redactedBean = new RedactedBean("string", 1234, 1.0f, new String[] {"string1", "string2"}, true, beanMap);
         _nonRedactedBean = new NonRedactedBean("string", 1234, 1.0f, new String[] {"string1", "string2"}, true, beanMap);
@@ -77,9 +80,11 @@ public class RedactionFilterTest {
     @Test
     public void testRedactedWithNull() throws Exception {
         // Override the filter to be configured with allowing nulls
+        // CHECKSTYLE.OFF: IllegalInstantiation - No Guava dependency here.
         final Map<String, Object> filterMap = new HashMap<>();
+        // CHECKSTYLE.ON: IllegalInstantiation
         filterMap.put(RedactionFilter.REDACTION_FILTER_ID, new RedactionFilter(true));
-        _objectMapper.setFilters(new SimpleFilterProvider(filterMap));
+        _objectMapper.setFilterProvider(new SimpleFilterProvider(filterMap));
         final JsonNode actualTree = _objectMapper.valueToTree(_redactedBean);
         final JsonNode expectedTree = readTree("testRedactedWithNull.json");
         Assert.assertEquals(expectedTree, actualTree);
@@ -99,7 +104,9 @@ public class RedactionFilterTest {
                         Matchers.any(SerializerProvider.class),
                         Matchers.any(PropertyWriter.class));
 
+        // CHECKSTYLE.OFF: IllegalInstantiation - No Guava dependency here.
         final Map<String, Object> filterMap = new HashMap<>();
+        // CHECKSTYLE.ON: IllegalInstantiation
         filterMap.put(RedactionFilter.REDACTION_FILTER_ID, mockFilter);
         _objectMapper.setFilters(new SimpleFilterProvider(filterMap));
         final JsonNode actualTree = _objectMapper.valueToTree(_redactedBean);
@@ -121,7 +128,9 @@ public class RedactionFilterTest {
                         Matchers.any(SerializerProvider.class),
                         Matchers.any(PropertyWriter.class));
 
+        // CHECKSTYLE.OFF: IllegalInstantiation - No Guava dependency here.
         final Map<String, Object> filterMap = new HashMap<>();
+        // CHECKSTYLE.ON: IllegalInstantiation
         filterMap.put(RedactionFilter.REDACTION_FILTER_ID, mockFilter);
         _objectMapper.setFilters(new SimpleFilterProvider(filterMap));
         final JsonNode actualTree = _objectMapper.valueToTree(_redactedBean);
@@ -131,7 +140,8 @@ public class RedactionFilterTest {
 
     private JsonNode readTree(final String resourceSuffix) {
         try {
-            return _objectMapper.readTree(Resources.getResource("com/arpnetworking/logback/jackson/" + CLASS_NAME + "." + resourceSuffix));
+            return _objectMapper.readTree(getClass().getClassLoader().getResource(
+                    "com/arpnetworking/logback/jackson/" + CLASS_NAME + "." + resourceSuffix));
         } catch (final IOException e) {
             Assert.fail("Failed with exception: " + e);
             return null;
@@ -144,9 +154,9 @@ public class RedactionFilterTest {
 
     private static final String CLASS_NAME = RedactionFilterTest.class.getSimpleName();
 
-    private static class NonRedactedBean {
+    private static final class NonRedactedBean {
 
-        public NonRedactedBean(
+        private NonRedactedBean(
                 final String stringValue,
                 final Integer intValue,
                 final float floatValue,
@@ -204,9 +214,9 @@ public class RedactionFilterTest {
 
     // CHECKSTYLE.OFF: MemberName - Testing field annotations requires same name as getter.
     // CHECKSTYLE.OFF: HiddenField - Testing field annotations requires same name as getter.
-    private static class RedactedBean {
+    private static final class RedactedBean {
 
-        public RedactedBean(
+        private RedactedBean(
                 final String stringValue,
                 final Integer intValue,
                 final float floatValue,
@@ -281,9 +291,9 @@ public class RedactionFilterTest {
      * @deprecated Provided for test compatibility with deprecated method in Jackson.
      */
     @Deprecated
-    private static class SerializeAsFieldAnswer implements Answer<Void> {
+    private static final class SerializeAsFieldAnswer implements Answer<Void> {
 
-        public SerializeAsFieldAnswer(final RedactionFilter redactionFilter) {
+        private SerializeAsFieldAnswer(final RedactionFilter redactionFilter) {
             _redactionFilter = redactionFilter;
         }
 

@@ -42,7 +42,7 @@ import java.net.UnknownHostException;
     /**
      * Default implementation of <code>HostProvider</code> using <code>InetAddress</code>.
      */
-    /* package private */ static final class DefaultHostProvider implements HostProvider {
+    /* package private static */ final class DefaultHostProvider implements HostProvider {
 
         public String get() throws UnknownHostException {
             return InetAddress.getLocalHost().getHostName();

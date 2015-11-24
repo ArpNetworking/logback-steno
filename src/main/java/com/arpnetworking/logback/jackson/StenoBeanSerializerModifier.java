@@ -112,7 +112,7 @@ public final class StenoBeanSerializerModifier extends BeanSerializerModifier {
 
     /* package private */ static class BeanIdentifierPropertyWriter extends VirtualBeanPropertyWriter {
 
-        public BeanIdentifierPropertyWriter(final SerializationConfig config) {
+        /* package private */ BeanIdentifierPropertyWriter(final SerializationConfig config) {
             super(
                     SimpleBeanPropertyDefinition.construct(
                             config,
@@ -166,11 +166,12 @@ public final class StenoBeanSerializerModifier extends BeanSerializerModifier {
         }
 
         private static final PropertyName PROPERTY_NAME = new PropertyName("_id");
+        private static final long serialVersionUID = 1031451570210101221L;
     }
 
     /* package private */ static class BeanClassPropertyWriter extends VirtualBeanPropertyWriter {
 
-        public BeanClassPropertyWriter(final SerializationConfig config) {
+        /* package private */ BeanClassPropertyWriter(final SerializationConfig config) {
             super(
                     SimpleBeanPropertyDefinition.construct(
                             config,
@@ -223,5 +224,6 @@ public final class StenoBeanSerializerModifier extends BeanSerializerModifier {
         }
 
         private static final PropertyName PROPERTY_NAME = new PropertyName("_class");
+        private static final long serialVersionUID = -3408022300214322460L;
     }
 }

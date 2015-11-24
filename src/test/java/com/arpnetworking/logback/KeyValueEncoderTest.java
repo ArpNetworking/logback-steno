@@ -22,7 +22,6 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.LoggingEvent;
 import ch.qos.logback.core.Layout;
 import com.arpnetworking.logback.widgets.Widget;
-import com.google.common.io.Resources;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,8 +31,11 @@ import org.mockito.MockitoAnnotations;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -607,9 +609,13 @@ public class KeyValueEncoderTest {
                 .replaceAll("processId=[^,\\}]+", "processId=<PROCESS_ID>")
                 .replaceAll("threadId=[^,\\}]+", "threadId=<THREAD_ID>");
         try {
-            final URL resource = Resources.getResource("com/arpnetworking/logback/" + expectedResource);
-            Assert.assertEquals(Resources.toString(resource, StandardCharsets.UTF_8), actualOutputSanitized);
-        } catch (final IOException e) {
+            final URL resource = KeyValueEncoderTest.class.getClassLoader().getResource("com/arpnetworking/logback/" + expectedResource);
+            Assert.assertEquals(
+                    // CHECKSTYLE.OFF: IllegalInstantiation - This is how you do it.
+                    new String(Files.readAllBytes(Paths.get(resource.toURI())), StandardCharsets.UTF_8),
+                    // CHECKSTYLE.ON: IllegalInstantiation
+                    actualOutputSanitized);
+        } catch (final IOException | URISyntaxException e) {
             Assert.fail("Failed with exception: " + e);
         }
     }

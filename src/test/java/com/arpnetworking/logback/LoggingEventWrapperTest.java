@@ -47,9 +47,11 @@ public class LoggingEventWrapperTest {
         final StackTraceElement[] callerData = new StackTraceElement[]{};
         final Marker marker = Mockito.mock(Marker.class);
 
+        // CHECKSTYLE.OFF: IllegalInstantiation - No Guava dependency here.
         final Map<String, String> mdcPropertyMap = new HashMap<>();
-        mdcPropertyMap.put("foo1", "bar1");
         final Map<String, String> mdc = new HashMap<>();
+        // CHECKSTYLE.ON: IllegalInstantiation
+        mdcPropertyMap.put("foo1", "bar1");
         mdc.put("foo2", "bar2");
         final String message = "The message";
         final Object[] arguments = new Object[] {};

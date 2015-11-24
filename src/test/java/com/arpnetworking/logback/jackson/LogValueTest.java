@@ -47,7 +47,7 @@ public class LogValueTest {
         _objectMapper.setAnnotationIntrospector(new StenoAnnotationIntrospector());
         final SimpleFilterProvider simpleFilterProvider = new SimpleFilterProvider();
         simpleFilterProvider.addFilter(RedactionFilter.REDACTION_FILTER_ID, new RedactionFilter(false));
-        _objectMapper.setFilters(simpleFilterProvider);
+        _objectMapper.setFilterProvider(simpleFilterProvider);
         final SimpleModule module = new SimpleModule();
         module.setSerializerModifier(new StenoBeanSerializerModifier(_encoder));
         _objectMapper.registerModule(module);
