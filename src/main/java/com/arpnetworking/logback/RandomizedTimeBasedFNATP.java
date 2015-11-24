@@ -21,6 +21,7 @@ import ch.qos.logback.core.rolling.DefaultTimeBasedFileNamingAndTriggeringPolicy
 import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
+import java.util.Date;
 
 /**
  * An alternative triggering policy that adds a random offset (calculated once on startup) to the rolling time of a
@@ -93,6 +94,14 @@ public class RandomizedTimeBasedFNATP<E> extends DefaultTimeBasedFileNamingAndTr
     @Override
     protected void computeNextCheck() {
         nextCheck = rc.getNextTriggeringMillis(dateInCurrentPeriod) + _randomOffsetInMillis;
+    }
+
+    /* package private */ long getNextCheck() {
+        return nextCheck;
+    }
+
+    /* package private */ Date getDateInCurrentPeriod() {
+        return dateInCurrentPeriod;
     }
 
     private final double _randomNumber;
