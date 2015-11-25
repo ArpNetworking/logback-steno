@@ -142,14 +142,9 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>checkstyle-check</id>
-            <configuration>
-              <suppressionsLocation>${basedir}/checkstyle-suppressions.xml</suppressionsLocation>
-            </configuration>
-          </execution>
-        </executions>
+        <configuration>
+          <suppressionsLocation>${basedir}/checkstyle-suppressions.xml</suppressionsLocation>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
