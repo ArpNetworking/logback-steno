@@ -1,18 +1,22 @@
-*.class
-target
-*.iml
-.idea
-.project
-.checkstyle
-.classpath
-.settings
+# Output
+target/
+logs/
 pom.xml.versionsBackup
-pom.xml.releaseBackup
-release.properties
-jacoco.exec
-.DS_Store
+dependency-reduced-pom.xml
 
-# Package Files #
-*.jar
-*.war
-*.ear
+# Eclipse
+.metadata/
+.externalToolBuilders/
+maven-eclipse.xml
+bin/
+eclipse-bin/
+**/.classpath
+**/RemoteSystemsTempFiles/
+
+# IntelliJ
+.idea
+.settings/
+*.iml
+
+# Mac
+.DS_Store
