@@ -1339,9 +1339,9 @@ public class StenoEncoderTest {
                 new WidgetWithLogValue("bar"),
                 Arrays.asList("A", "B", "C"),
                 Collections.emptyList(),
-                // CHECKSTYLE.OFF: RegexpSinglelineCheck - Allow construction for testing purposes
+                // CHECKSTYLE.OFF: RegexpSingleline - Allow construction for testing purposes
                 LogValueMapFactory.builder().build(),
-                // CHECKSTYLE.ON: RegexpSinglelineCheck
+                // CHECKSTYLE.ON: RegexpSingleline
                 null);
         event.setArgumentArray(argArray);
         final ObjectMapper objectMapper = Mockito.mock(ObjectMapper.class);
