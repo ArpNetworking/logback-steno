@@ -166,7 +166,7 @@ public class StenoEncoder extends BaseLoggingEncoder implements Serializable {
         // Initialize this here based on the above code, if it was initialized at the declaration site then things
         // could get out of sync
         _redactEnabled = true;
-        _objectMapper.setFilters(simpleFilterProvider);
+        _objectMapper.setFilterProvider(simpleFilterProvider);
 
         // Setup writing of Date/DateTime values
         _objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
@@ -217,7 +217,7 @@ public class StenoEncoder extends BaseLoggingEncoder implements Serializable {
             simpleFilterProvider.addFilter(RedactionFilter.REDACTION_FILTER_ID,
                     SimpleBeanPropertyFilter.serializeAllExcept(Collections.<String>emptySet()));
         }
-        _objectMapper.setFilters(simpleFilterProvider);
+        _objectMapper.setFilterProvider(simpleFilterProvider);
         _redactEnabled = redactEnabled;
     }
 
@@ -246,7 +246,7 @@ public class StenoEncoder extends BaseLoggingEncoder implements Serializable {
         if (_redactEnabled) {
             final SimpleFilterProvider simpleFilterProvider = new SimpleFilterProvider();
             simpleFilterProvider.addFilter(RedactionFilter.REDACTION_FILTER_ID, new RedactionFilter(!redactNull));
-            _objectMapper.setFilters(simpleFilterProvider);
+            _objectMapper.setFilterProvider(simpleFilterProvider);
         }
         _redactNull = redactNull;
     }

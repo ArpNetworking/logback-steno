@@ -446,7 +446,9 @@ public final class StenoSerializationHelper {
         crit(Level.ERROR);
 
         private final Level[] _logbackLevels;
+        // CHECKSTYLE.OFF: IllegalInstantiation - No Guava dependency here.
         private static final Map<Level, StenoLevel> LOGBACK_LEVEL_MAP = new HashMap<>();
+        // CHECKSTYLE.ON: IllegalInstantiation
 
         static {
             for (StenoLevel stenoLevel : values()) {
@@ -456,7 +458,7 @@ public final class StenoSerializationHelper {
             }
         }
 
-        private StenoLevel(final Level... logbackLevels) {
+        StenoLevel(final Level... logbackLevels) {
             _logbackLevels = logbackLevels;
         }
 

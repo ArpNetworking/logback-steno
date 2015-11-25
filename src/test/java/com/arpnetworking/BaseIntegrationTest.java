@@ -19,18 +19,17 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;
 import ch.qos.logback.core.joran.spi.JoranException;
 import com.arpnetworking.steno.TestLoggerFactory;
-import com.google.common.base.Charsets;
-import com.google.common.base.Throwables;
-import com.google.common.io.Resources;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 
 /**
  * Base integration test.
@@ -41,8 +40,7 @@ public abstract class BaseIntegrationTest {
 
     @Before
     public void setUp() {
-        final URL configuration = Resources.getResource(
-                this.getClass(),
+        final URL configuration = getClass().getResource(
                 this.getClass().getSimpleName() + ".xml");
         _loggerContext = new LoggerContext();
         final JoranConfigurator configurator = new JoranConfigurator();
@@ -51,7 +49,7 @@ public abstract class BaseIntegrationTest {
         try {
             configurator.doConfigure(configuration);
         } catch (final JoranException e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e);
         }
     }
 
@@ -70,22 +68,23 @@ public abstract class BaseIntegrationTest {
     }
 
     protected void assertOutput() {
-        final URL expectedResource = Resources.getResource(
-                this.getClass(),
-                this.getClass().getSimpleName() + ".expected");
+        final URL expectedResource = getClass().getResource(
+                getClass().getSimpleName() + ".expected");
         final File actualFile = new File("target/integration-test-logs/" + this.getClass().getSimpleName() + ".log");
         final String actualOutput;
         final String redactedOutput;
         try {
             // CHECKSTYLE.OFF: IllegalInstantiation - This is valid case.
-            actualOutput = new String(Files.readAllBytes(actualFile.toPath()), Charsets.UTF_8);
+            actualOutput = new String(Files.readAllBytes(actualFile.toPath()), StandardCharsets.UTF_8);
             // CHECKSTYLE.ON: IllegalInstantiation
         } catch (final IOException e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e);
         }
         try {
-            assertOutput(Resources.toString(expectedResource, StandardCharsets.UTF_8), actualOutput);
-        } catch (final IOException e) {
+            // CHECKSTYLE.OFF: IllegalInstantiation - This is how you do it.
+            assertOutput(new String(Files.readAllBytes(Paths.get(expectedResource.toURI())), StandardCharsets.UTF_8), actualOutput);
+            // CHECKSTYLE.ON: IllegalInstantiation
+        } catch (final IOException | URISyntaxException e) {
             Assert.fail("Failed with exception: " + e);
         }
     }

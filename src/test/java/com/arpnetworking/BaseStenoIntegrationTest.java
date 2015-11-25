@@ -23,7 +23,6 @@ import com.github.fge.jsonschema.core.exceptions.ProcessingException;
 import com.github.fge.jsonschema.core.report.ProcessingReport;
 import com.github.fge.jsonschema.main.JsonSchemaFactory;
 import com.github.fge.jsonschema.main.JsonValidator;
-import com.google.common.base.Throwables;
 import org.junit.Assert;
 
 import java.io.IOException;
@@ -96,7 +95,7 @@ public abstract class BaseStenoIntegrationTest extends BaseIntegrationTest {
         try {
             jsonNode = JsonLoader.fromResource("/steno.schema.json");
         } catch (final IOException e) {
-            Throwables.propagate(e);
+            throw new RuntimeException(e);
         }
         STENO_SCHEMA = jsonNode;
     }

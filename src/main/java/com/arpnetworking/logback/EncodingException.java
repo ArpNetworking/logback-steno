@@ -33,7 +33,7 @@ import java.util.Map;
      * @param context The context of the event being processed when the encoding failure was encountered.
      * @param cause The failure encountered during encoding.
      */
-    public EncodingException(final Map<String, Object> context, final Throwable cause) {
+    /* package private */ EncodingException(final Map<String, Object> context, final Throwable cause) {
         super("Encoding Exception", cause);
         _context = context;
     }

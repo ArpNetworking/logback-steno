@@ -24,6 +24,8 @@ public abstract class BaseKeyValueIntegrationTest extends BaseIntegrationTest {
 
     @Override
     protected String sanitizeOutput(final String output) {
-        return output.replaceAll("[\\d][\\d][\\d][\\d]-[\\d][\\d]-[\\d][\\d] [\\d][\\d]:[\\d][\\d]:[\\d][\\d],[\\d][\\d][\\d]", "<TIME>");
+        return output.replaceAll(
+                "[\\d][\\d][\\d][\\d]-[\\d][\\d]-[\\d][\\d] [\\d][\\d]:[\\d][\\d]:[\\d][\\d],[\\d][\\d][\\d] [^ ]+",
+                "<TIME> <THREAD_ID>");
     }
 }

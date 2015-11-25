@@ -15,10 +15,10 @@
  */
 package com.arpnetworking.logback;
 
-import com.google.common.base.Charsets;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.UUID;
 
@@ -37,7 +37,7 @@ public class SecureRandomProviderTest {
 
     @Test
     public void testDefaultSecureRandomProviderWithSeed() {
-        final SecureRandom secureRandom = SecureRandomProvider.DEFAULT.get(UUID.randomUUID().toString().getBytes(Charsets.UTF_8));
+        final SecureRandom secureRandom = SecureRandomProvider.DEFAULT.get(UUID.randomUUID().toString().getBytes(StandardCharsets.UTF_8));
         Assert.assertNotNull(secureRandom);
     }
 }

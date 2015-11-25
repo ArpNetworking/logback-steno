@@ -25,7 +25,7 @@ import java.util.regex.Pattern;
  * @author Ville Koskela (vkoskela at groupon dot com)
  * @since 1.1.0
  */
-/*package private*/ interface ProcessProvider {
+/* package private */ interface ProcessProvider {
 
     /**
      * Return the process identifier.
@@ -42,9 +42,9 @@ import java.util.regex.Pattern;
     /**
      * Default implementation of <code>ProcessProvider</code> using <code>ManagementFactory</code>.
      */
-    /*package private*/ static final class DefaultProcessProvider implements ProcessProvider {
+    /* package private static */ final class DefaultProcessProvider implements ProcessProvider {
 
-        public DefaultProcessProvider(final Pattern pattern) {
+        /* package private */ DefaultProcessProvider(final Pattern pattern) {
             _pattern = pattern;
         }
 

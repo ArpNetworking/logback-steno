@@ -48,7 +48,7 @@ import java.security.SecureRandom;
     /**
      * Default implementation of <code>SecureRandomProvider</code>.
      */
-    /*package private*/ static final class DefaultSecureRandomProvider implements SecureRandomProvider {
+    /* package private static */ final class DefaultSecureRandomProvider implements SecureRandomProvider {
 
         public SecureRandom get() {
             return new SecureRandom();
