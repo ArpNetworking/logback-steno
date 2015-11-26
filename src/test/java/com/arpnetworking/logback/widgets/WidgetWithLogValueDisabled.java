@@ -45,7 +45,7 @@ public final class WidgetWithLogValueDisabled {
      */
     @LogValue(enabled = false)
     public Object toLogValue() {
-        // CHECKSTYLE.OFF: RegexpSingleline - Allow suboptiomal construction for testing purposes.
+        // CHECKSTYLE.OFF: RegexpSingleline - Allow suboptimal construction for testing purposes.
         return LogValueMapFactory.of("logValue", _value);
         // CHECKSTYLE.ON: RegexpSingleline
     }

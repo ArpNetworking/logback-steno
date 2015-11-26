@@ -50,7 +50,7 @@ public class LogValueMapFactoryTest {
         final Map<String, Object> expectedValue = new HashMap<>();
         // CHECKSTYLE.ON: IllegalInstantiation
         expectedValue.put("k1", "v1");
-        // CHECKSTYLE.OFF: RegexpSingleline - Allow suboptiomal construction for testing purposes.
+        // CHECKSTYLE.OFF: RegexpSingleline - Allow suboptimal construction for testing purposes.
         final Map<String, Object> actualValue = LogValueMapFactory.of("k1", "v1").getData();
         // CHECKSTYLE.ON: RegexpSingleline
         Assert.assertEquals(expectedValue, actualValue);
@@ -63,7 +63,7 @@ public class LogValueMapFactoryTest {
         // CHECKSTYLE.ON: IllegalInstantiation
         expectedValue.put("k1", "v1");
         expectedValue.put("k2", "v2");
-        // CHECKSTYLE.OFF: RegexpSingleline - Allow suboptiomal construction for testing purposes.
+        // CHECKSTYLE.OFF: RegexpSingleline - Allow suboptimal construction for testing purposes.
         final Map<String, Object> actualValue = LogValueMapFactory.of(
                 "k1", "v1",
                 "k2", "v2")
@@ -80,7 +80,7 @@ public class LogValueMapFactoryTest {
         expectedValue.put("k1", "v1");
         expectedValue.put("k2", "v2");
         expectedValue.put("k3", "v3");
-        // CHECKSTYLE.OFF: RegexpSingleline - Allow suboptiomal construction for testing purposes.
+        // CHECKSTYLE.OFF: RegexpSingleline - Allow suboptimal construction for testing purposes.
         final Map<String, Object> actualValue = LogValueMapFactory.of(
                 "k1", "v1",
                 "k2", "v2",
@@ -99,7 +99,7 @@ public class LogValueMapFactoryTest {
         expectedValue.put("k2", "v2");
         expectedValue.put("k3", "v3");
         expectedValue.put("k4", "v4");
-        // CHECKSTYLE.OFF: RegexpSingleline - Allow suboptiomal construction for testing purposes.
+        // CHECKSTYLE.OFF: RegexpSingleline - Allow suboptimal construction for testing purposes.
         final Map<String, Object> actualValue = LogValueMapFactory.of(
                 "k1", "v1",
                 "k2", "v2",
@@ -120,7 +120,7 @@ public class LogValueMapFactoryTest {
         expectedValue.put("k3", "v3");
         expectedValue.put("k4", "v4");
         expectedValue.put("k5", "v5");
-        // CHECKSTYLE.OFF: RegexpSingleline - Allow suboptiomal construction for testing purposes.
+        // CHECKSTYLE.OFF: RegexpSingleline - Allow suboptimal construction for testing purposes.
         final Map<String, Object> actualValue = LogValueMapFactory.of(
                 "k1", "v1",
                 "k2", "v2",
@@ -140,7 +140,7 @@ public class LogValueMapFactoryTest {
         expectedValue.put("k1", "v1");
         expectedValue.put("_nullKeys", true);
         expectedValue.put("k3", "v3");
-        // CHECKSTYLE.OFF: RegexpSingleline - Allow suboptiomal construction for testing purposes.
+        // CHECKSTYLE.OFF: RegexpSingleline - Allow suboptimal construction for testing purposes.
         final Map<String, Object> actualValue = LogValueMapFactory.builder()
                 .put("k1", "v1")
                 .put(null, "v2")
@@ -159,7 +159,7 @@ public class LogValueMapFactoryTest {
         expectedValue.put("k1", "v1");
         expectedValue.put("_nullValues", true);
         expectedValue.put("k3", "v3");
-        // CHECKSTYLE.OFF: RegexpSingleline - Allow suboptiomal construction for testing purposes.
+        // CHECKSTYLE.OFF: RegexpSingleline - Allow suboptimal construction for testing purposes.
         final Map<String, Object> actualValue = LogValueMapFactory.builder()
                 .put("k1", "v1")
                 .put("k2", null)
@@ -185,7 +185,7 @@ public class LogValueMapFactoryTest {
 
     @Test
     public void testToString() {
-        // CHECKSTYLE.OFF: RegexpSingleline - Allow suboptiomal construction for testing purposes.
+        // CHECKSTYLE.OFF: RegexpSingleline - Allow suboptimal construction for testing purposes.
         final String asString = LogValueMapFactory.builder().build().toString();
         // CHECKSTYLE.ON: RegexpSingleline
         Assert.assertNotNull(asString);

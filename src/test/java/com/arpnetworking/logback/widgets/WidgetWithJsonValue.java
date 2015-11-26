@@ -45,7 +45,7 @@ public final class WidgetWithJsonValue {
      */
     @JsonValue
     public Object toJsonValue() {
-        // CHECKSTYLE.OFF: RegexpSingleline - Allow suboptiomal construction for testing purposes.
+        // CHECKSTYLE.OFF: RegexpSingleline - Allow suboptimal construction for testing purposes.
         return LogValueMapFactory.of("jsonValue", _value);
         // CHECKSTYLE.ON: RegexpSingleline
     }
