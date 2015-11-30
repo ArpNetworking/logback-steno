@@ -29,7 +29,7 @@
   <name>logback-steno</name>
   <description>A logback encoder for the steno format</description>
   <url>https://github.com/arpnetworking/logback-steno</url>
-  <version>1.10.7-SNAPSHOT</version>
+  <version>1.10.7</version>
 
   <licenses>
     <license>
@@ -97,7 +97,7 @@
     <connection>scm:git:git@github.com:arpnetworking/logback-steno.git</connection>
     <developerConnection>scm:git:git@github.com:arpnetworking/logback-steno.git</developerConnection>
     <url>https://github.com/arpnetworking/logback-steno</url>
-    <tag>HEAD</tag>
+    <tag>logback-steno-1.10.7</tag>
   </scm>
 
   <properties>
