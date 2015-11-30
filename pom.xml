@@ -269,6 +269,7 @@
             <configuration>
               <excludes>
                 <exclude>com/arpnetworking/steno/aspect/**</exclude>
+                <exclude>ch/qos/logback/core/rolling/helper/CustomSizeAndTimeBasedArchiveRemover.class</exclude>
               </excludes>
             </configuration>
           </execution>
