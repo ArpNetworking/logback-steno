@@ -65,7 +65,7 @@ public class HostConverterTest {
     public void testProcessConvertDefaultProvider() throws UnknownHostException {
         final HostConverter converter = new HostConverter();
         Assert.assertEquals(
-                InetAddress.getLocalHost().getHostName(),
+                InetAddress.getLocalHost().getCanonicalHostName(),
                 converter.convert(Mockito.mock(ILoggingEvent.class)));
     }
 }
