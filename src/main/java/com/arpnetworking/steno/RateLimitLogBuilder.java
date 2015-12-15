@@ -45,7 +45,7 @@ public class RateLimitLogBuilder implements LogBuilder {
     }
 
     /**
-     * Public constructor.
+     * Package private constructor.
      *
      * @since 1.9.0
      *

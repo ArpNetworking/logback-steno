@@ -325,6 +325,26 @@ Output:
 {"time":"2011-11-11T00:00:00.400Z","name":"foo","level":"info","data":{"message":"foo was called","key1":1234,"widget":{"name":"MyWidget"}},"context":{"host":"<HOST>","processId":"<PROCESS>","threadId":"<THREAD>"},"id":"oRw59PrARvatGNC7fiWw4A"}
 ```
 
+### Rate Limited Logging
+
+It is possible to limit the number of times any particular message is logged in an interval by using a __RateLimitLogBuilder__.
+First, continue to instantiate a __Logger__ but for each message you wish to rate limit also instantiate a __RateLimitLogBuilder__.
+You can add any fixed data such as the message or event when instantiating the __RateLimitLogBuilder__. Any data only available
+during the logging invocation may be added before __log()__ is invoked. Note that multiple threads should not use the same instance
+of __RateLimitLogBuilder__ unless there is proper locking in place.
+
+For example:
+
+```java
+private static final Logger LOGGER = LoggerFactory.getLogger(MyClass.class);
+private static final LogBuilder CONNECT_INFO = new RateLimitLogBuilder(LOGGER.info(), Duration.ofSeconds(1))
+        .setMessage("Connection established");
+
+public void accept(final ConnectionInfo info) {
+    CONNECT_INFO.addData("source", info.getSource()).log();
+}
+```
+
 ### Context Weaving
 
 The library contains an Aspect for weaving additional context into all __log()__ invocations of the Steno LogBuilder.  The
@@ -709,7 +729,6 @@ Development
 
 To build the library locally you must satisfy these prerequisites:
 * [JDK8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
-* [Maven 3.2.5+](http://maven.apache.org/download.cgi)
 
 Next, fork the repository, clone and build:
 

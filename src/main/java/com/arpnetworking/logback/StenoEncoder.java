@@ -26,16 +26,14 @@ import com.arpnetworking.logback.serialization.steno.MapOfJsonSerialziationStrat
 import com.arpnetworking.logback.serialization.steno.MapSerialziationStrategy;
 import com.arpnetworking.logback.serialization.steno.ObjectAsJsonSerialziationStrategy;
 import com.arpnetworking.logback.serialization.steno.ObjectSerialziationStrategy;
+import com.arpnetworking.logback.serialization.steno.SafeSerializationHelper;
 import com.arpnetworking.logback.serialization.steno.StandardSerializationStrategy;
 import com.arpnetworking.logback.serialization.steno.StenoSerializationHelper;
-import com.arpnetworking.steno.LogReferenceOnly;
-import com.arpnetworking.steno.LogValueMapFactory;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.databind.node.TextNode;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
@@ -47,11 +45,9 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -644,14 +640,11 @@ public class StenoEncoder extends BaseLoggingEncoder implements Serializable {
                 .append("{\"time\":\"")
                 .append(ISO_DATE_TIME_FORMATTER.format(Instant.ofEpochMilli(event.getTimeStamp())))
                 .append("\",\"name\":\"EncodingException\",\"level\":\"warn\",\"data\":{\"originalMessage\":");
-        safeEncodeValue(encoder, event.getMessage());
-        // TODO(vkoskela): Populate stacktrace [ISSUE-12]
-        encoder.append("},\"exception\":{\"type\":\"")
-                .append(ee.getClass().getName())
-                .append("\",\"message\":");
-        safeEncodeValue(encoder, ee.getMessage());
-        encoder.append(",\"backtrace\":[],\"data\":{}},\"context\":");
-        safeEncodeValue(encoder, ee.getContext());
+        SafeSerializationHelper.safeEncodeValue(encoder, event.getMessage());
+        encoder.append("},\"exception\":");
+        SafeSerializationHelper.safeEncodeValue(encoder, ee);
+        encoder.append(",\"context\":");
+        SafeSerializationHelper.safeEncodeValue(encoder, ee.getContext());
         encoder.append(",\"id\":\"")
                 .append(StenoSerializationHelper.createId())
                 .append("\",\"version\":\"0\"}\n");
@@ -668,7 +661,7 @@ public class StenoEncoder extends BaseLoggingEncoder implements Serializable {
             // CHECKSTYLE.OFF: IllegalCatch: Ensure any exception or error is caught to prevent Appender death.
         } catch (final Throwable t) {
             // CHECKSTYLE.ON: IllegalCatch
-            throw new EncodingException(createSafeContext(event), t);
+            throw new EncodingException(SafeSerializationHelper.createSafeContext(this, event, _objectMapper), t);
         }
     }
 
@@ -692,7 +685,7 @@ public class StenoEncoder extends BaseLoggingEncoder implements Serializable {
             // CHECKSTYLE.OFF: IllegalCatch: Ensure any exception or error is caught to prevent Appender death.
         } catch (final Throwable t) {
             // CHECKSTYLE.ON: IllegalCatch
-            throw new EncodingException(createSafeContext(event), t);
+            throw new EncodingException(SafeSerializationHelper.createSafeContext(this, event, _objectMapper), t);
         }
     }
 
@@ -716,7 +709,7 @@ public class StenoEncoder extends BaseLoggingEncoder implements Serializable {
             // CHECKSTYLE.OFF: IllegalCatch: Ensure any exception or error is caught to prevent Appender death.
         } catch (final Throwable t) {
             // CHECKSTYLE.ON: IllegalCatch
-            throw new EncodingException(createSafeContext(event), t);
+            throw new EncodingException(SafeSerializationHelper.createSafeContext(this, event, _objectMapper), t);
         }
     }
 
@@ -738,7 +731,7 @@ public class StenoEncoder extends BaseLoggingEncoder implements Serializable {
             // CHECKSTYLE.OFF: IllegalCatch: Ensure any exception or error is caught to prevent Appender death.
         } catch (final Throwable t) {
             // CHECKSTYLE.ON: IllegalCatch
-            throw new EncodingException(createSafeContext(event), t);
+            throw new EncodingException(SafeSerializationHelper.createSafeContext(this, event, _objectMapper), t);
         }
     }
 
@@ -760,7 +753,7 @@ public class StenoEncoder extends BaseLoggingEncoder implements Serializable {
             // CHECKSTYLE.OFF: IllegalCatch: Ensure any exception or error is caught to prevent Appender death.
         } catch (final Throwable t) {
             // CHECKSTYLE.ON: IllegalCatch
-            throw new EncodingException(createSafeContext(event), t);
+            throw new EncodingException(SafeSerializationHelper.createSafeContext(this, event, _objectMapper), t);
         }
     }
 
@@ -782,7 +775,7 @@ public class StenoEncoder extends BaseLoggingEncoder implements Serializable {
             // CHECKSTYLE.OFF: IllegalCatch: Ensure any exception or error is caught to prevent Appender death.
         } catch (final Throwable t) {
             // CHECKSTYLE.ON: IllegalCatch
-            throw new EncodingException(createSafeContext(event), t);
+            throw new EncodingException(SafeSerializationHelper.createSafeContext(this, event, _objectMapper), t);
         }
     }
 
@@ -804,7 +797,7 @@ public class StenoEncoder extends BaseLoggingEncoder implements Serializable {
             // CHECKSTYLE.OFF: IllegalCatch: Ensure any exception or error is caught to prevent Appender death.
         } catch (final Throwable t) {
             // CHECKSTYLE.ON: IllegalCatch
-            throw new EncodingException(createSafeContext(event), t);
+            throw new EncodingException(SafeSerializationHelper.createSafeContext(this, event, _objectMapper), t);
         }
     }
 
@@ -832,64 +825,14 @@ public class StenoEncoder extends BaseLoggingEncoder implements Serializable {
             // CHECKSTYLE.OFF: IllegalCatch: Ensure any exception or error is caught to prevent Appender death.
         } catch (final Throwable t) {
             // CHECKSTYLE.ON: IllegalCatch
-            throw new EncodingException(createSafeContext(event, contextKeys, contextValues), t);
-        }
-    }
-
-    /* package private */ Map<String, Object> createSafeContext(final ILoggingEvent event) {
-        return createSafeContext(event, Collections.emptyList(), Collections.emptyList());
-    }
-
-    /* package private */ Map<String, Object> createSafeContext(
-            final ILoggingEvent event,
-            final List<String> contextKeys,
-            final List<Object> contextValues) {
-        return StenoSerializationHelper.createContext(this, event, _objectMapper, contextKeys, contextValues);
-    }
-
-    /* package private */ static void safeEncodeValue(final StringBuilder encoder, final Object value) {
-        // TODO(vkoskela): Support array encoding [ISSUE-9]
-        if (value == null) {
-            encoder.append("null");
-        } else if (value instanceof Map) {
-            final Map<?, ?> valueAsMap = (Map<?, ?>) value;
-            encoder.append("{");
-            for (Map.Entry<?, ?> entry : valueAsMap.entrySet()) {
-                encoder.append("\"")
-                        .append(entry.getKey().toString())
-                        .append("\":");
-                safeEncodeValue(encoder, entry.getValue());
-                encoder.append(",");
-            }
-            if (valueAsMap.isEmpty()) {
-                encoder.append("}");
-            } else {
-                encoder.setCharAt(encoder.length() - 1, '}');
-            }
-        } else if (value instanceof List) {
-            final List<?> valueAsList = (List<?>) value;
-            encoder.append("[");
-            for (Object listValue : valueAsList) {
-                safeEncodeValue(encoder, listValue);
-                encoder.append(",");
-            }
-            if (valueAsList.isEmpty()) {
-                encoder.append("]");
-            } else {
-                encoder.setCharAt(encoder.length() - 1, ']');
-            }
-        } else if (value instanceof LogValueMapFactory.LogValueMap) {
-            final LogValueMapFactory.LogValueMap logValueMap = (LogValueMapFactory.LogValueMap) value;
-            final Map<String, Object> safeLogValueMap = new LinkedHashMap<>();
-            final Optional<Object> target = logValueMap.getTarget();
-            safeLogValueMap.put("_id", target.isPresent() ? Integer.toHexString(System.identityHashCode(target.get())) : null);
-            safeLogValueMap.put("_class", target.isPresent() ? target.get().getClass().getName() : null);
-            safeEncodeValue(encoder, safeLogValueMap);
-        } else if (StenoSerializationHelper.isSimpleType(value)) {
-            // TODO(vkoskela): Support natural json representation for boolean and number [ISSUE-10]
-            encoder.append(new TextNode(value.toString()).toString());
-        } else {
-            safeEncodeValue(encoder, LogReferenceOnly.of(value).toLogValue());
+            throw new EncodingException(
+                    SafeSerializationHelper.createSafeContext(
+                            this,
+                            event,
+                            _objectMapper,
+                            contextKeys,
+                            contextValues),
+                    t);
         }
     }
 
