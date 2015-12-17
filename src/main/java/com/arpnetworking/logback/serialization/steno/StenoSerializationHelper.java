@@ -229,14 +229,16 @@ public final class StenoSerializationHelper {
         jsonGenerator.writeObjectField("type", throwableProxy.getClassName());
         jsonGenerator.writeObjectField("message", throwableProxy.getMessage());
         jsonGenerator.writeArrayFieldStart("backtrace");
-        for (StackTraceElementProxy ste : throwableProxy.getStackTraceElementProxyArray()) {
+        for (final StackTraceElementProxy ste : throwableProxy.getStackTraceElementProxyArray()) {
             jsonGenerator.writeString(ste.toString());
         }
         jsonGenerator.writeEndArray();
         jsonGenerator.writeObjectFieldStart("data");
-        if (throwableProxy.getSuppressed() != null) {
+        // Although Throwable has a final getSuppressed which cannot return a null array, the
+        // proxy in Logback provides no such guarantees.
+        if (throwableProxy.getSuppressed() != null && throwableProxy.getSuppressed().length > 0) {
             jsonGenerator.writeArrayFieldStart("suppressed");
-            for (IThrowableProxy suppressed : throwableProxy.getSuppressed()) {
+            for (final IThrowableProxy suppressed : throwableProxy.getSuppressed()) {
                 jsonGenerator.writeStartObject();
                 serializeThrowable(suppressed, jsonGenerator, objectMapper);
                 jsonGenerator.writeEndObject();
