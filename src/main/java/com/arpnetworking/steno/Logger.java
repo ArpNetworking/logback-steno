@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 /**
  * Logger designed for use particularly with Steno encoder. Although not
@@ -52,7 +53,7 @@ public class Logger {
      * Create a new log event at the trace level. Do not pre-build and cache
      * <code>LogBuilder</code> instances.
      *
-     * @since 1.3.1
+     * @since 1.12.0
      *
      * @return Instance of <code>LogBuilder</code>.
      */
@@ -61,6 +62,24 @@ public class Logger {
             return new DefaultLogBuilder(this, LogLevel.TRACE);
         } else {
             return NO_OP_LOG_BUILDER;
+        }
+    }
+
+    /**
+     * Create a new log event at the trace level. The provided <code>Consumer</code>
+     * populates a <code>DeferredLogBuilder</code> to define the log event. The
+     * consumer may not be invoked if it is not necessary. Therefore it is
+     * important not to include side-effects in the provided <code>Consumer</code>.
+     *
+     * @since 1.12.0
+     *
+     * @param consumer Function to populate the <code>DeferredLogBuilder</code>.
+     */
+    public void trace(final Consumer<DeferredLogBuilder> consumer) {
+        if (_slf4jLogger.isTraceEnabled()) {
+            final LogBuilder logBuilder = new DefaultLogBuilder(this, LogLevel.TRACE);
+            consumer.accept(logBuilder);
+            logBuilder.log();
         }
     }
 
@@ -365,6 +384,24 @@ public class Logger {
     }
 
     /**
+     * Create a new log event at the debug level. The provided <code>Consumer</code>
+     * populates a <code>DeferredLogBuilder</code> to define the log event. The
+     * consumer may not be invoked if it is not necessary. Therefore it is
+     * important not to include side-effects in the provided <code>Consumer</code>.
+     *
+     * @since 1.12.0
+     *
+     * @param consumer Function to populate the <code>DeferredLogBuilder</code>.
+     */
+    public void debug(final Consumer<DeferredLogBuilder> consumer) {
+        if (_slf4jLogger.isDebugEnabled()) {
+            final LogBuilder logBuilder = new DefaultLogBuilder(this, LogLevel.DEBUG);
+            consumer.accept(logBuilder);
+            logBuilder.log();
+        }
+    }
+
+    /**
      * Log a message at the debug level. Default values are used for all other
      * parameters.
      *
@@ -661,6 +698,24 @@ public class Logger {
             return new DefaultLogBuilder(this, LogLevel.INFO);
         } else {
             return NO_OP_LOG_BUILDER;
+        }
+    }
+
+    /**
+     * Create a new log event at the info level. The provided <code>Consumer</code>
+     * populates a <code>DeferredLogBuilder</code> to define the log event. The
+     * consumer may not be invoked if it is not necessary. Therefore it is
+     * important not to include side-effects in the provided <code>Consumer</code>.
+     *
+     * @since 1.12.0
+     *
+     * @param consumer Function to populate the <code>DeferredLogBuilder</code>.
+     */
+    public void info(final Consumer<DeferredLogBuilder> consumer) {
+        if (_slf4jLogger.isInfoEnabled()) {
+            final LogBuilder logBuilder = new DefaultLogBuilder(this, LogLevel.INFO);
+            consumer.accept(logBuilder);
+            logBuilder.log();
         }
     }
 
@@ -964,6 +1019,25 @@ public class Logger {
         }
     }
 
+
+    /**
+     * Create a new log event at the warn level. The provided <code>Consumer</code>
+     * populates a <code>DeferredLogBuilder</code> to define the log event. The
+     * consumer may not be invoked if it is not necessary. Therefore it is
+     * important not to include side-effects in the provided <code>Consumer</code>.
+     *
+     * @since 1.12.0
+     *
+     * @param consumer Function to populate the <code>DeferredLogBuilder</code>.
+     */
+    public void warn(final Consumer<DeferredLogBuilder> consumer) {
+        if (_slf4jLogger.isWarnEnabled()) {
+            final LogBuilder logBuilder = new DefaultLogBuilder(this, LogLevel.WARN);
+            consumer.accept(logBuilder);
+            logBuilder.log();
+        }
+    }
+
     /**
      * Log a message at the warn level. Default values are used for all other
      * parameters.
@@ -1261,6 +1335,24 @@ public class Logger {
             return new DefaultLogBuilder(this, LogLevel.ERROR);
         } else {
             return NO_OP_LOG_BUILDER;
+        }
+    }
+
+    /**
+     * Create a new log event at the error level. The provided <code>Consumer</code>
+     * populates a <code>DeferredLogBuilder</code> to define the log event. The
+     * consumer may not be invoked if it is not necessary. Therefore it is
+     * important not to include side-effects in the provided <code>Consumer</code>.
+     *
+     * @since 1.12.0
+     *
+     * @param consumer Function to populate the <code>DeferredLogBuilder</code>.
+     */
+    public void error(final Consumer<DeferredLogBuilder> consumer) {
+        if (_slf4jLogger.isErrorEnabled()) {
+            final LogBuilder logBuilder = new DefaultLogBuilder(this, LogLevel.ERROR);
+            consumer.accept(logBuilder);
+            logBuilder.log();
         }
     }
 

@@ -64,6 +64,37 @@ public class LoggerTest {
     }
 
     @Test
+    public void testCreateTraceWithLambda() {
+        final org.slf4j.Logger slf4jLogger = Mockito.mock(org.slf4j.Logger.class);
+        Mockito.doReturn(Boolean.TRUE).when(slf4jLogger).isTraceEnabled();
+        new Logger(slf4jLogger).trace(l -> {
+            l.setEvent(TEST_EVENT)
+                    .setMessage(TEST_MESSAGE)
+                    .addData(KEY1, VALUE1)
+                    .addContext(KEY2, VALUE2);
+        });
+        Mockito.verify(slf4jLogger).trace(
+                StenoMarker.LISTS_MARKER,
+                TEST_EVENT,
+                Arrays.asList(MESSAGE_KEY, KEY1),
+                Arrays.asList(TEST_MESSAGE, VALUE1),
+                Collections.singletonList(KEY2),
+                Collections.singletonList(VALUE2));
+    }
+
+    @Test
+    public void testCreateTraceWithLambdaDisabled() {
+        final org.slf4j.Logger slf4jLogger = Mockito.mock(org.slf4j.Logger.class);
+        Mockito.doReturn(Boolean.FALSE).when(slf4jLogger).isTraceEnabled();
+        Mockito.reset(slf4jLogger);
+        new Logger(slf4jLogger).trace(l -> {
+            l.setMessage(TEST_MESSAGE);
+        });
+        Mockito.verify(slf4jLogger).isTraceEnabled();
+        Mockito.verifyNoMoreInteractions(slf4jLogger);
+    }
+
+    @Test
     public void testCreateTraceWithException() {
         final org.slf4j.Logger slf4jLogger = Mockito.mock(org.slf4j.Logger.class);
         Mockito.doReturn(Boolean.TRUE).when(slf4jLogger).isTraceEnabled();
@@ -286,6 +317,37 @@ public class LoggerTest {
                 Arrays.asList(TEST_MESSAGE, VALUE1),
                 Collections.singletonList(KEY2),
                 Collections.singletonList(VALUE2));
+    }
+
+    @Test
+    public void testCreateDebugWithLambda() {
+        final org.slf4j.Logger slf4jLogger = Mockito.mock(org.slf4j.Logger.class);
+        Mockito.doReturn(Boolean.TRUE).when(slf4jLogger).isDebugEnabled();
+        new Logger(slf4jLogger).debug(l -> {
+            l.setEvent(TEST_EVENT)
+                    .setMessage(TEST_MESSAGE)
+                    .addData(KEY1, VALUE1)
+                    .addContext(KEY2, VALUE2);
+        });
+        Mockito.verify(slf4jLogger).debug(
+                StenoMarker.LISTS_MARKER,
+                TEST_EVENT,
+                Arrays.asList(MESSAGE_KEY, KEY1),
+                Arrays.asList(TEST_MESSAGE, VALUE1),
+                Collections.singletonList(KEY2),
+                Collections.singletonList(VALUE2));
+    }
+
+    @Test
+    public void testCreateDebugWithLambdaDisabled() {
+        final org.slf4j.Logger slf4jLogger = Mockito.mock(org.slf4j.Logger.class);
+        Mockito.doReturn(Boolean.FALSE).when(slf4jLogger).isDebugEnabled();
+        Mockito.reset(slf4jLogger);
+        new Logger(slf4jLogger).debug(l -> {
+            l.setMessage(TEST_MESSAGE);
+        });
+        Mockito.verify(slf4jLogger).isDebugEnabled();
+        Mockito.verifyNoMoreInteractions(slf4jLogger);
     }
 
     @Test
@@ -514,6 +576,37 @@ public class LoggerTest {
     }
 
     @Test
+    public void testCreateInfoWithLambda() {
+        final org.slf4j.Logger slf4jLogger = Mockito.mock(org.slf4j.Logger.class);
+        Mockito.doReturn(Boolean.TRUE).when(slf4jLogger).isInfoEnabled();
+        new Logger(slf4jLogger).info(l -> {
+            l.setEvent(TEST_EVENT)
+                    .setMessage(TEST_MESSAGE)
+                    .addData(KEY1, VALUE1)
+                    .addContext(KEY2, VALUE2);
+        });
+        Mockito.verify(slf4jLogger).info(
+                StenoMarker.LISTS_MARKER,
+                TEST_EVENT,
+                Arrays.asList(MESSAGE_KEY, KEY1),
+                Arrays.asList(TEST_MESSAGE, VALUE1),
+                Collections.singletonList(KEY2),
+                Collections.singletonList(VALUE2));
+    }
+
+    @Test
+    public void testCreateInfoWithLambdaDisabled() {
+        final org.slf4j.Logger slf4jLogger = Mockito.mock(org.slf4j.Logger.class);
+        Mockito.doReturn(Boolean.FALSE).when(slf4jLogger).isInfoEnabled();
+        Mockito.reset(slf4jLogger);
+        new Logger(slf4jLogger).info(l -> {
+            l.setMessage(TEST_MESSAGE);
+        });
+        Mockito.verify(slf4jLogger).isInfoEnabled();
+        Mockito.verifyNoMoreInteractions(slf4jLogger);
+    }
+
+    @Test
     public void testCreateInfoWithException() {
         final org.slf4j.Logger slf4jLogger = Mockito.mock(org.slf4j.Logger.class);
         Mockito.doReturn(Boolean.TRUE).when(slf4jLogger).isInfoEnabled();
@@ -739,6 +832,37 @@ public class LoggerTest {
     }
 
     @Test
+    public void testCreateWarnWithLambda() {
+        final org.slf4j.Logger slf4jLogger = Mockito.mock(org.slf4j.Logger.class);
+        Mockito.doReturn(Boolean.TRUE).when(slf4jLogger).isWarnEnabled();
+        new Logger(slf4jLogger).warn(l -> {
+            l.setEvent(TEST_EVENT)
+                    .setMessage(TEST_MESSAGE)
+                    .addData(KEY1, VALUE1)
+                    .addContext(KEY2, VALUE2);
+        });
+        Mockito.verify(slf4jLogger).warn(
+                StenoMarker.LISTS_MARKER,
+                TEST_EVENT,
+                Arrays.asList(MESSAGE_KEY, KEY1),
+                Arrays.asList(TEST_MESSAGE, VALUE1),
+                Collections.singletonList(KEY2),
+                Collections.singletonList(VALUE2));
+    }
+
+    @Test
+    public void testCreateWarnWithLambdaDisabled() {
+        final org.slf4j.Logger slf4jLogger = Mockito.mock(org.slf4j.Logger.class);
+        Mockito.doReturn(Boolean.FALSE).when(slf4jLogger).isWarnEnabled();
+        Mockito.reset(slf4jLogger);
+        new Logger(slf4jLogger).warn(l -> {
+            l.setMessage(TEST_MESSAGE);
+        });
+        Mockito.verify(slf4jLogger).isWarnEnabled();
+        Mockito.verifyNoMoreInteractions(slf4jLogger);
+    }
+
+    @Test
     public void testCreateWarnWithException() {
         final org.slf4j.Logger slf4jLogger = Mockito.mock(org.slf4j.Logger.class);
         Mockito.doReturn(Boolean.TRUE).when(slf4jLogger).isWarnEnabled();
@@ -961,6 +1085,37 @@ public class LoggerTest {
                 Arrays.asList(TEST_MESSAGE, VALUE1),
                 Collections.singletonList(KEY2),
                 Collections.singletonList(VALUE2));
+    }
+
+    @Test
+    public void testCreateErrorWithLambda() {
+        final org.slf4j.Logger slf4jLogger = Mockito.mock(org.slf4j.Logger.class);
+        Mockito.doReturn(Boolean.TRUE).when(slf4jLogger).isErrorEnabled();
+        new Logger(slf4jLogger).error(l -> {
+            l.setEvent(TEST_EVENT)
+                    .setMessage(TEST_MESSAGE)
+                    .addData(KEY1, VALUE1)
+                    .addContext(KEY2, VALUE2);
+        });
+        Mockito.verify(slf4jLogger).error(
+                StenoMarker.LISTS_MARKER,
+                TEST_EVENT,
+                Arrays.asList(MESSAGE_KEY, KEY1),
+                Arrays.asList(TEST_MESSAGE, VALUE1),
+                Collections.singletonList(KEY2),
+                Collections.singletonList(VALUE2));
+    }
+
+    @Test
+    public void testCreateErrorWithLambdaDisabled() {
+        final org.slf4j.Logger slf4jLogger = Mockito.mock(org.slf4j.Logger.class);
+        Mockito.doReturn(Boolean.FALSE).when(slf4jLogger).isErrorEnabled();
+        Mockito.reset(slf4jLogger);
+        new Logger(slf4jLogger).error(l -> {
+            l.setMessage(TEST_MESSAGE);
+        });
+        Mockito.verify(slf4jLogger).isErrorEnabled();
+        Mockito.verifyNoMoreInteractions(slf4jLogger);
     }
 
     @Test
@@ -1341,7 +1496,7 @@ public class LoggerTest {
     public void testTraceMessageNull() {
         final org.slf4j.Logger slf4jLogger = Mockito.mock(org.slf4j.Logger.class);
         Mockito.doReturn(Boolean.TRUE).when(slf4jLogger).isTraceEnabled();
-        new Logger(slf4jLogger).trace(null);
+        new Logger(slf4jLogger).trace((String) null);
         Mockito.verify(slf4jLogger).trace(
                 StenoMarker.ARRAY_MARKER,
                 null,
@@ -1440,7 +1595,7 @@ public class LoggerTest {
     public void testDebugMessageNull() {
         final org.slf4j.Logger slf4jLogger = Mockito.mock(org.slf4j.Logger.class);
         Mockito.doReturn(Boolean.TRUE).when(slf4jLogger).isDebugEnabled();
-        new Logger(slf4jLogger).debug(null);
+        new Logger(slf4jLogger).debug((String) null);
         Mockito.verify(slf4jLogger).debug(
                 StenoMarker.ARRAY_MARKER,
                 null,
@@ -1665,7 +1820,7 @@ public class LoggerTest {
     public void testErrorMessageNull() {
         final org.slf4j.Logger slf4jLogger = Mockito.mock(org.slf4j.Logger.class);
         Mockito.doReturn(Boolean.TRUE).when(slf4jLogger).isErrorEnabled();
-        new Logger(slf4jLogger).error(null);
+        new Logger(slf4jLogger).error((String) null);
         Mockito.verify(slf4jLogger).error(
                 StenoMarker.ARRAY_MARKER,
                 null,
