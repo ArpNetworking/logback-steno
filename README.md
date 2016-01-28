@@ -294,6 +294,14 @@ public class MyClass {
         .addData("widget", widget)
         .log();
 
+    // Fluent builder via lambda:
+    LOGGER.info(l -> {
+        l.setEvent("foo")
+            .setMessage("foo was called")
+            .addData("key1", 1234)
+            .addData("widget", widget)
+    });
+
     // Additional data with arrays:
     LOGGER.info("foo", "foo was called", new String[]{"key1", "widget"}, new Object[]{1234, widget});
 
@@ -322,11 +330,12 @@ public class MyClass {
 Output:
 
 ```json
-{"time":"2011-11-11T00:00:00.000Z","name":"log","level":"info","data":{"message":"foo was called"},"context":{"host":"<HOST>","processId":"<PROCESS>","threadId":"<THREAD>"},"id":"oRw59PrARvatGNC7fiWw4A"}
-{"time":"2011-11-11T00:00:00.100Z","name":"foo","level":"info","data":{"message":"foo was called","key1":1234,"widget":{"name":"MyWidget"}},"context":{"host":"<HOST>","processId":"<PROCESS>","threadId":"<THREAD>"},"id":"oRw59PrARvatGNC7fiWw4A"}
-{"time":"2011-11-11T00:00:00.200Z","name":"foo","level":"info","data":{"message":"foo was called","key1":1234,"widget":{"name":"MyWidget"}},"context":{"host":"<HOST>","processId":"<PROCESS>","threadId":"<THREAD>"},"id":"oRw59PrARvatGNC7fiWw4A"}
-{"time":"2011-11-11T00:00:00.300Z","name":"foo","level":"info","data":{"message":"foo was called","key1":1234,"widget":{"name":"MyWidget"}},"context":{"host":"<HOST>","processId":"<PROCESS>","threadId":"<THREAD>"},"id":"oRw59PrARvatGNC7fiWw4A"}
-{"time":"2011-11-11T00:00:00.400Z","name":"foo","level":"info","data":{"message":"foo was called","key1":1234,"widget":{"name":"MyWidget"}},"context":{"host":"<HOST>","processId":"<PROCESS>","threadId":"<THREAD>"},"id":"oRw59PrARvatGNC7fiWw4A"}
+{"time":"2011-11-11T00:00:00.000Z","name":"log","level":"info","data":{"message":"foo was called"},"context":{"host":"<HOST>","processId":"<PROCESS>","threadId":"<THREAD>"},"id":"oRw59PrARvatGNC7fiWw41"}
+{"time":"2011-11-11T00:00:00.100Z","name":"foo","level":"info","data":{"message":"foo was called","key1":1234,"widget":{"name":"MyWidget"}},"context":{"host":"<HOST>","processId":"<PROCESS>","threadId":"<THREAD>"},"id":"oRw59PrARvatGNC7fiWw42"}
+{"time":"2011-11-11T00:00:00.200Z","name":"foo","level":"info","data":{"message":"foo was called","key1":1234,"widget":{"name":"MyWidget"}},"context":{"host":"<HOST>","processId":"<PROCESS>","threadId":"<THREAD>"},"id":"oRw59PrARvatGNC7fiWw43"}
+{"time":"2011-11-11T00:00:00.300Z","name":"foo","level":"info","data":{"message":"foo was called","key1":1234,"widget":{"name":"MyWidget"}},"context":{"host":"<HOST>","processId":"<PROCESS>","threadId":"<THREAD>"},"id":"oRw59PrARvatGNC7fiWw44"}
+{"time":"2011-11-11T00:00:00.400Z","name":"foo","level":"info","data":{"message":"foo was called","key1":1234,"widget":{"name":"MyWidget"}},"context":{"host":"<HOST>","processId":"<PROCESS>","threadId":"<THREAD>"},"id":"oRw59PrARvatGNC7fiWw45"}
+{"time":"2011-11-11T00:00:00.500Z","name":"foo","level":"info","data":{"message":"foo was called","key1":1234,"widget":{"name":"MyWidget"}},"context":{"host":"<HOST>","processId":"<PROCESS>","threadId":"<THREAD>"},"id":"oRw59PrARvatGNC7fiWw46"}
 ```
 
 ### Rate Limited Logging

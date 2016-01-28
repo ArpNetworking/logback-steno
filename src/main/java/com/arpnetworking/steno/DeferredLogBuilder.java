@@ -16,11 +16,12 @@
 package com.arpnetworking.steno;
 
 /**
- * Interface for classes which assemble log messages and log them.
+ * Interface for classes which assemble log messages where the actual logging
+ * is deferred.
  *
  * @author Ville Koskela (vkoskela at groupon dot com)
  */
-public interface LogBuilder extends DeferredLogBuilder {
+public interface DeferredLogBuilder {
 
     /**
      * Set the event.
@@ -30,8 +31,7 @@ public interface LogBuilder extends DeferredLogBuilder {
      * @param value The event.
      * @return This instance as {@code <T>}.
      */
-    @Override
-    LogBuilder setEvent(String value);
+    DeferredLogBuilder setEvent(String value);
 
     /**
      * Set the message.
@@ -41,8 +41,7 @@ public interface LogBuilder extends DeferredLogBuilder {
      * @param value The message.
      * @return This instance as {@code <T>}.
      */
-    @Override
-    LogBuilder setMessage(String value);
+    DeferredLogBuilder setMessage(String value);
 
     /**
      * Set the exception (<code>Throwable</code>).
@@ -52,8 +51,7 @@ public interface LogBuilder extends DeferredLogBuilder {
      * @param value The exception (<code>Throwable</code>).
      * @return This instance as {@code <T>}.
      */
-    @Override
-    LogBuilder setThrowable(Throwable value);
+    DeferredLogBuilder setThrowable(Throwable value);
 
     /**
      * Add data key-value pair.
@@ -64,8 +62,7 @@ public interface LogBuilder extends DeferredLogBuilder {
      * @param value The value.
      * @return This instance as {@code <T>}.
      */
-    @Override
-    LogBuilder addData(String name, Object value);
+    DeferredLogBuilder addData(String name, Object value);
 
     /**
      * Add context key-value pair.
@@ -76,13 +73,5 @@ public interface LogBuilder extends DeferredLogBuilder {
      * @param value The value.
      * @return This instance as {@code <T>}.
      */
-    @Override
-    LogBuilder addContext(String name, Object value);
-
-    /**
-     * Log this message.
-     *
-     * @since 1.3.0
-     */
-    void log();
+    DeferredLogBuilder addContext(String name, Object value);
 }
