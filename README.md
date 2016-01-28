@@ -101,6 +101,10 @@ The second encoder is more human friendly and encodes each key-value pair of sup
 data instance's toString method.  This is intended for development.  For more information about Logback
 configuration please see: http://logback.qos.ch/manual/configuration.html
 
+__IMPORTANT__: The structured data markers injected by this library are __not__ supported by any other
+Logback encoders. Therefore, it is required that you _either_ specify the StenoEncoder or the
+KeyValueEncoder in your Logback configuration when using this library.
+
 #### StenoEncoder
 
 Example appender configuration in XML:
