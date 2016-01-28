@@ -15,6 +15,8 @@
  */
 package com.arpnetworking.steno;
 
+import java.time.Duration;
+
 /**
  * Factory class creates instances of <code>Logger</code>. To include the
  * context class or name in the context block of the Steno encoder's
@@ -39,6 +41,17 @@ public final class LoggerFactory {
     }
 
     /**
+     * Return a rate limited Steno <code>Logger</code> for a context class.
+     *
+     * @param clazz The <code>Logger</code> context class.
+     * @param duration Minimum time between log message output.
+     * @return Steno <code>Logger</code> instance.
+     */
+    public static Logger getRateLimitLogger(final Class<?> clazz, final Duration duration) {
+        return new RateLimitLogger(org.slf4j.LoggerFactory.getLogger(clazz), duration);
+    }
+
+    /**
      * Return a Steno <code>Logger</code> for a context name.
      *
      * @param name The <code>Logger</code> context name.
@@ -46,6 +59,17 @@ public final class LoggerFactory {
      */
     public static Logger getLogger(final String name) {
         return new Logger(org.slf4j.LoggerFactory.getLogger(name));
+    }
+
+    /**
+     * Return a rate limited Steno <code>Logger</code> for a context name.
+     *
+     * @param name The <code>Logger</code> context name.
+     * @param duration Minimum time between log message output.
+     * @return Steno <code>Logger</code> instance.
+     */
+    public static Logger getRateLimitLogger(final String name, final Duration duration) {
+        return new RateLimitLogger(org.slf4j.LoggerFactory.getLogger(name), duration);
     }
 
     private LoggerFactory() {

@@ -29,7 +29,9 @@ import java.util.Optional;
  *
  * @author Ville Koskela (vkoskela at groupon dot com)
  * @since 1.9.0
+ * @deprecated This class is not thread safe and easily leads to misuse. Use <code>RateLimitLogger</code>.
  */
+@Deprecated
 public class RateLimitLogBuilder implements LogBuilder {
 
     /**

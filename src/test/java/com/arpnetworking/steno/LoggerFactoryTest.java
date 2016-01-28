@@ -20,6 +20,7 @@ import org.junit.Test;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.time.Duration;
 
 /**
  * Tests for <code>LoggerFactory</code>.
@@ -38,8 +39,26 @@ public class LoggerFactoryTest {
     }
 
     @Test
+    public void testGetRateLimitLoggerWithClass() {
+        final Logger logger = LoggerFactory.getRateLimitLogger(LoggerFactoryTest.class, Duration.ofSeconds(1));
+        final org.slf4j.Logger slf4jLogger = logger.getSlf4jLogger();
+        //Assert.assertTrue(slf4jLogger instanceof ch.qos.logback.classic.Logger);
+        //final ch.qos.logback.classic.Logger logbackLogger = (ch.qos.logback.classic.Logger) slf4jLogger;
+        Assert.assertEquals("com.arpnetworking.steno.LoggerFactoryTest", slf4jLogger.getName());
+    }
+
+    @Test
     public void testGetLoggerWithName() {
         final Logger logger = LoggerFactory.getLogger("MyLogger");
+        final org.slf4j.Logger slf4jLogger = logger.getSlf4jLogger();
+        //Assert.assertTrue(slf4jLogger instanceof ch.qos.logback.classic.Logger);
+        //final ch.qos.logback.classic.Logger logbackLogger = (ch.qos.logback.classic.Logger) slf4jLogger;
+        Assert.assertEquals("MyLogger", slf4jLogger.getName());
+    }
+
+    @Test
+    public void testGetRateLimitLoggerWithName() {
+        final Logger logger = LoggerFactory.getRateLimitLogger("MyLogger", Duration.ofSeconds(1));
         final org.slf4j.Logger slf4jLogger = logger.getSlf4jLogger();
         //Assert.assertTrue(slf4jLogger instanceof ch.qos.logback.classic.Logger);
         //final ch.qos.logback.classic.Logger logbackLogger = (ch.qos.logback.classic.Logger) slf4jLogger;
