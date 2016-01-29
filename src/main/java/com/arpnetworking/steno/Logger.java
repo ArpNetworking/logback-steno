@@ -46,7 +46,7 @@ public class Logger {
      * @return True if and only if trace level logging is enabled.
      */
     public boolean isTraceEnabled() {
-        return _slf4jLogger.isTraceEnabled();
+        return getSlf4jLogger().isTraceEnabled();
     }
 
     /**
@@ -58,7 +58,7 @@ public class Logger {
      * @return Instance of <code>LogBuilder</code>.
      */
     public LogBuilder trace() {
-        if (_slf4jLogger.isTraceEnabled()) {
+        if (getSlf4jLogger().isTraceEnabled()) {
             return new DefaultLogBuilder(this, LogLevel.TRACE);
         } else {
             return NO_OP_LOG_BUILDER;
@@ -178,9 +178,9 @@ public class Logger {
             final String message,
             final Map<String, Object> data,
             final Throwable throwable) {
-        if (_slf4jLogger.isTraceEnabled()) {
+        if (getSlf4jLogger().isTraceEnabled()) {
             LogLevel.TRACE.log(
-                    _slf4jLogger,
+                    getSlf4jLogger(),
                     event,
                     createKeysFromCollection(
                             data == null ? Collections.emptyList() : data.keySet(),
@@ -288,9 +288,9 @@ public class Logger {
             final String dataKey1,
             final Object dataValue1,
             final Throwable throwable) {
-        if (_slf4jLogger.isTraceEnabled()) {
+        if (getSlf4jLogger().isTraceEnabled()) {
             LogLevel.TRACE.log(
-                    _slf4jLogger,
+                    getSlf4jLogger(),
                     event,
                     createKeysFromArgs(MESSAGE_DATA_KEY, dataKey1),
                     createValuesFromArgs(message, dataValue1),
@@ -346,9 +346,9 @@ public class Logger {
             final Object dataValue1,
             final Object dataValue2,
             final Throwable throwable) {
-        if (_slf4jLogger.isTraceEnabled()) {
+        if (getSlf4jLogger().isTraceEnabled()) {
             LogLevel.TRACE.log(
-                    _slf4jLogger,
+                    getSlf4jLogger(),
                     event,
                     createKeysFromArgs(MESSAGE_DATA_KEY, dataKey1, dataKey2),
                     createValuesFromArgs(message, dataValue1, dataValue2),
@@ -364,7 +364,7 @@ public class Logger {
      * @return True if and only if debug level logging is enabled.
      */
     public boolean isDebugEnabled() {
-        return _slf4jLogger.isDebugEnabled();
+        return getSlf4jLogger().isDebugEnabled();
     }
 
     /**
@@ -376,7 +376,7 @@ public class Logger {
      * @return Instance of <code>LogBuilder</code>.
      */
     public LogBuilder debug() {
-        if (_slf4jLogger.isDebugEnabled()) {
+        if (getSlf4jLogger().isDebugEnabled()) {
             return new DefaultLogBuilder(this, LogLevel.DEBUG);
         } else {
             return NO_OP_LOG_BUILDER;
@@ -496,9 +496,9 @@ public class Logger {
             final String message,
             final Map<String, Object> data,
             final Throwable throwable) {
-        if (_slf4jLogger.isDebugEnabled()) {
+        if (getSlf4jLogger().isDebugEnabled()) {
             LogLevel.DEBUG.log(
-                    _slf4jLogger,
+                    getSlf4jLogger(),
                     event,
                     createKeysFromCollection(
                             data == null ? Collections.emptyList() : data.keySet(),
@@ -606,9 +606,9 @@ public class Logger {
             final String dataKey1,
             final Object dataValue1,
             final Throwable throwable) {
-        if (_slf4jLogger.isDebugEnabled()) {
+        if (getSlf4jLogger().isDebugEnabled()) {
             LogLevel.DEBUG.log(
-                    _slf4jLogger,
+                    getSlf4jLogger(),
                     event,
                     createKeysFromArgs(MESSAGE_DATA_KEY, dataKey1),
                     createValuesFromArgs(message, dataValue1),
@@ -664,9 +664,9 @@ public class Logger {
             final Object dataValue1,
             final Object dataValue2,
             final Throwable throwable) {
-        if (_slf4jLogger.isDebugEnabled()) {
+        if (getSlf4jLogger().isDebugEnabled()) {
             LogLevel.DEBUG.log(
-                    _slf4jLogger,
+                    getSlf4jLogger(),
                     event,
                     createKeysFromArgs(MESSAGE_DATA_KEY, dataKey1, dataKey2),
                     createValuesFromArgs(message, dataValue1, dataValue2),
@@ -682,7 +682,7 @@ public class Logger {
      * @return True if and only if info level logging is enabled.
      */
     public boolean isInfoEnabled() {
-        return _slf4jLogger.isInfoEnabled();
+        return getSlf4jLogger().isInfoEnabled();
     }
 
     /**
@@ -694,7 +694,7 @@ public class Logger {
      * @return Instance of <code>LogBuilder</code>.
      */
     public LogBuilder info() {
-        if (_slf4jLogger.isInfoEnabled()) {
+        if (getSlf4jLogger().isInfoEnabled()) {
             return new DefaultLogBuilder(this, LogLevel.INFO);
         } else {
             return NO_OP_LOG_BUILDER;
@@ -814,9 +814,9 @@ public class Logger {
             final String message,
             final Map<String, Object> data,
             final Throwable throwable) {
-        if (_slf4jLogger.isInfoEnabled()) {
+        if (getSlf4jLogger().isInfoEnabled()) {
             LogLevel.INFO.log(
-                    _slf4jLogger,
+                    getSlf4jLogger(),
                     event,
                     createKeysFromCollection(
                             data == null ? Collections.emptyList() : data.keySet(),
@@ -924,9 +924,9 @@ public class Logger {
             final String dataKey1,
             final Object dataValue1,
             final Throwable throwable) {
-        if (_slf4jLogger.isInfoEnabled()) {
+        if (getSlf4jLogger().isInfoEnabled()) {
             LogLevel.INFO.log(
-                    _slf4jLogger,
+                    getSlf4jLogger(),
                     event,
                     createKeysFromArgs(MESSAGE_DATA_KEY, dataKey1),
                     createValuesFromArgs(message, dataValue1),
@@ -982,9 +982,9 @@ public class Logger {
             final Object dataValue1,
             final Object dataValue2,
             final Throwable throwable) {
-        if (_slf4jLogger.isInfoEnabled()) {
+        if (getSlf4jLogger().isInfoEnabled()) {
             LogLevel.INFO.log(
-                    _slf4jLogger,
+                    getSlf4jLogger(),
                     event,
                     createKeysFromArgs(MESSAGE_DATA_KEY, dataKey1, dataKey2),
                     createValuesFromArgs(message, dataValue1, dataValue2),
@@ -1000,7 +1000,7 @@ public class Logger {
      * @return True if and only if warn level logging is enabled.
      */
     public boolean isWarnEnabled() {
-        return _slf4jLogger.isWarnEnabled();
+        return getSlf4jLogger().isWarnEnabled();
     }
 
     /**
@@ -1012,7 +1012,7 @@ public class Logger {
      * @return Instance of <code>LogBuilder</code>.
      */
     public LogBuilder warn() {
-        if (_slf4jLogger.isWarnEnabled()) {
+        if (getSlf4jLogger().isWarnEnabled()) {
             return new DefaultLogBuilder(this, LogLevel.WARN);
         } else {
             return NO_OP_LOG_BUILDER;
@@ -1133,9 +1133,9 @@ public class Logger {
             final String message,
             final Map<String, Object> data,
             final Throwable throwable) {
-        if (_slf4jLogger.isWarnEnabled()) {
+        if (getSlf4jLogger().isWarnEnabled()) {
             LogLevel.WARN.log(
-                    _slf4jLogger,
+                    getSlf4jLogger(),
                     event,
                     createKeysFromCollection(
                             data == null ? Collections.emptyList() : data.keySet(),
@@ -1243,9 +1243,9 @@ public class Logger {
             final String dataKey1,
             final Object dataValue1,
             final Throwable throwable) {
-        if (_slf4jLogger.isWarnEnabled()) {
+        if (getSlf4jLogger().isWarnEnabled()) {
             LogLevel.WARN.log(
-                    _slf4jLogger,
+                    getSlf4jLogger(),
                     event,
                     createKeysFromArgs(MESSAGE_DATA_KEY, dataKey1),
                     createValuesFromArgs(message, dataValue1),
@@ -1301,9 +1301,9 @@ public class Logger {
             final Object dataValue1,
             final Object dataValue2,
             final Throwable throwable) {
-        if (_slf4jLogger.isWarnEnabled()) {
+        if (getSlf4jLogger().isWarnEnabled()) {
             LogLevel.WARN.log(
-                    _slf4jLogger,
+                    getSlf4jLogger(),
                     event,
                     createKeysFromArgs(MESSAGE_DATA_KEY, dataKey1, dataKey2),
                     createValuesFromArgs(message, dataValue1, dataValue2),
@@ -1319,7 +1319,7 @@ public class Logger {
      * @return True if and only if error level logging is enabled.
      */
     public boolean isErrorEnabled() {
-        return _slf4jLogger.isErrorEnabled();
+        return getSlf4jLogger().isErrorEnabled();
     }
 
     /**
@@ -1331,7 +1331,7 @@ public class Logger {
      * @return Instance of <code>LogBuilder</code>.
      */
     public LogBuilder error() {
-        if (_slf4jLogger.isErrorEnabled()) {
+        if (getSlf4jLogger().isErrorEnabled()) {
             return new DefaultLogBuilder(this, LogLevel.ERROR);
         } else {
             return NO_OP_LOG_BUILDER;
@@ -1451,9 +1451,9 @@ public class Logger {
             final String message,
             final Map<String, Object> data,
             final Throwable throwable) {
-        if (_slf4jLogger.isErrorEnabled()) {
+        if (getSlf4jLogger().isErrorEnabled()) {
             LogLevel.ERROR.log(
-                    _slf4jLogger,
+                    getSlf4jLogger(),
                     event,
                     createKeysFromCollection(
                             data == null ? Collections.emptyList() : data.keySet(),
@@ -1561,9 +1561,9 @@ public class Logger {
             final String dataKey1,
             final Object dataValue1,
             final Throwable throwable) {
-        if (_slf4jLogger.isErrorEnabled()) {
+        if (getSlf4jLogger().isErrorEnabled()) {
             LogLevel.ERROR.log(
-                    _slf4jLogger,
+                    getSlf4jLogger(),
                     event,
                     createKeysFromArgs(MESSAGE_DATA_KEY, dataKey1),
                     createValuesFromArgs(message, dataValue1),
@@ -1619,9 +1619,9 @@ public class Logger {
             final Object dataValue1,
             final Object dataValue2,
             final Throwable throwable) {
-        if (_slf4jLogger.isErrorEnabled()) {
+        if (getSlf4jLogger().isErrorEnabled()) {
             LogLevel.ERROR.log(
-                    _slf4jLogger,
+                    getSlf4jLogger(),
                     event,
                     createKeysFromArgs(MESSAGE_DATA_KEY, dataKey1, dataKey2),
                     createValuesFromArgs(message, dataValue1, dataValue2),
@@ -1629,6 +1629,25 @@ public class Logger {
         }
     }
 
+    /**
+     * Accessor for underluing <code>org.slf4j.Logger</code> instance.
+     *
+     * @return Instance of underlying <code>org.slf4j.Logger</code>.
+     */
+    protected org.slf4j.Logger getSlf4jLogger() {
+        return _slf4jLogger;
+    }
+
+    /**
+     * Log for a particular level using the <code>ARRAY_MARKER</code>.
+     *
+     * @param level The log event level.
+     * @param event The log event name.
+     * @param message The log event message.
+     * @param dataKeys The array of data keys.
+     * @param dataValues The array of data values.
+     * @param throwable The <code>Throwable</code>.
+     */
     /* package private */ void log(
             final LogLevel level,
             final String event,
@@ -1637,13 +1656,28 @@ public class Logger {
             final Object[] dataValues,
             final Throwable throwable) {
         level.log(
-                _slf4jLogger,
+                getSlf4jLogger(),
                 event,
                 createKeysFromArray(dataKeys, MESSAGE_DATA_KEY),
                 createValuesFromArray(dataValues, message),
                 throwable);
     }
 
+    /**
+     * Log for a particular level using the <code>LISTS_MARKER</code>.
+     *
+     * @param level The log event level.
+     * @param event The log event name.
+     * @param dataKeys The <code>List</code> of data keys. The
+     * <code>List</code> may be modified.
+     * @param dataValues The <code>List</code> of data values. The
+     * <code>List</code> may be modified.
+     * @param contextKeys The <code>List</code> of context keys. The
+     * <code>List</code> may be modified.
+     * @param contextValues The <code>List</code> of context values. The
+     * <code>List</code> may be modified.
+     * @param throwable The <code>Throwable</code>.
+     */
     /* package private */ void log(
             final LogLevel level,
             final String event,
@@ -1653,7 +1687,7 @@ public class Logger {
             final List<Object> contextValues,
             final Throwable throwable) {
         level.log(
-                _slf4jLogger,
+                getSlf4jLogger(),
                 event,
                 dataKeys,
                 dataValues,
@@ -1738,10 +1772,6 @@ public class Logger {
         return null;
     }
 
-    /* package private */ org.slf4j.Logger getSlf4jLogger() {
-        return _slf4jLogger;
-    }
-
     private static String[] createKeysFromArgs(final String... keys) {
         return keys;
     }
@@ -1787,6 +1817,11 @@ public class Logger {
         return Arrays.copyOf(in, in.length - count);
     }
 
+    /**
+     * Protected constructor for extension.
+     *
+     * @param slf4jLogger Instance of underlying <code>org.slf4j.Logger</code>.
+     */
     /* package private */ Logger(final org.slf4j.Logger slf4jLogger) {
         _slf4jLogger = slf4jLogger;
     }

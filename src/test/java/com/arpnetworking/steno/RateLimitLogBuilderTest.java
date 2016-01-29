@@ -43,6 +43,7 @@ public class RateLimitLogBuilderTest {
 
     @Test
     public void testSetters() {
+        @SuppressWarnings("deprecation")
         final RateLimitLogBuilder rateLimitLogBuilder = new RateLimitLogBuilder(_logBuilder, Duration.ofMinutes(1));
 
         Assert.assertSame(rateLimitLogBuilder, rateLimitLogBuilder.addContext("foo", "bar"));
@@ -64,6 +65,7 @@ public class RateLimitLogBuilderTest {
 
     @Test
     public void testLogFirstTime() {
+        @SuppressWarnings("deprecation")
         final RateLimitLogBuilder rateLimitLogBuilder = new RateLimitLogBuilder(_logBuilder, Duration.ofMinutes(1));
         rateLimitLogBuilder.setMessage("m").log();
         Mockito.verify(_logBuilder).setMessage("m");
@@ -74,6 +76,7 @@ public class RateLimitLogBuilderTest {
 
     @Test
     public void testLogSecondTimeWithinDuration() {
+        @SuppressWarnings("deprecation")
         final RateLimitLogBuilder rateLimitLogBuilder = new RateLimitLogBuilder(_logBuilder, Duration.ofMinutes(1));
         rateLimitLogBuilder.setMessage("m").log();
         Mockito.verify(_logBuilder).setMessage("m");
@@ -87,6 +90,7 @@ public class RateLimitLogBuilderTest {
 
     @Test
     public void testLogSecondTimeAfterDuration() throws InterruptedException {
+        @SuppressWarnings("deprecation")
         final RateLimitLogBuilder rateLimitLogBuilder = new RateLimitLogBuilder(_logBuilder, Duration.ofSeconds(1));
         final Instant beforeLastLog = Instant.now();
         rateLimitLogBuilder.setMessage("m").log();
@@ -118,6 +122,7 @@ public class RateLimitLogBuilderTest {
 
     @Test
     public void testToString() {
+        @SuppressWarnings("deprecation")
         final RateLimitLogBuilder rateLimitLogBuilder = new RateLimitLogBuilder(_logBuilder, Duration.ofMinutes(1));
         final String asString = rateLimitLogBuilder.toString();
         Assert.assertNotNull(asString);

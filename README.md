@@ -340,21 +340,19 @@ Output:
 
 ### Rate Limited Logging
 
-It is possible to limit the number of times any particular message is logged in an interval by using a __RateLimitLogBuilder__.
-First, continue to instantiate a __Logger__ but for each message you wish to rate limit also instantiate a __RateLimitLogBuilder__.
-You can add any fixed data such as the message or event when instantiating the __RateLimitLogBuilder__. Any data only available
-during the logging invocation may be added before __log()__ is invoked. Note that multiple threads should not use the same instance
-of __RateLimitLogBuilder__ unless there is proper locking in place.
+It is possible to limit the number of times any particular messages are logged in an interval by using a __RateLimitLogger__.
+Instead of instantiating a __Logger__ instantiate a __RateLimitLogger__ using the __LoggerFactory__. Any messages logged to
+the __RateLimitLogger__ instance will be limited to no more than one in the specified duration.
 
 For example:
 
 ```java
-private static final Logger LOGGER = LoggerFactory.getLogger(MyClass.class);
-private static final LogBuilder CONNECT_INFO = new RateLimitLogBuilder(LOGGER.info(), Duration.ofSeconds(1))
-        .setMessage("Connection established");
+private static final Logger CONNECT_INFO_LOGGER = LoggerFactory.getRateLimitLogger(MyClass.class, Duration.ofSeconds(1));
 
 public void accept(final ConnectionInfo info) {
-    CONNECT_INFO.addData("source", info.getSource()).log();
+    CONNECT_INFO_LOGGER.setMessage("Connection established")
+        .addData("source", info.getSource())
+        .log();
 }
 ```
 
