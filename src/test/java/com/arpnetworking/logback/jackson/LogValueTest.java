@@ -44,7 +44,7 @@ public class LogValueTest {
         MockitoAnnotations.initMocks(this);
         Mockito.doReturn(Boolean.FALSE).when(_encoder).isInjectBeanIdentifier();
         _objectMapper = new ObjectMapper();
-        _objectMapper.setAnnotationIntrospector(new StenoAnnotationIntrospector());
+        _objectMapper.setAnnotationIntrospector(new StenoAnnotationIntrospector(_objectMapper));
         final SimpleFilterProvider simpleFilterProvider = new SimpleFilterProvider();
         simpleFilterProvider.addFilter(RedactionFilter.REDACTION_FILTER_ID, new RedactionFilter(false));
         _objectMapper.setFilterProvider(simpleFilterProvider);

@@ -30,6 +30,7 @@ import com.arpnetworking.logback.widgets.WidgetWithLoggable;
 import com.arpnetworking.steno.LogValueMapFactory;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -695,7 +696,12 @@ public class StenoEncoderTest {
         argArray[0] = new Widget("foo");
         event.setArgumentArray(argArray);
         final ObjectMapper objectMapper = Mockito.mock(ObjectMapper.class);
-        Mockito.doThrow(new JsonGenerationException("Mock Failure")).when(objectMapper).writeValueAsString(Mockito.any(Object.class));
+        Mockito.doThrow(
+                new JsonGenerationException(
+                        "Mock Failure",
+                        Mockito.mock(JsonGenerator.class)))
+                .when(objectMapper)
+                .writeValueAsString(Mockito.any(Object.class));
         final JsonFactory jsonFactory = Mockito.mock(JsonFactory.class);
         _encoder = new StenoEncoder(jsonFactory, objectMapper);
         _encoder.init(_baos);
