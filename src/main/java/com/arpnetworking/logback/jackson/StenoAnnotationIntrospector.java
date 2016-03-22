@@ -16,6 +16,7 @@
 package com.arpnetworking.logback.jackson;
 
 import com.arpnetworking.logback.annotations.LogValue;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.introspect.Annotated;
 import com.fasterxml.jackson.databind.introspect.AnnotatedClass;
 import com.fasterxml.jackson.databind.introspect.AnnotatedMethod;
@@ -35,6 +36,15 @@ import com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector;
 public class StenoAnnotationIntrospector extends JacksonAnnotationIntrospector {
 
     /**
+     * Public constructor.
+     *
+     * @param objectMapper Instance of <code>ObjectMapper</code>.
+     */
+    public StenoAnnotationIntrospector(final ObjectMapper objectMapper) {
+        _objectMapper = objectMapper;
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -48,7 +58,10 @@ public class StenoAnnotationIntrospector extends JacksonAnnotationIntrospector {
     @Override
     public boolean hasAsValueAnnotation(final AnnotatedMethod annotatedMethod) {
         // The @LogValue annotation if active takes precedence
-        final AnnotatedClass annotatedClass = annotatedMethod.getContextClass();
+        final Class<?> clazz = annotatedMethod.getDeclaringClass();
+        final AnnotatedClass annotatedClass = AnnotatedClass.construct(
+                _objectMapper.constructType(clazz),
+                _objectMapper.getSerializationConfig());
         for (final AnnotatedMethod otherAnnotatedMethod : annotatedClass.memberMethods()) {
             final LogValue annotation = _findAnnotation(otherAnnotatedMethod, LogValue.class);
             if (annotation != null) {
@@ -63,6 +76,8 @@ public class StenoAnnotationIntrospector extends JacksonAnnotationIntrospector {
         // Otherwise use default logic (e.g respect @JsonValue)
         return super.hasAsValueAnnotation(annotatedMethod);
     }
+
+    private final ObjectMapper _objectMapper;
 
     private static final long serialVersionUID = 7623002162557264578L;
 }

@@ -47,4 +47,19 @@ public class StenoBeanSerializerModifierTest {
         Assert.assertSame(writer, writer.withConfig(null, null, null, null));
         Assert.assertEquals("BeanClassPropertyWriter", writer.toString());
     }
+
+    @SuppressWarnings("deprecation")
+    @Test
+    public void testDeprecatedMethods() {
+        // TODO(vkoskela): Remove this with Jackson 2.8.x when the deprecated methods are removed [ISSUE-?].
+        final ObjectMapper objectMapper = new ObjectMapper();
+
+        final StenoBeanSerializerModifier.BeanIdentifierPropertyWriter beanIdentifierPropertyWriter =
+                new StenoBeanSerializerModifier.BeanIdentifierPropertyWriter(objectMapper.getSerializationConfig());
+        Assert.assertEquals(String.class, beanIdentifierPropertyWriter.getPropertyType());
+
+        final StenoBeanSerializerModifier.BeanClassPropertyWriter beanClassPropertyWriterriter =
+                new StenoBeanSerializerModifier.BeanClassPropertyWriter(objectMapper.getSerializationConfig());
+        Assert.assertEquals(String.class, beanClassPropertyWriterriter.getPropertyType());
+    }
 }

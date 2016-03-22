@@ -156,7 +156,7 @@ public class StenoEncoder extends BaseLoggingEncoder implements Serializable {
 
         // Initialize object mapper;
         _objectMapper = objectMapper;
-        _objectMapper.setAnnotationIntrospector(new StenoAnnotationIntrospector());
+        _objectMapper.setAnnotationIntrospector(new StenoAnnotationIntrospector(_objectMapper));
         final SimpleFilterProvider simpleFilterProvider = new SimpleFilterProvider();
         simpleFilterProvider.addFilter(RedactionFilter.REDACTION_FILTER_ID, new RedactionFilter(!DEFAULT_REDACT_NULL));
         // Initialize this here based on the above code, if it was initialized at the declaration site then things

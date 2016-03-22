@@ -36,7 +36,7 @@ public class StenoSerializationHelperTest {
     public void setUp() {
         _objectMapper = new ObjectMapper();
         _encoder = new StenoEncoder();
-        _objectMapper.setAnnotationIntrospector(new StenoAnnotationIntrospector());
+        _objectMapper.setAnnotationIntrospector(new StenoAnnotationIntrospector(_objectMapper));
     }
 
     @Test

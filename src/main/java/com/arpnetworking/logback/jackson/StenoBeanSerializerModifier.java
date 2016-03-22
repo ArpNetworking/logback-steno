@@ -31,7 +31,7 @@ import com.fasterxml.jackson.databind.introspect.BeanPropertyDefinition;
 import com.fasterxml.jackson.databind.ser.BeanPropertyWriter;
 import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
 import com.fasterxml.jackson.databind.ser.VirtualBeanPropertyWriter;
-import com.fasterxml.jackson.databind.type.SimpleType;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.fasterxml.jackson.databind.util.Annotations;
 import com.fasterxml.jackson.databind.util.SimpleBeanPropertyDefinition;
 
@@ -108,7 +108,7 @@ public final class StenoBeanSerializerModifier extends BeanSerializerModifier {
 
     private static final Map<Class<?>, Boolean> LOGGABLE_CLASSES = new ConcurrentHashMap<>();
     private static final Annotations EMPTY_ANNOTATION_MAP = new AnnotationMap();
-    private static final JavaType STRING_JAVA_TYPE = SimpleType.construct(String.class);
+    private static final JavaType STRING_JAVA_TYPE = TypeFactory.defaultInstance().constructType(String.class);
 
     /* package private */ static class BeanIdentifierPropertyWriter extends VirtualBeanPropertyWriter {
 
@@ -138,6 +138,12 @@ public final class StenoBeanSerializerModifier extends BeanSerializerModifier {
             }
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * @deprecated See <code>BeanPropertyWriter</code>.
+         */
+        @Deprecated
         @Override
         public Class<?> getPropertyType() {
             return String.class;
@@ -197,6 +203,12 @@ public final class StenoBeanSerializerModifier extends BeanSerializerModifier {
             }
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * @deprecated See <code>BeanPropertyWriter</code>.
+         */
+        @Deprecated
         @Override
         public Class<?> getPropertyType() {
             return String.class;

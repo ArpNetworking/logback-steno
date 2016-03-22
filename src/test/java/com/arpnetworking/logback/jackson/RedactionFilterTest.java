@@ -48,7 +48,7 @@ public class RedactionFilterTest {
     @Before
     public void setUp() {
         _objectMapper = new ObjectMapper();
-        _objectMapper.setAnnotationIntrospector(new StenoAnnotationIntrospector());
+        _objectMapper.setAnnotationIntrospector(new StenoAnnotationIntrospector(_objectMapper));
         // CHECKSTYLE.OFF: IllegalInstantiation - No Guava dependency here.
         final Map<String, Object> filterMap = new HashMap<>();
         // CHECKSTYLE.ON: IllegalInstantiation
