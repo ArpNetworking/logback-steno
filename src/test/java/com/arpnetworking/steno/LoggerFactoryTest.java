@@ -65,6 +65,26 @@ public class LoggerFactoryTest {
         Assert.assertEquals("MyLogger", slf4jLogger.getName());
     }
 
+    @Test
+    public void testGetLoggerWithSlf4jInstance() {
+        final org.slf4j.Logger slf4jLogger = org.slf4j.LoggerFactory.getLogger("MySlf4jLogger");
+        final Logger logger = LoggerFactory.getLogger(slf4jLogger);
+        final org.slf4j.Logger actualSlf4jLogger = logger.getSlf4jLogger();
+        //Assert.assertTrue(slf4jLogger instanceof ch.qos.logback.classic.Logger);
+        //final ch.qos.logback.classic.Logger logbackLogger = (ch.qos.logback.classic.Logger) slf4jLogger;
+        Assert.assertEquals(slf4jLogger, actualSlf4jLogger);
+    }
+
+    @Test
+    public void testGetRateLimitLoggerWithSlf4jInstance() {
+        final org.slf4j.Logger slf4jLogger = org.slf4j.LoggerFactory.getLogger("MySlf4jLogger");
+        final Logger logger = LoggerFactory.getRateLimitLogger(slf4jLogger, Duration.ofSeconds(1));
+        final org.slf4j.Logger actualSlf4jLogger = logger.getSlf4jLogger();
+        //Assert.assertTrue(slf4jLogger instanceof ch.qos.logback.classic.Logger);
+        //final ch.qos.logback.classic.Logger logbackLogger = (ch.qos.logback.classic.Logger) slf4jLogger;
+        Assert.assertEquals(slf4jLogger, actualSlf4jLogger);
+    }
+
     @Test(expected = UnsupportedOperationException.class)
     // CHECKSTYLE.OFF: IllegalThrows - InvocationTargetException target is Throwable
     public void testPrivateConstructor() throws Throwable {
