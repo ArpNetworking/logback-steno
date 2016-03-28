@@ -74,6 +74,8 @@ Instances of the following are logged as-is using Jackson serialization:
 * Number
 * Boolean
 * String
+* `java.util.Map` where the `key` is `String`
+* `java.util.List`
 
 Instances of classes declaring a method to create a serializable representation with @LogValue or @JsonValue or
 using a specific serializer with @JsonSerialize are logged in that representation. Also, instances mapping to a custom
