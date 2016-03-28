@@ -72,6 +72,28 @@ public final class LoggerFactory {
         return new RateLimitLogger(org.slf4j.LoggerFactory.getLogger(name), duration);
     }
 
+    /**
+     * Return a Steno <code>Logger</code> for an already instantiated <code>org.slf4j.Logger</code> instance.
+     *
+     * @param logger The <code>org.slf4j.Logger</code> instance.
+     * @return Steno <code>Logger</code> instance.
+     */
+    public static Logger getLogger(final org.slf4j.Logger logger) {
+        return new Logger(logger);
+    }
+
+    /**
+     * Return a rate limited Steno <code>Logger</code> for an already instantiated <code>org.slf4j.Logger</code>
+     * instance.
+     *
+     * @param logger The <code>org.slf4j.Logger</code> instance.
+     * @param duration Minimum time between log message output.
+     * @return Steno <code>Logger</code> instance.
+     */
+    public static Logger getRateLimitLogger(final org.slf4j.Logger logger, final Duration duration) {
+        return new RateLimitLogger(logger, duration);
+    }
+
     private LoggerFactory() {
         throw new UnsupportedOperationException("This class cannot be instantiated");
     }
