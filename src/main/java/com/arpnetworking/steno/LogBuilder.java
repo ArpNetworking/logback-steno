@@ -61,7 +61,8 @@ public interface LogBuilder extends DeferredLogBuilder {
      * @since 1.3.0
      *
      * @param name The key.
-     * @param value The value.
+     * @param value The value. See the README in the project root for the constraints on the value's type and the
+     *              corresponding log content.
      * @return This instance as {@code <T>}.
      */
     @Override
