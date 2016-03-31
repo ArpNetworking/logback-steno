@@ -71,10 +71,10 @@ Not all classes are designed for serialization. To ensure the encoder is able to
 representation of each value it is provided the following rules will be applied.
 
 Instances of the following are logged as-is using Jackson serialization:
-* Number
-* Boolean
-* String
-* `java.util.Map` where the `key` is `String`
+* `java.lang.Number`
+* `java.lang.Boolean`
+* `java.lang.String`
+* `java.util.Map` where the `key` is `java.lang.String`
 * `java.util.List`
 
 Instances of classes declaring a method to create a serializable representation with @LogValue or @JsonValue or
