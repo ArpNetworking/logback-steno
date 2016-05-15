@@ -59,7 +59,7 @@ public abstract class BaseStenoIntegrationTest extends BaseIntegrationTest {
                     contextNode.remove("MDC_KEY2");
                 }
                 final ProcessingReport report = VALIDATOR.validate(STENO_SCHEMA, rootNode);
-                Assert.assertTrue("Line: " + i + " " + report.toString(), report.isSuccess());
+                Assert.assertTrue("Line: " + (i + 1) + " " + report.toString(), report.isSuccess());
             } catch (final IOException | ProcessingException e) {
                 Assert.fail("Failed with exception: " + e);
             }
@@ -68,7 +68,7 @@ public abstract class BaseStenoIntegrationTest extends BaseIntegrationTest {
             try {
                 final JsonNode expectedJsonNode = OBJECT_MAPPER.readTree(expectedLine);
                 final JsonNode actualJsonNode = OBJECT_MAPPER.readTree(sanitizedActualLine);
-                Assert.assertEquals("Line: " + i, expectedJsonNode, actualJsonNode);
+                Assert.assertEquals("Line: " + (i + 1), expectedJsonNode, actualJsonNode);
             } catch (final IOException e) {
                 Assert.fail("Failed with exception: " + e);
             }

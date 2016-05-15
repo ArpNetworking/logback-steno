@@ -19,6 +19,7 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import com.arpnetworking.logback.jackson.RedactionFilter;
 import com.arpnetworking.logback.jackson.StenoAnnotationIntrospector;
 import com.arpnetworking.logback.jackson.StenoBeanSerializerModifier;
+import com.arpnetworking.logback.jackson.ThrowableMixIn;
 import com.arpnetworking.logback.serialization.steno.ArrayOfJsonSerialziationStrategy;
 import com.arpnetworking.logback.serialization.steno.ArraySerialziationStrategy;
 import com.arpnetworking.logback.serialization.steno.ListsSerialziationStrategy;
@@ -173,6 +174,9 @@ public class StenoEncoder extends BaseLoggingEncoder implements Serializable {
         final SimpleModule module = new SimpleModule();
         module.setSerializerModifier(new StenoBeanSerializerModifier(this));
         _objectMapper.registerModule(module);
+
+        // Throwable mix-in
+        _objectMapper.setMixIns(Collections.singletonMap(Throwable.class, ThrowableMixIn.class));
 
         // After burner to improve data-bind performance
         _objectMapper.registerModule(new AfterburnerModule());
