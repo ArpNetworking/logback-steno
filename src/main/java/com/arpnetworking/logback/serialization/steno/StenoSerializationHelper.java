@@ -48,7 +48,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Helper functions and functors for Steno serialziation.
  *
- * @author Ville Koskela (vkoskela at groupon dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
  * @since 1.7.0
  */
 public final class StenoSerializationHelper {

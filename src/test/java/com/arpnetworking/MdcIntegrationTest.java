@@ -22,7 +22,7 @@ import org.slf4j.MDC;
 /**
  * Integration test of MDC (Mapped Diagnostic Context) integration.
  *
- * @author Ville Koskela (vkoskela at groupon dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
  */
 public class MdcIntegrationTest extends BaseStenoIntegrationTest {
 

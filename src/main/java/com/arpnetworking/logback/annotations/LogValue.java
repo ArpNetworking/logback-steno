@@ -35,7 +35,7 @@ import java.lang.annotation.Target;
  * causes the introspector to ignore both @LogValue and @JsonValue and perform
  * standard bean serialization.
  *
- * @author Ville Koskela (vkoskela at groupon dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
  * @since 1.3.3
  */
 @Target({ElementType.METHOD})

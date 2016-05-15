@@ -35,7 +35,7 @@ import org.mockito.MockitoAnnotations;
 /**
  * Tests for <code>LogValue</code>.
  *
- * @author Ville Koskela (vkoskela at groupon dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
  */
 public class LogValueTest {
 

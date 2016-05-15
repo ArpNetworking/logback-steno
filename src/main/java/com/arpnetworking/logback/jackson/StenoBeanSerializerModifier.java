@@ -56,7 +56,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *     <li>The type does not have a custom serializer registered.</li>
  * </ul>
  *
- * @author Ville Koskela (vkoskela at groupon dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
  * @since 1.9.0
  */
 public final class StenoBeanSerializerModifier extends BeanSerializerModifier {

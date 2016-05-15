@@ -26,7 +26,7 @@ import java.util.List;
 /**
  * Tests for <code>DefaultLogBuilder</code>.
  *
- * @author Ville Koskela (vkoskela at groupon dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
  */
 public class DefaultLogBuilderTest {
 

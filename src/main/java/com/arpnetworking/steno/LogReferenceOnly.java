@@ -24,7 +24,7 @@ import com.arpnetworking.logback.annotations.LogValue;
  *
  * @since 1.7.0
  *
- * @author Ville Koskela (vkoskela at groupon dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
  */
 public final class LogReferenceOnly {
 

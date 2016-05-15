@@ -30,7 +30,7 @@ import com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector;
  * </ul>
  *
  * @author Gil Markham (gil at groupon dot com)
- * @author Ville Koskela (vkoskela at groupon dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
  * @since 1.3.3
  */
 public class StenoAnnotationIntrospector extends JacksonAnnotationIntrospector {

@@ -23,7 +23,7 @@ import org.junit.Test;
 /**
  * Integration test of bean identity injection.
  *
- * @author Ville Koskela (vkoskela at groupon dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
  */
 public class BeanIdentifierInjectionIntegrationTest extends BaseStenoIntegrationTest {
 

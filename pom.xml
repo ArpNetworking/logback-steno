@@ -42,6 +42,16 @@
 
   <developers>
     <developer>
+      <id>barp</id>
+      <name>Brandon Arp</name>
+      <email>brandon.arp@inscopemetrics.com</email>
+      <organization>Inscope Metrics</organization>
+      <organizationUrl>http://www.inscopemetrics.com</organizationUrl>
+      <roles>
+        <role>developer</role>
+      </roles>
+    </developer>
+    <developer>
       <id>gmarkham</id>
       <name>Gil Markham</name>
       <email>gil@groupon.com</email>
@@ -74,19 +84,9 @@
     <developer>
       <id>vkoskela</id>
       <name>Ville Koskela</name>
-      <email>vkoskela@groupon.com</email>
+      <email>ville.koskela@inscopemetrics.com</email>
       <organization>Groupon</organization>
-      <organizationUrl>http://www.groupon.com</organizationUrl>
-      <roles>
-        <role>developer</role>
-      </roles>
-    </developer>
-    <developer>
-      <id>barp</id>
-      <name>Brandon Arp</name>
-      <email>barp@groupon.com</email>
-      <organization>Groupon</organization>
-      <organizationUrl>http://www.groupon.com</organizationUrl>
+      <organizationUrl>http://www.inscopemetrics.com</organizationUrl>
       <roles>
         <role>developer</role>
       </roles>

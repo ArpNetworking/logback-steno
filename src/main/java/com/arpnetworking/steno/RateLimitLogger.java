@@ -29,7 +29,7 @@ import java.util.concurrent.atomic.AtomicReference;
  *
  * @since 1.12.0
  *
- * @author Ville Koskela (vkoskela at groupon dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
  */
 /* package private */ class RateLimitLogger extends Logger {
 

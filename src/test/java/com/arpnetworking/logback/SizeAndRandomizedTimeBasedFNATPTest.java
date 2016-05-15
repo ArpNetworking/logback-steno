@@ -32,7 +32,7 @@ import java.util.Date;
 /**
  * Tests for <code>SizeAndRandomizedTimeBasedFNATP</code>.
  *
- * @author Ville Koskela (vkoskela at groupon dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
  */
 public class SizeAndRandomizedTimeBasedFNATPTest {
 

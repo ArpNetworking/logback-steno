@@ -22,7 +22,7 @@ import org.junit.Test;
 /**
  * Integration test of <code>LogBuilderAspect</code>a spect weaving.
  *
- * @author Ville Koskela (vkoskela at groupon dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
  */
 public class LogBuilderAspectIntegrationTest extends BaseStenoIntegrationTest {
 

@@ -40,7 +40,7 @@ import java.util.Date;
  *
  * @param <E> The event type.
  *
- * @author Ville Koskela (vkoskela at groupon dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
  * @since 1.10.0
  */
 @NoAutoStart

@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 /**
  * Interface for providing the process identifier.
  *
- * @author Ville Koskela (vkoskela at groupon dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
  * @since 1.1.0
  */
 /* package private */ interface ProcessProvider {
