@@ -23,7 +23,7 @@ import java.net.UnknownHostException;
 /**
  * Tests for <code>HostProvider</code>.
  *
- * @author Ville Koskela (vkoskela at groupon dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
  */
 public class HostProviderTest {
 

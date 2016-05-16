@@ -19,7 +19,7 @@ package com.arpnetworking.steno;
  * Interface for classes which assemble log messages where the actual logging
  * is deferred.
  *
- * @author Ville Koskela (vkoskela at groupon dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
  */
 public interface DeferredLogBuilder {
 

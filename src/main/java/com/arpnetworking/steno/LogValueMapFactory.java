@@ -33,7 +33,7 @@ import java.util.Optional;
  * keys or values and adds keys "_nullKeys" and/or "_nullValues" with value
  * true. If no null keys/values are found then no additional data is inserted.
  *
- * @author Ville Koskela (vkoskela at groupon dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
  * @since 1.7.0
  */
 public final class LogValueMapFactory {

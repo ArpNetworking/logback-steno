@@ -18,7 +18,7 @@ package com.arpnetworking.steno;
 /**
  * Implementation of <code>LogBuilder</code> which does not log a message.
  *
- * @author Ville Koskela (vkoskela at groupon dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
  */
 public class NoOpLogBuilder implements LogBuilder {
 

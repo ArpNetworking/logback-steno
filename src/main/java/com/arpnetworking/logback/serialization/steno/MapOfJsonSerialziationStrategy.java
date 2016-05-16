@@ -28,7 +28,7 @@ import java.util.Map;
 /**
  * Serialization strategy for JSON map based message specifications.
  *
- * @author Ville Koskela (vkoskela at groupon dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
  * @since 1.3.1
  */
 public class MapOfJsonSerialziationStrategy implements Serializable {

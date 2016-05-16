@@ -37,7 +37,7 @@ import java.util.Optional;
 /**
  * Helper functions and for safe serialziation.
  *
- * @author Ville Koskela (vkoskela at groupon dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
  * @since 1.11.2
  */
 public final class SafeSerializationHelper {

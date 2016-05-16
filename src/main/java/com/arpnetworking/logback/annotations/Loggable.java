@@ -38,7 +38,7 @@ import java.lang.annotation.Target;
  * the serializer to fail if they are included in the log message or transitively in any types included in the log
  * message.
  *
- * @author Ville Koskela (vkoskela at groupon dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
  * @see com.arpnetworking.logback.jackson.RedactionFilter
  * @since 1.8.0
  */

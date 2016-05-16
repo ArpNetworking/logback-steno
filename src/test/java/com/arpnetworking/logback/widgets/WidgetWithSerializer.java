@@ -25,7 +25,7 @@ import java.io.IOException;
 /**
  * Class to test object serialization.
  *
- * @author Ville Koskela (vkoskela at groupon dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
  */
 public final class WidgetWithSerializer {
 

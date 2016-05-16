@@ -20,7 +20,7 @@ import java.security.SecureRandom;
 /**
  * Interface for providing the <code>SecureRandom</code> instances.
  *
- * @author Ville Koskela (vkoskela at groupon dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
  * @since 1.1.0
  */
 /*package private*/ interface SecureRandomProvider {

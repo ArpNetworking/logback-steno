@@ -28,7 +28,7 @@ import java.util.Map;
 /**
  * Tests for <code>SafeSerializationHelper</code>.
  *
- * @author Ville Koskela (vkoskela at groupon dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
  */
 public class SafeSerializationHelperTest {
 

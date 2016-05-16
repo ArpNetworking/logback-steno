@@ -18,7 +18,7 @@ package com.arpnetworking.steno;
 /**
  * Wraps a <code>org.slf4j.Logger</code> instance in a <code>com.arpnetwoprking.steno.Logger</code> instance.
  *
- * @author Ville Koskela (vkoskela at groupon dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
  */
 public final class TestLoggerFactory {
 

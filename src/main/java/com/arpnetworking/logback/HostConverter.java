@@ -24,7 +24,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * Generate the host name for a logging event. This implementation uses the local host name and therefore will not
  * work as expected if log events are serialized on a remote system.
  *
- * @author Ville Koskela (vkoskela at groupon dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
  * @since 1.1.0
  */
 public class HostConverter extends ClassicConverter {

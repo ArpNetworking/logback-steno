@@ -24,7 +24,7 @@ import java.lang.reflect.InvocationTargetException;
 /**
  * Tests for <code>StenoMarker</code>.
  *
- * @author Ville Koskela (vkoskela at groupon dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
  */
 public class StenoMarkerTest {
 

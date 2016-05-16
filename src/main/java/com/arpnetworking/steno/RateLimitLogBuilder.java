@@ -27,7 +27,7 @@ import java.util.Optional;
  * The implementation will add two data attributes <code>_skipped</code> and
  * <code>_lastLogTime</code> to the wrapped <code>LogBuilder</code> instance.
  *
- * @author Ville Koskela (vkoskela at groupon dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
  * @since 1.9.0
  * @deprecated This class is not thread safe and easily leads to misuse. Use <code>RateLimitLogger</code>.
  */
