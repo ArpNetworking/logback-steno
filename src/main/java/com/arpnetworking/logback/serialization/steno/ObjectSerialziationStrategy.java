@@ -25,7 +25,7 @@ import java.io.Serializable;
 /**
  * Serialization strategy for object based message specifications.
  *
- * @author Ville Koskela (vkoskela at groupon dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
  * @since 1.3.1
  */
 public class ObjectSerialziationStrategy implements Serializable {

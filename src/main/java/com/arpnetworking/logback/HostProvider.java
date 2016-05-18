@@ -21,7 +21,7 @@ import java.net.UnknownHostException;
 /**
  * Interface for providing the local host name.
  *
- * @author Ville Koskela (vkoskela at groupon dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
  * @since 1.1.0
  */
 /*package private*/ interface HostProvider {

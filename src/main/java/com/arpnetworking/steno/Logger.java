@@ -34,7 +34,7 @@ import java.util.function.Consumer;
  *
  * @author Stuart Siegrist (fsiegrist at groupon dot com)
  * @author Gil Markham (gil at groupon dot com)
- * @author Ville Koskela (vkoskela at groupon dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
  */
 public class Logger {
 

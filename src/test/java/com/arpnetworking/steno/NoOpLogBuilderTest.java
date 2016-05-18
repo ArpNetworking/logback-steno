@@ -21,7 +21,7 @@ import org.junit.Test;
 /**
  * Tests for <code>NoOpLogBuilder</code>.
  *
- * @author Ville Koskela (vkoskela at groupon dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
  */
 public class NoOpLogBuilderTest {
 

@@ -30,7 +30,7 @@ import java.io.IOException;
 /**
  * Base integration test for <code>StenoEncoder</code>.
  *
- * @author Ville Koskela (vkoskela at groupon dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
  */
 public abstract class BaseStenoIntegrationTest extends BaseIntegrationTest {
 

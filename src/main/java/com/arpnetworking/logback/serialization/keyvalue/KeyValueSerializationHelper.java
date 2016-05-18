@@ -30,7 +30,7 @@ import java.util.Map;
 /**
  * Helper functions and functors for Key-Value serialziation.
  *
- * @author Ville Koskela (vkoskela at groupon dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
  * @since 1.9.0
  */
 public final class KeyValueSerializationHelper {

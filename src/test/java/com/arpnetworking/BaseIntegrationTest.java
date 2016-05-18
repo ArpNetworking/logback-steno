@@ -34,7 +34,7 @@ import java.nio.file.Paths;
 /**
  * Base integration test.
  *
- * @author Ville Koskela (vkoskela at groupon dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
  */
 public abstract class BaseIntegrationTest {
 

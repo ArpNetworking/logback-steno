@@ -132,7 +132,7 @@ import java.util.Set;
  * </code></pre>
  *
  * @author Gil Markham (gil at groupon dot com)
- * @author Ville Koskela (vkoskela at groupon dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
  * @since 1.0.0
  */
 public class StenoEncoder extends BaseLoggingEncoder implements Serializable {

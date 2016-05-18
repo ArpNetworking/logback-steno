@@ -33,7 +33,7 @@ import java.util.Date;
  * is incorporated into a release of Logback this class will be removed from
  * Logback-Steno.
  *
- * @author Ville Koskela (vkoskela at groupon dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
  * @since 1.11.0
  */
 public class CustomSizeAndTimeBasedArchiveRemover extends DefaultArchiveRemover {

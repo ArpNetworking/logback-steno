@@ -25,7 +25,7 @@ import org.aspectj.lang.reflect.SourceLocation;
  * Aspect for <code>LogBuilder</code> weaving line, file and class into the
  * context block of each <code>LogBuilder</code> message.
  *
- * @author Ville Koskela (vkoskela at groupon dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
  */
 @Aspect
 public class LogBuilderAspect {
