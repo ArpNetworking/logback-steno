@@ -22,6 +22,7 @@ import ch.qos.logback.classic.pattern.ThreadConverter;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.IThrowableProxy;
 import ch.qos.logback.classic.spi.StackTraceElementProxy;
+import ch.qos.logback.classic.spi.ThrowableProxy;
 import com.arpnetworking.logback.HostConverter;
 import com.arpnetworking.logback.ProcessConverter;
 import com.arpnetworking.logback.StenoClassOfCallerConverter;
@@ -30,6 +31,7 @@ import com.arpnetworking.logback.StenoFileOfCallerConverter;
 import com.arpnetworking.logback.StenoLineOfCallerConverter;
 import com.arpnetworking.logback.StenoMethodOfCallerConverter;
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
@@ -43,7 +45,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Helper functions and functors for Steno serialziation.
@@ -226,14 +227,24 @@ public final class StenoSerializationHelper {
             final ObjectMapper objectMapper)
             throws IOException {
 
-        jsonGenerator.writeObjectField("type", throwableProxy.getClassName());
-        jsonGenerator.writeObjectField("message", throwableProxy.getMessage());
+        jsonGenerator.writeStringField("type", throwableProxy.getClassName());
+        jsonGenerator.writeStringField("message", throwableProxy.getMessage());
         jsonGenerator.writeArrayFieldStart("backtrace");
         for (final StackTraceElementProxy ste : throwableProxy.getStackTraceElementProxyArray()) {
             jsonGenerator.writeString(ste.toString());
         }
         jsonGenerator.writeEndArray();
         jsonGenerator.writeObjectFieldStart("data");
+        if (throwableProxy instanceof ThrowableProxy) {
+            final JsonNode jsonNode = objectMapper.valueToTree(((ThrowableProxy) throwableProxy).getThrowable());
+            for (final Iterator<Map.Entry<String, JsonNode>> iterator = jsonNode.fields(); iterator.hasNext();) {
+                final Map.Entry<String, JsonNode> field = iterator.next();
+                jsonGenerator.writeFieldName(field.getKey());
+                objectMapper.writeValue(
+                        jsonGenerator,
+                        field.getValue());
+            }
+        }
         // Although Throwable has a final getSuppressed which cannot return a null array, the
         // proxy in Logback provides no such guarantees.
         if (throwableProxy.getSuppressed() != null && throwableProxy.getSuppressed().length > 0) {
@@ -478,7 +489,6 @@ public final class StenoSerializationHelper {
 
     private StenoSerializationHelper() {}
 
-    private static final Map<Class<?>, Boolean> LOGGABLE_CLASSES = new ConcurrentHashMap<>();
     private static final DateTimeFormatter ISO_DATE_TIME_FORMATTER =
             DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ").withZone(ZoneId.of("UTC"));
 }
