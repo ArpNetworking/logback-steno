@@ -16,19 +16,19 @@
 package com.arpnetworking.logback.serialization.steno;
 
 import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.pattern.ClassOfCallerConverter;
 import ch.qos.logback.classic.pattern.ClassicConverter;
-import ch.qos.logback.classic.pattern.FileOfCallerConverter;
-import ch.qos.logback.classic.pattern.LineOfCallerConverter;
 import ch.qos.logback.classic.pattern.LoggerConverter;
-import ch.qos.logback.classic.pattern.MethodOfCallerConverter;
 import ch.qos.logback.classic.pattern.ThreadConverter;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.IThrowableProxy;
 import ch.qos.logback.classic.spi.StackTraceElementProxy;
 import com.arpnetworking.logback.HostConverter;
 import com.arpnetworking.logback.ProcessConverter;
+import com.arpnetworking.logback.StenoClassOfCallerConverter;
 import com.arpnetworking.logback.StenoEncoder;
+import com.arpnetworking.logback.StenoFileOfCallerConverter;
+import com.arpnetworking.logback.StenoLineOfCallerConverter;
+import com.arpnetworking.logback.StenoMethodOfCallerConverter;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -385,22 +385,22 @@ public final class StenoSerializationHelper {
      * Converter for file.
      * @since 1.7.0
      */
-    public static final ClassicConverter FILE_CONVERTER = new FileOfCallerConverter();
+    public static final ClassicConverter FILE_CONVERTER = new StenoFileOfCallerConverter();
     /**
      * Converter for class.
      * @since 1.7.0
      */
-    public static final ClassicConverter CLASS_CONVERTER = new ClassOfCallerConverter();
+    public static final ClassicConverter CLASS_CONVERTER = new StenoClassOfCallerConverter();
     /**
      * Converter for method.
      * @since 1.7.0
      */
-    public static final ClassicConverter METHOD_CONVERTER = new MethodOfCallerConverter();
+    public static final ClassicConverter METHOD_CONVERTER = new StenoMethodOfCallerConverter();
     /**
      * Converter for line.
      * @since 1.7.0
      */
-    public static final ClassicConverter LINE_CONVERTER = new LineOfCallerConverter();
+    public static final ClassicConverter LINE_CONVERTER = new StenoLineOfCallerConverter();
 
     static {
         CONDENSED_LOGGER_CONVERTER.setOptionList(Collections.singletonList("1"));
