@@ -19,9 +19,6 @@ import ch.qos.logback.core.Context;
 import ch.qos.logback.core.joran.spi.NoAutoStart;
 import ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP;
 import ch.qos.logback.core.rolling.TimeBasedRollingPolicy;
-import ch.qos.logback.core.rolling.helper.ArchiveRemover;
-import ch.qos.logback.core.rolling.helper.CustomSizeAndTimeBasedArchiveRemover;
-import ch.qos.logback.core.rolling.helper.FileNamePattern;
 
 import java.util.Date;
 
@@ -158,16 +155,6 @@ public class SizeAndRandomizedTimeBasedFNATP<E> extends SizeAndTimeBasedFNATP<E>
     protected void setDateInCurrentPeriod(final long now) {
         _randomizedTimeBasedFNATP.getDateInCurrentPeriod().setTime(now);
         super.setDateInCurrentPeriod(now);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected ArchiveRemover createArchiveRemover() {
-        return new CustomSizeAndTimeBasedArchiveRemover(
-                new FileNamePattern(this.tbrp.getFileNamePattern(), this.context),
-                this.rc);
     }
 
     /* package private */ long getNextCheck() {

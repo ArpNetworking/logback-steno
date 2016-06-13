@@ -734,6 +734,7 @@ Example of SizeAndRandomizedTimeBasedFNATP configuration:
 <timeBasedFileNamingAndTriggeringPolicy class="com.arpnetworking.logback.SizeAndRandomizedTimeBasedFNATP">
     <maxOffsetInMillis>900000</maxOffsetInMillis>
     <maxFileSize>100MB</maxFileSize>
+    <totalSizeCap>1GB</totalSizeCap>
 </timeBasedFileNamingAndTriggeringPolicy>
 ```
 
@@ -741,7 +742,7 @@ Development
 -----------
 
 To build the library locally you must satisfy these prerequisites:
-* [JDK8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
+* [JDK8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) (Or Invoke with JDKW)
 
 Next, fork the repository, clone and build:
 

@@ -93,7 +93,7 @@ public class RandomizedTimeBasedFNATP<E> extends DefaultTimeBasedFileNamingAndTr
      */
     @Override
     protected void computeNextCheck() {
-        nextCheck = rc.getNextTriggeringMillis(dateInCurrentPeriod) + _randomOffsetInMillis;
+        nextCheck = rc.getNextTriggeringDate(dateInCurrentPeriod).getTime() + _randomOffsetInMillis;
     }
 
     /* package private */ long getNextCheck() {
