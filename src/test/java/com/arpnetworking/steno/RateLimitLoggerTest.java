@@ -182,6 +182,19 @@ public class RateLimitLoggerTest {
                                 isBetween(beforeLastLog, afterLastLog)})));
     }
 
+    @Test
+    public void testLogBuilderWithEmptyData() {
+        final Logger rateLimitLogger = new RateLimitLogger(_slf4jLogger, Duration.ofMinutes(1), Clock.systemUTC());
+        rateLimitLogger.info().setEvent("m").log();
+        Mockito.verify(_slf4jLogger).info(
+            StenoMarker.LISTS_MARKER,
+            "m",
+            Arrays.asList("_skipped", "_lastLogTime"),
+            Arrays.asList(0, null),
+            null,
+            null);
+    }
+
     private static Matcher<Instant> isBetween(final Instant before, final Instant after) {
         return new TypeSafeMatcher<Instant>() {
             @Override
