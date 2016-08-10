@@ -18,6 +18,7 @@ package com.arpnetworking.steno;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -86,12 +87,14 @@ import java.util.concurrent.atomic.AtomicReference;
             final Throwable throwable) {
 
         if (shouldLog(level)) {
-            dataKeys.add("_skipped");
-            dataKeys.add("_lastLogTime");
-            dataValues.add(_skipped.getAndSet(0));
-            dataValues.add(_lastLogTime.getAndSet(_clock.instant()));
+            final List<String> actualDataKeys = dataKeys != null ? dataKeys : new ArrayList<>(2);
+            final List<Object> actualDataValues = dataValues != null ? dataValues : new ArrayList<>(2);
+            actualDataKeys.add("_skipped");
+            actualDataKeys.add("_lastLogTime");
+            actualDataValues.add(_skipped.getAndSet(0));
+            actualDataValues.add(_lastLogTime.getAndSet(_clock.instant()));
 
-            super.log(level, event, dataKeys, dataValues, contextKeys, contextValues, throwable);
+            super.log(level, event, actualDataKeys, actualDataValues, contextKeys, contextValues, throwable);
         }
     }
 
