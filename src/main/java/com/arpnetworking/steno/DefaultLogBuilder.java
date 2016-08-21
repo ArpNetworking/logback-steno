@@ -86,20 +86,16 @@ public class DefaultLogBuilder implements LogBuilder {
      */
     @Override
     public void log() {
-        // TODO(vkoskela): Add STENO_MAPS_MARKER and convert to it. [ISSUE-12]
-        List<String> dataKeys = null;
-        List<Object> dataValues = null;
-        List<String> contextKeys = null;
-        List<Object> contextValues = null;
+        // TODO(vkoskela): Add STENO_MAPS_MARKER and convert to it.
+        final List<String> dataKeys = new ArrayList<>();
+        final List<Object> dataValues = new ArrayList<>();
+        final List<String> contextKeys = new ArrayList<>();
+        final List<Object> contextValues = new ArrayList<>();
 
         if (_data != null) {
-            dataKeys = new ArrayList<>();
-            dataValues = new ArrayList<>();
             populateKeyValueLists(_data, dataKeys, dataValues);
         }
         if (_context != null) {
-            contextKeys = new ArrayList<>();
-            contextValues = new ArrayList<>();
             populateKeyValueLists(_context, contextKeys, contextValues);
         }
 
