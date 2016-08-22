@@ -32,9 +32,9 @@ import javax.annotation.Nullable;
         @Override
         public void log(
                 final org.slf4j.Logger logger,
-                final String event,
-                final String[] keys,
-                final Object[] values,
+                @Nullable final String event,
+                @Nullable final String[] keys,
+                @Nullable final Object[] values,
                 @Nullable final Throwable throwable) {
             if (isEnabled(logger)) {
                 if (throwable != null) {
@@ -48,7 +48,7 @@ import javax.annotation.Nullable;
         @Override
         public void log(
                 final org.slf4j.Logger logger,
-                final String event,
+                @Nullable final String event,
                 final List<String> dataKeys,
                 final List<Object> dataValues,
                 final List<String> contextKeys,
@@ -72,9 +72,9 @@ import javax.annotation.Nullable;
         @Override
         public void log(
                 final org.slf4j.Logger logger,
-                final String event,
-                final String[] keys,
-                final Object[] values,
+                @Nullable final String event,
+                @Nullable final String[] keys,
+                @Nullable final Object[] values,
                 @Nullable final Throwable throwable) {
             if (isEnabled(logger)) {
                 if (throwable != null) {
@@ -88,7 +88,7 @@ import javax.annotation.Nullable;
         @Override
         public void log(
                 final org.slf4j.Logger logger,
-                final String event,
+                @Nullable final String event,
                 final List<String> dataKeys,
                 final List<Object> dataValues,
                 final List<String> contextKeys,
@@ -112,9 +112,9 @@ import javax.annotation.Nullable;
         @Override
         public void log(
                 final org.slf4j.Logger logger,
-                final String event,
-                final String[] keys,
-                final Object[] values,
+                @Nullable final String event,
+                @Nullable final String[] keys,
+                @Nullable final Object[] values,
                 @Nullable final Throwable throwable) {
             if (isEnabled(logger)) {
                 if (throwable != null) {
@@ -128,7 +128,7 @@ import javax.annotation.Nullable;
         @Override
         public void log(
                 final org.slf4j.Logger logger,
-                final String event,
+                @Nullable final String event,
                 final List<String> dataKeys,
                 final List<Object> dataValues,
                 final List<String> contextKeys,
@@ -152,9 +152,9 @@ import javax.annotation.Nullable;
         @Override
         public void log(
                 final org.slf4j.Logger logger,
-                final String event,
-                final String[] keys,
-                final Object[] values,
+                @Nullable final String event,
+                @Nullable final String[] keys,
+                @Nullable final Object[] values,
                 @Nullable final Throwable throwable) {
             if (isEnabled(logger)) {
                 if (throwable != null) {
@@ -168,7 +168,7 @@ import javax.annotation.Nullable;
         @Override
         public void log(
                 final org.slf4j.Logger logger,
-                final String event,
+                @Nullable final String event,
                 final List<String> dataKeys,
                 final List<Object> dataValues,
                 final List<String> contextKeys,
@@ -192,9 +192,9 @@ import javax.annotation.Nullable;
         @Override
         public void log(
                 final org.slf4j.Logger logger,
-                final String event,
-                final String[] keys,
-                final Object[] values,
+                @Nullable final String event,
+                @Nullable final String[] keys,
+                @Nullable final Object[] values,
                 @Nullable final Throwable throwable) {
             if (isEnabled(logger)) {
                 if (throwable != null) {
@@ -208,7 +208,7 @@ import javax.annotation.Nullable;
         @Override
         public void log(
                 final org.slf4j.Logger logger,
-                final String event,
+                @Nullable final String event,
                 final List<String> dataKeys,
                 final List<Object> dataValues,
                 final List<String> contextKeys,
@@ -231,14 +231,14 @@ import javax.annotation.Nullable;
 
     public abstract void log(
             final org.slf4j.Logger logger,
-            final String event,
-            final String[] keys,
-            final Object[] values,
+            @Nullable final String event,
+            @Nullable final String[] keys,
+            @Nullable final Object[] values,
             @Nullable final Throwable throwable);
 
     public abstract void log(
             final org.slf4j.Logger logger,
-            final String event,
+            @Nullable final String event,
             final List<String> dataKeys,
             final List<Object> dataValues,
             final List<String> contextKeys,

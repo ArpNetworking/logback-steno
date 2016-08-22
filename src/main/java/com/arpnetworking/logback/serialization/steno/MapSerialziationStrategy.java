@@ -24,6 +24,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.Serializable;
 import java.io.StringWriter;
 import java.util.Map;
+import javax.annotation.Nullable;
 
 /**
  * Serialization strategy for map based message specifications.
@@ -61,7 +62,7 @@ public class MapSerialziationStrategy implements Serializable {
     public String serialize(
             final ILoggingEvent event,
             final String eventName,
-            final Map<String, ? extends Object> map)
+            @Nullable final Map<String, ? extends Object> map)
             throws Exception {
         final StringWriter jsonWriter = new StringWriter();
         final JsonGenerator jsonGenerator = _jsonFactory.createGenerator(jsonWriter);

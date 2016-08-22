@@ -45,6 +45,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import javax.annotation.Nullable;
 
 /**
  * Helper functions and functors for Steno serialziation.
@@ -127,8 +128,8 @@ public final class StenoSerializationHelper {
     public static void endStenoWrapper(
             final ILoggingEvent event,
             final String eventName,
-            final List<String> contextKeys,
-            final List<Object> contextValues,
+            @Nullable final List<String> contextKeys,
+            @Nullable final List<Object> contextValues,
             final JsonGenerator jsonGenerator,
             final ObjectMapper objectMapper,
             final StenoEncoder encoder)
@@ -162,8 +163,8 @@ public final class StenoSerializationHelper {
      * @throws IOException If writing JSON fails.
      */
     public static void writeKeyValuePairs(
-            final List<String> keys,
-            final List<Object> values,
+            @Nullable final List<String> keys,
+            @Nullable final List<Object> values,
             final JsonGenerator jsonGenerator,
             final ObjectMapper objectMapper,
             final StenoEncoder encoder)
@@ -279,8 +280,8 @@ public final class StenoSerializationHelper {
             final StenoEncoder encoder,
             final ILoggingEvent event,
             final ObjectMapper objectMapper,
-            final List<String> contextKeys,
-            final List<Object> contextValues) {
+            @Nullable final List<String> contextKeys,
+            @Nullable final List<Object> contextValues) {
 
         final Map<String, Object> context = new LinkedHashMap<>();
         if (encoder.isInjectContextHost()) {
@@ -346,7 +347,7 @@ public final class StenoSerializationHelper {
      * @param obj The <code>Object</code> to analyze.
      * @return <code>True</code> if and only if the <code>Object</code> is a simple type.
      */
-    public static boolean isSimpleType(final Object obj) {
+    public static boolean isSimpleType(@Nullable final Object obj) {
         if (obj == null) {
             return true;
         }

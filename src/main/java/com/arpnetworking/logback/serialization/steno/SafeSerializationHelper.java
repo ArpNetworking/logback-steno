@@ -33,6 +33,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import javax.annotation.Nullable;
 
 /**
  * Helper functions and for safe serialziation.
@@ -73,8 +74,8 @@ public final class SafeSerializationHelper {
             final StenoEncoder encoder,
             final ILoggingEvent event,
             final ObjectMapper objectMapper,
-            final List<String> contextKeys,
-            final List<Object> contextValues) {
+            @Nullable final List<String> contextKeys,
+            @Nullable final List<Object> contextValues) {
         return StenoSerializationHelper.createContext(encoder, event, objectMapper, contextKeys, contextValues);
     }
 
@@ -85,7 +86,7 @@ public final class SafeSerializationHelper {
      * @param encoder The <code>StenoEncoder</code> instance.
      * @param value The <code>Object</code> instance to safely serialize.
      */
-    public static void safeEncodeValue(final StringBuilder encoder, final Object value) {
+    public static void safeEncodeValue(final StringBuilder encoder, @Nullable final Object value) {
         if (value == null) {
             encoder.append("null");
         } else if (value instanceof Map) {

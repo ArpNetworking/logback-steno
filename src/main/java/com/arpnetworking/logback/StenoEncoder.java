@@ -50,6 +50,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.annotation.Nullable;
 
 /**
  * Encoder that builds Steno formatted log messages.
@@ -203,7 +204,7 @@ public class StenoEncoder extends BaseLoggingEncoder implements Serializable {
 
     /**
      * Enables/Disables redaction support when serializing complex objects.  Redacted fields/properties marked
-     * with the @LogRedact annotation will be output as a string with the value "{@code<REDACTED>}".
+     * with the @LogRedact annotation will be output as a string with the value "{@code <REDACTED>}".
      *
      * @param redactEnabled - true to filter out redacted fields
      *
@@ -675,9 +676,9 @@ public class StenoEncoder extends BaseLoggingEncoder implements Serializable {
     @Override
     protected String buildArrayMessage(
             final ILoggingEvent event,
-            final String eventName,
-            final String[] keys,
-            final Object[] values)
+            @Nullable final String eventName,
+            @Nullable final String[] keys,
+            @Nullable final Object[] values)
             throws EncodingException {
 
         try {
@@ -699,9 +700,9 @@ public class StenoEncoder extends BaseLoggingEncoder implements Serializable {
     @Override
     protected String buildArrayJsonMessage(
             final ILoggingEvent event,
-            final String eventName,
-            final String[] keys,
-            final String[] jsonValues)
+            @Nullable final String eventName,
+            @Nullable final String[] keys,
+            @Nullable final String[] jsonValues)
             throws EncodingException {
 
         try {
@@ -723,8 +724,8 @@ public class StenoEncoder extends BaseLoggingEncoder implements Serializable {
     @Override
     protected String buildMapMessage(
             final ILoggingEvent event,
-            final String eventName,
-            final Map<String, ?> map)
+            @Nullable final String eventName,
+            @Nullable final Map<String, ?> map)
             throws EncodingException {
 
         try {
@@ -745,8 +746,8 @@ public class StenoEncoder extends BaseLoggingEncoder implements Serializable {
     @Override
     protected String buildMapJsonMessage(
             final ILoggingEvent event,
-            final String eventName,
-            final Map<String, String> map)
+            @Nullable final String eventName,
+            @Nullable final Map<String, String> map)
             throws EncodingException {
 
         try {
@@ -767,15 +768,16 @@ public class StenoEncoder extends BaseLoggingEncoder implements Serializable {
     @Override
     protected String buildObjectMessage(
             final ILoggingEvent event,
-            final String eventName,
-            final Object data)
+            @Nullable final String eventName,
+            @Nullable final Object data)
             throws EncodingException {
 
         try {
             return _objectSerialziationStrategy.serialize(
                     event,
                     firstNonNull(eventName, _logEventName),
-                    data);
+                    // TODO(ville): This is where the switch for null as-is for object marker should go [issue #4]
+                    data == null ? Collections.emptyMap() : data);
             // CHECKSTYLE.OFF: IllegalCatch: Ensure any exception or error is caught to prevent Appender death.
         } catch (final Throwable t) {
             // CHECKSTYLE.ON: IllegalCatch
@@ -789,7 +791,7 @@ public class StenoEncoder extends BaseLoggingEncoder implements Serializable {
     @Override
     protected String buildObjectJsonMessage(
             final ILoggingEvent event,
-            final String eventName,
+            @Nullable final String eventName,
             final String jsonData)
             throws EncodingException {
 
@@ -811,11 +813,11 @@ public class StenoEncoder extends BaseLoggingEncoder implements Serializable {
     @Override
     protected String buildListsMessage(
             final ILoggingEvent event,
-            final String eventName,
-            final List<String> dataKeys,
-            final List<Object> dataValues,
-            final List<String> contextKeys,
-            final List<Object> contextValues)
+            @Nullable final String eventName,
+            @Nullable final List<String> dataKeys,
+            @Nullable final List<Object> dataValues,
+            @Nullable final List<String> contextKeys,
+            @Nullable final List<Object> contextValues)
             throws EncodingException {
 
         try {
@@ -840,7 +842,7 @@ public class StenoEncoder extends BaseLoggingEncoder implements Serializable {
         }
     }
 
-    /* package private */ static <T> T firstNonNull(final T first, final T second) {
+    /* package private */ static <T> T firstNonNull(@Nullable final T first, @Nullable final T second) {
         if (first != null) {
             return first;
         } else if (second != null) {

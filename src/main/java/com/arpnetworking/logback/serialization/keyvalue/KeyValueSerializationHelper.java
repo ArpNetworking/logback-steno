@@ -26,6 +26,7 @@ import com.arpnetworking.logback.ProcessConverter;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.Nullable;
 
 /**
  * Helper functions and functors for Key-Value serialziation.
@@ -49,8 +50,8 @@ public final class KeyValueSerializationHelper {
     public static Map<String, Object> createContext(
             final KeyValueEncoder encoder,
             final ILoggingEvent event,
-            final List<String> contextKeys,
-            final List<Object> contextValues) {
+            @Nullable final List<String> contextKeys,
+            @Nullable final List<Object> contextValues) {
         final Map<String, Object> context = new LinkedHashMap<>();
         context.put("host", KeyValueSerializationHelper.HOST_CONVERTER.convert(event));
         context.put("processId", KeyValueSerializationHelper.PROCESS_CONVERTER.convert(event));

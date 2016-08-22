@@ -21,6 +21,7 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.Serializable;
+import javax.annotation.Nullable;
 
 /**
  * Serialization strategy for object based message specifications.
@@ -57,9 +58,9 @@ public class ObjectSerialziationStrategy implements Serializable {
     public String serialize(
             final ILoggingEvent event,
             final String eventName,
-            final Object data)
+            @Nullable final Object data)
             throws Exception {
-        final String jsonData = data == null ? null : _objectMapper.writeValueAsString(data);
+        final String jsonData = _objectMapper.writeValueAsString(data);
         return _objectAsJsonStrategy.serialize(
                 event,
                 eventName,
