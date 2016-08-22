@@ -32,6 +32,7 @@ import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -57,8 +58,8 @@ public class RateLimitLoggerTest {
                 null,
                 Arrays.asList("message", "_skipped", "_lastLogTime"),
                 Arrays.asList("m", 0, null),
-                null,
-                null);
+                Collections.emptyList(),
+                Collections.emptyList());
     }
 
     @Test
@@ -70,8 +71,8 @@ public class RateLimitLoggerTest {
                 null,
                 Arrays.asList("message", "_skipped", "_lastLogTime"),
                 Arrays.asList("m1", 0, null),
-                null,
-                null);
+                Collections.emptyList(),
+                Collections.emptyList());
 
         rateLimitLogger.info().setMessage("m2").log();
         Mockito.verify(_slf4jLogger, Mockito.atLeastOnce()).isInfoEnabled();
@@ -90,8 +91,8 @@ public class RateLimitLoggerTest {
                 null,
                 Arrays.asList("message", "_skipped", "_lastLogTime"),
                 Arrays.asList("m1", 0, null),
-                null,
-                null);
+                Collections.emptyList(),
+                Collections.emptyList());
 
         Mockito.verifyNoMoreInteractions(_slf4jLogger);
         Thread.sleep(500);
@@ -117,8 +118,8 @@ public class RateLimitLoggerTest {
                                 Matchers.hasItem("m4"),
                                 Matchers.hasItem(1),
                                 Matchers.hasItem(isBetween(beforeLastLog, afterLastLog)))),
-                Mockito.argThat(Matchers.nullValue(List.class)),
-                Mockito.argThat(Matchers.nullValue(List.class)));
+                Mockito.argThat(Matchers.equalTo(Collections.emptyList())),
+                Mockito.argThat(Matchers.equalTo(Collections.emptyList())));
     }
 
     @Test
@@ -180,6 +181,19 @@ public class RateLimitLoggerTest {
                                 Matchers.<Object>equalTo("m4"),
                                 Matchers.<Object>equalTo(1),
                                 isBetween(beforeLastLog, afterLastLog)})));
+    }
+
+    @Test
+    public void testLogBuilderWithEmptyData() {
+        final Logger rateLimitLogger = new RateLimitLogger(_slf4jLogger, Duration.ofMinutes(1), Clock.systemUTC());
+        rateLimitLogger.info().setEvent("m").log();
+        Mockito.verify(_slf4jLogger).info(
+                StenoMarker.LISTS_MARKER,
+                "m",
+                Arrays.asList("_skipped", "_lastLogTime"),
+                Arrays.asList(0, null),
+                Collections.emptyList(),
+                Collections.emptyList());
     }
 
     private static Matcher<Instant> isBetween(final Instant before, final Instant after) {

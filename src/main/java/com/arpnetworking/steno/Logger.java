@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+import javax.annotation.Nullable;
 
 /**
  * Logger designed for use particularly with Steno encoder. Although not
@@ -114,7 +115,7 @@ public class Logger {
      * @param message The message to be logged.
      * @param throwable The exception (<code>Throwable</code>) to be logged.
      */
-    public void trace(final String message, final Throwable throwable) {
+    public void trace(final String message, @Nullable final Throwable throwable) {
         log(LogLevel.TRACE, DEFAULT_EVENT, message, EMPTY_STRING_ARRAY, EMPTY_OBJECT_ARRAY, throwable);
     }
 
@@ -141,7 +142,7 @@ public class Logger {
      * @param message The message to be logged.
      * @param throwable The exception (<code>Throwable</code>) to be logged.
      */
-    public void trace(final String event, final String message, final Throwable throwable) {
+    public void trace(final String event, final String message, @Nullable final Throwable throwable) {
         log(LogLevel.TRACE, event, message, EMPTY_STRING_ARRAY, EMPTY_OBJECT_ARRAY, throwable);
     }
 
@@ -177,7 +178,7 @@ public class Logger {
             final String event,
             final String message,
             final Map<String, Object> data,
-            final Throwable throwable) {
+            @Nullable final Throwable throwable) {
         if (getSlf4jLogger().isTraceEnabled()) {
             LogLevel.TRACE.log(
                     getSlf4jLogger(),
@@ -238,7 +239,7 @@ public class Logger {
             final String message,
             final String[] dataKeys,
             final Object[] dataValues,
-            final Throwable throwable) {
+            @Nullable final Throwable throwable) {
         log(
                 LogLevel.TRACE,
                 event,
@@ -287,7 +288,7 @@ public class Logger {
             final String message,
             final String dataKey1,
             final Object dataValue1,
-            final Throwable throwable) {
+            @Nullable final Throwable throwable) {
         if (getSlf4jLogger().isTraceEnabled()) {
             LogLevel.TRACE.log(
                     getSlf4jLogger(),
@@ -345,7 +346,7 @@ public class Logger {
             final String dataKey2,
             final Object dataValue1,
             final Object dataValue2,
-            final Throwable throwable) {
+            @Nullable final Throwable throwable) {
         if (getSlf4jLogger().isTraceEnabled()) {
             LogLevel.TRACE.log(
                     getSlf4jLogger(),
@@ -432,7 +433,7 @@ public class Logger {
      * @param message The message to be logged.
      * @param throwable The exception (<code>Throwable</code>) to be logged.
      */
-    public void debug(final String message, final Throwable throwable) {
+    public void debug(final String message, final @Nullable Throwable throwable) {
         log(LogLevel.DEBUG, DEFAULT_EVENT, message, EMPTY_STRING_ARRAY, EMPTY_OBJECT_ARRAY, throwable);
     }
 
@@ -459,7 +460,7 @@ public class Logger {
      * @param message The message to be logged.
      * @param throwable The exception (<code>Throwable</code>) to be logged.
      */
-    public void debug(final String event, final String message, final Throwable throwable) {
+    public void debug(final String event, final String message, @Nullable final Throwable throwable) {
         log(LogLevel.DEBUG, event, message, EMPTY_STRING_ARRAY, EMPTY_OBJECT_ARRAY, throwable);
     }
 
@@ -495,7 +496,7 @@ public class Logger {
             final String event,
             final String message,
             final Map<String, Object> data,
-            final Throwable throwable) {
+            @Nullable final Throwable throwable) {
         if (getSlf4jLogger().isDebugEnabled()) {
             LogLevel.DEBUG.log(
                     getSlf4jLogger(),
@@ -556,7 +557,7 @@ public class Logger {
             final String message,
             final String[] dataKeys,
             final Object[] dataValues,
-            final Throwable throwable) {
+            @Nullable final Throwable throwable) {
         log(
                 LogLevel.DEBUG,
                 event,
@@ -605,7 +606,7 @@ public class Logger {
             final String message,
             final String dataKey1,
             final Object dataValue1,
-            final Throwable throwable) {
+            @Nullable final Throwable throwable) {
         if (getSlf4jLogger().isDebugEnabled()) {
             LogLevel.DEBUG.log(
                     getSlf4jLogger(),
@@ -663,7 +664,7 @@ public class Logger {
             final String dataKey2,
             final Object dataValue1,
             final Object dataValue2,
-            final Throwable throwable) {
+            @Nullable final Throwable throwable) {
         if (getSlf4jLogger().isDebugEnabled()) {
             LogLevel.DEBUG.log(
                     getSlf4jLogger(),
@@ -750,7 +751,7 @@ public class Logger {
      * @param message The message to be logged.
      * @param throwable The exception (<code>Throwable</code>) to be logged.
      */
-    public void info(final String message, final Throwable throwable) {
+    public void info(final String message, @Nullable final Throwable throwable) {
         log(LogLevel.INFO, DEFAULT_EVENT, message, EMPTY_STRING_ARRAY, EMPTY_OBJECT_ARRAY, throwable);
     }
 
@@ -777,7 +778,7 @@ public class Logger {
      * @param message The message to be logged.
      * @param throwable The exception (<code>Throwable</code>) to be logged.
      */
-    public void info(final String event, final String message, final Throwable throwable) {
+    public void info(final String event, final String message, @Nullable final Throwable throwable) {
         log(LogLevel.INFO, event, message, EMPTY_STRING_ARRAY, EMPTY_OBJECT_ARRAY, throwable);
     }
 
@@ -813,7 +814,7 @@ public class Logger {
             final String event,
             final String message,
             final Map<String, Object> data,
-            final Throwable throwable) {
+            @Nullable final Throwable throwable) {
         if (getSlf4jLogger().isInfoEnabled()) {
             LogLevel.INFO.log(
                     getSlf4jLogger(),
@@ -874,7 +875,7 @@ public class Logger {
             final String message,
             final String[] dataKeys,
             final Object[] dataValues,
-            final Throwable throwable) {
+            @Nullable final Throwable throwable) {
         log(
                 LogLevel.INFO,
                 event,
@@ -923,7 +924,7 @@ public class Logger {
             final String message,
             final String dataKey1,
             final Object dataValue1,
-            final Throwable throwable) {
+            @Nullable final Throwable throwable) {
         if (getSlf4jLogger().isInfoEnabled()) {
             LogLevel.INFO.log(
                     getSlf4jLogger(),
@@ -981,7 +982,7 @@ public class Logger {
             final String dataKey2,
             final Object dataValue1,
             final Object dataValue2,
-            final Throwable throwable) {
+            @Nullable final Throwable throwable) {
         if (getSlf4jLogger().isInfoEnabled()) {
             LogLevel.INFO.log(
                     getSlf4jLogger(),
@@ -1069,7 +1070,7 @@ public class Logger {
      * @param message The message to be logged.
      * @param throwable The exception (<code>Throwable</code>) to be logged.
      */
-    public void warn(final String message, final Throwable throwable) {
+    public void warn(final String message, @Nullable final Throwable throwable) {
         log(LogLevel.WARN, DEFAULT_EVENT, message, EMPTY_STRING_ARRAY, EMPTY_OBJECT_ARRAY, throwable);
     }
 
@@ -1096,7 +1097,7 @@ public class Logger {
      * @param message The message to be logged.
      * @param throwable The exception (<code>Throwable</code>) to be logged.
      */
-    public void warn(final String event, final String message, final Throwable throwable) {
+    public void warn(final String event, final String message, @Nullable final Throwable throwable) {
         log(LogLevel.WARN, event, message, EMPTY_STRING_ARRAY, EMPTY_OBJECT_ARRAY, throwable);
     }
 
@@ -1132,7 +1133,7 @@ public class Logger {
             final String event,
             final String message,
             final Map<String, Object> data,
-            final Throwable throwable) {
+            @Nullable final Throwable throwable) {
         if (getSlf4jLogger().isWarnEnabled()) {
             LogLevel.WARN.log(
                     getSlf4jLogger(),
@@ -1193,7 +1194,7 @@ public class Logger {
             final String message,
             final String[] dataKeys,
             final Object[] dataValues,
-            final Throwable throwable) {
+            @Nullable final Throwable throwable) {
         log(
                 LogLevel.WARN,
                 event,
@@ -1242,7 +1243,7 @@ public class Logger {
             final String message,
             final String dataKey1,
             final Object dataValue1,
-            final Throwable throwable) {
+            @Nullable final Throwable throwable) {
         if (getSlf4jLogger().isWarnEnabled()) {
             LogLevel.WARN.log(
                     getSlf4jLogger(),
@@ -1300,7 +1301,7 @@ public class Logger {
             final String dataKey2,
             final Object dataValue1,
             final Object dataValue2,
-            final Throwable throwable) {
+            @Nullable final Throwable throwable) {
         if (getSlf4jLogger().isWarnEnabled()) {
             LogLevel.WARN.log(
                     getSlf4jLogger(),
@@ -1387,7 +1388,7 @@ public class Logger {
      * @param message The message to be logged.
      * @param throwable The exception (<code>Throwable</code>) to be logged.
      */
-    public void error(final String message, final Throwable throwable) {
+    public void error(final String message, @Nullable final Throwable throwable) {
         log(LogLevel.ERROR, DEFAULT_EVENT, message, EMPTY_STRING_ARRAY, EMPTY_OBJECT_ARRAY, throwable);
     }
 
@@ -1414,7 +1415,7 @@ public class Logger {
      * @param message The message to be logged.
      * @param throwable The exception (<code>Throwable</code>) to be logged.
      */
-    public void error(final String event, final String message, final Throwable throwable) {
+    public void error(final String event, final String message, @Nullable final Throwable throwable) {
         log(LogLevel.ERROR, event, message, EMPTY_STRING_ARRAY, EMPTY_OBJECT_ARRAY, throwable);
     }
 
@@ -1450,7 +1451,7 @@ public class Logger {
             final String event,
             final String message,
             final Map<String, Object> data,
-            final Throwable throwable) {
+            @Nullable final Throwable throwable) {
         if (getSlf4jLogger().isErrorEnabled()) {
             LogLevel.ERROR.log(
                     getSlf4jLogger(),
@@ -1511,7 +1512,7 @@ public class Logger {
             final String message,
             final String[] dataKeys,
             final Object[] dataValues,
-            final Throwable throwable) {
+            @Nullable final Throwable throwable) {
         log(
                 LogLevel.ERROR,
                 event,
@@ -1560,7 +1561,7 @@ public class Logger {
             final String message,
             final String dataKey1,
             final Object dataValue1,
-            final Throwable throwable) {
+            @Nullable final Throwable throwable) {
         if (getSlf4jLogger().isErrorEnabled()) {
             LogLevel.ERROR.log(
                     getSlf4jLogger(),
@@ -1618,7 +1619,7 @@ public class Logger {
             final String dataKey2,
             final Object dataValue1,
             final Object dataValue2,
-            final Throwable throwable) {
+            @Nullable final Throwable throwable) {
         if (getSlf4jLogger().isErrorEnabled()) {
             LogLevel.ERROR.log(
                     getSlf4jLogger(),
@@ -1654,7 +1655,7 @@ public class Logger {
             final String message,
             final String[] dataKeys,
             final Object[] dataValues,
-            final Throwable throwable) {
+            @Nullable final Throwable throwable) {
         level.log(
                 getSlf4jLogger(),
                 event,
@@ -1685,7 +1686,7 @@ public class Logger {
             final List<Object> dataValues,
             final List<String> contextKeys,
             final List<Object> contextValues,
-            final Throwable throwable) {
+            @Nullable final Throwable throwable) {
         level.log(
                 getSlf4jLogger(),
                 event,

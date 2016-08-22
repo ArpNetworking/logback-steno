@@ -18,6 +18,7 @@ package com.arpnetworking.steno;
 import com.arpnetworking.logback.StenoMarker;
 
 import java.util.List;
+import javax.annotation.Nullable;
 
 /**
  * Enumeration of log levels.
@@ -34,7 +35,7 @@ import java.util.List;
                 final String event,
                 final String[] keys,
                 final Object[] values,
-                final Throwable throwable) {
+                @Nullable final Throwable throwable) {
             if (isEnabled(logger)) {
                 if (throwable != null) {
                     logger.trace(StenoMarker.ARRAY_MARKER, event, keys, values, throwable);
@@ -52,7 +53,7 @@ import java.util.List;
                 final List<Object> dataValues,
                 final List<String> contextKeys,
                 final List<Object> contextValues,
-                final Throwable throwable) {
+                @Nullable final Throwable throwable) {
             if (isEnabled(logger)) {
                 if (throwable != null) {
                     logger.trace(StenoMarker.LISTS_MARKER, event, dataKeys, dataValues, contextKeys, contextValues, throwable);
@@ -74,7 +75,7 @@ import java.util.List;
                 final String event,
                 final String[] keys,
                 final Object[] values,
-                final Throwable throwable) {
+                @Nullable final Throwable throwable) {
             if (isEnabled(logger)) {
                 if (throwable != null) {
                     logger.debug(StenoMarker.ARRAY_MARKER, event, keys, values, throwable);
@@ -92,7 +93,7 @@ import java.util.List;
                 final List<Object> dataValues,
                 final List<String> contextKeys,
                 final List<Object> contextValues,
-                final Throwable throwable) {
+                @Nullable final Throwable throwable) {
             if (isEnabled(logger)) {
                 if (throwable != null) {
                     logger.debug(StenoMarker.LISTS_MARKER, event, dataKeys, dataValues, contextKeys, contextValues, throwable);
@@ -114,7 +115,7 @@ import java.util.List;
                 final String event,
                 final String[] keys,
                 final Object[] values,
-                final Throwable throwable) {
+                @Nullable final Throwable throwable) {
             if (isEnabled(logger)) {
                 if (throwable != null) {
                     logger.info(StenoMarker.ARRAY_MARKER, event, keys, values, throwable);
@@ -132,7 +133,7 @@ import java.util.List;
                 final List<Object> dataValues,
                 final List<String> contextKeys,
                 final List<Object> contextValues,
-                final Throwable throwable) {
+                @Nullable final Throwable throwable) {
             if (isEnabled(logger)) {
                 if (throwable != null) {
                     logger.info(StenoMarker.LISTS_MARKER, event, dataKeys, dataValues, contextKeys, contextValues, throwable);
@@ -154,7 +155,7 @@ import java.util.List;
                 final String event,
                 final String[] keys,
                 final Object[] values,
-                final Throwable throwable) {
+                @Nullable final Throwable throwable) {
             if (isEnabled(logger)) {
                 if (throwable != null) {
                     logger.warn(StenoMarker.ARRAY_MARKER, event, keys, values, throwable);
@@ -172,7 +173,7 @@ import java.util.List;
                 final List<Object> dataValues,
                 final List<String> contextKeys,
                 final List<Object> contextValues,
-                final Throwable throwable) {
+                @Nullable final Throwable throwable) {
             if (isEnabled(logger)) {
                 if (throwable != null) {
                     logger.warn(StenoMarker.LISTS_MARKER, event, dataKeys, dataValues, contextKeys, contextValues, throwable);
@@ -194,7 +195,7 @@ import java.util.List;
                 final String event,
                 final String[] keys,
                 final Object[] values,
-                final Throwable throwable) {
+                @Nullable final Throwable throwable) {
             if (isEnabled(logger)) {
                 if (throwable != null) {
                     logger.error(StenoMarker.ARRAY_MARKER, event, keys, values, throwable);
@@ -212,7 +213,7 @@ import java.util.List;
                 final List<Object> dataValues,
                 final List<String> contextKeys,
                 final List<Object> contextValues,
-                final Throwable throwable) {
+                @Nullable final Throwable throwable) {
             if (isEnabled(logger)) {
                 if (throwable != null) {
                     logger.error(StenoMarker.LISTS_MARKER, event, dataKeys, dataValues, contextKeys, contextValues, throwable);
@@ -233,7 +234,7 @@ import java.util.List;
             final String event,
             final String[] keys,
             final Object[] values,
-            final Throwable throwable);
+            @Nullable final Throwable throwable);
 
     public abstract void log(
             final org.slf4j.Logger logger,
@@ -242,7 +243,7 @@ import java.util.List;
             final List<Object> dataValues,
             final List<String> contextKeys,
             final List<Object> contextValues,
-            final Throwable throwable);
+            @Nullable final Throwable throwable);
 
     public abstract boolean isEnabled(final org.slf4j.Logger logger);
 }

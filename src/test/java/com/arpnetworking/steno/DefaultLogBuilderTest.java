@@ -45,8 +45,8 @@ public class DefaultLogBuilderTest {
                 "MyEvent",
                 dataKeys,
                 dataValues,
-                null,
-                null,
+                Collections.emptyList(),
+                Collections.emptyList(),
                 EXCEPTION);
     }
 
@@ -60,10 +60,10 @@ public class DefaultLogBuilderTest {
         Mockito.verify(logger).log(
                 LogLevel.DEBUG,
                 "MyEvent",
-                null,
-                null,
-                null,
-                null,
+                Collections.emptyList(),
+                Collections.emptyList(),
+                Collections.emptyList(),
+                Collections.emptyList(),
                 EXCEPTION);
     }
 
@@ -84,8 +84,8 @@ public class DefaultLogBuilderTest {
                 "MyEvent",
                 dataKeys,
                 dataValues,
-                null,
-                null,
+                Collections.emptyList(),
+                Collections.emptyList(),
                 EXCEPTION);
     }
 

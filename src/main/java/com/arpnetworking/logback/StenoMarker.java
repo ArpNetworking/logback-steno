@@ -31,7 +31,6 @@ public final class StenoMarker {
     private static final String STENO_MAP_JSON_MARKER_NAME = "com.arpnetworking.logback.stenoMarker.map.json";
     private static final String STENO_OBJECT_MARKER_NAME = "com.arpnetworking.logback.stenoMarker.object";
     private static final String STENO_OBJECT_JSON_MARKER_NAME = "com.arpnetworking.logback.stenoMarker.object.json";
-    private static final String STENO_JSON_MARKER_NAME = "com.arpnetworking.logback.stenoMarker.json";
     private static final String STENO_LISTS_MARKER_NAME = "com.arpnetworking.logback.stenoMarker.lists";
 
     /**
