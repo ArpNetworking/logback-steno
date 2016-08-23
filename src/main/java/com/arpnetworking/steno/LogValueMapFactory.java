@@ -25,6 +25,7 @@ import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
+import javax.annotation.Nullable;
 
 /**
  * Factory for creating <code>ImmutableMap</code> instances from key-value
@@ -59,7 +60,7 @@ public final class LogValueMapFactory {
      * @param o Instance of the <code>Object</code> being logged.
      * @return New <code>Builder</code> instance.
      */
-    public static Builder builder(final Object o) {
+    public static Builder builder(@Nullable final Object o) {
         return new Builder(Optional.ofNullable(o));
     }
 
@@ -308,7 +309,7 @@ public final class LogValueMapFactory {
          * @param value The entry value.
          * @return This <code>Builder</code> instance.
          */
-        public Builder put(final String key, final Object value) {
+        public Builder put(@Nullable final String key, @Nullable final Object value) {
             if (key == null) {
                 _nullKeys = true;
                 return this;

@@ -22,6 +22,7 @@ import org.slf4j.Marker;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.Nullable;
 
 /**
  * Base encoder class containing methods to determine if a Steno marker is present.
@@ -79,9 +80,9 @@ public abstract class BaseLoggingEncoder extends LayoutWrappingEncoder<ILoggingE
      */
     protected abstract String buildArrayMessage(
             ILoggingEvent event,
-            String eventName,
-            String[] keys,
-            Object[] values)
+            @Nullable String eventName,
+            @Nullable String[] keys,
+            @Nullable Object[] values)
             throws EncodingException;
 
     /**
@@ -98,9 +99,9 @@ public abstract class BaseLoggingEncoder extends LayoutWrappingEncoder<ILoggingE
      */
     protected abstract String buildArrayJsonMessage(
             ILoggingEvent event,
-            String eventName,
-            String[] keys,
-            String[] jsonValues)
+            @Nullable String eventName,
+            @Nullable String[] keys,
+            @Nullable String[] jsonValues)
             throws EncodingException;
 
     /**
@@ -116,8 +117,8 @@ public abstract class BaseLoggingEncoder extends LayoutWrappingEncoder<ILoggingE
      */
     protected abstract String buildMapMessage(
             ILoggingEvent event,
-            String eventName,
-            Map<String, ? extends Object> map)
+            @Nullable String eventName,
+            @Nullable Map<String, ? extends Object> map)
             throws EncodingException;
 
     /**
@@ -133,8 +134,8 @@ public abstract class BaseLoggingEncoder extends LayoutWrappingEncoder<ILoggingE
      */
     protected abstract String buildMapJsonMessage(
             ILoggingEvent event,
-            String eventName,
-            Map<String, String> map)
+            @Nullable String eventName,
+            @Nullable Map<String, String> map)
             throws EncodingException;
 
     /**
@@ -150,8 +151,8 @@ public abstract class BaseLoggingEncoder extends LayoutWrappingEncoder<ILoggingE
      */
     protected abstract String buildObjectMessage(
             ILoggingEvent event,
-            String eventName,
-            Object data)
+            @Nullable String eventName,
+            @Nullable Object data)
             throws EncodingException;
 
     /**
@@ -167,7 +168,7 @@ public abstract class BaseLoggingEncoder extends LayoutWrappingEncoder<ILoggingE
      */
     protected abstract String buildObjectJsonMessage(
             ILoggingEvent event,
-            String eventName,
+            @Nullable String eventName,
             String jsonData)
             throws EncodingException;
 
@@ -187,11 +188,11 @@ public abstract class BaseLoggingEncoder extends LayoutWrappingEncoder<ILoggingE
      */
     protected abstract String buildListsMessage(
             ILoggingEvent event,
-            String eventName,
-            List<String> dataKeys,
-            List<Object> dataValues,
-            List<String> contextKeys,
-            List<Object> contextValues)
+            @Nullable String eventName,
+            @Nullable List<String> dataKeys,
+            @Nullable List<Object> dataValues,
+            @Nullable List<String> contextKeys,
+            @Nullable List<Object> contextValues)
             throws EncodingException;
 
     /**
@@ -213,7 +214,7 @@ public abstract class BaseLoggingEncoder extends LayoutWrappingEncoder<ILoggingE
      * @param marker The <code>Marker</code> instance to evaluate.
      * @return True if and only if <code>marker</code> represents an array event.
      */
-    protected boolean isArrayStenoEvent(final Marker marker) {
+    protected boolean isArrayStenoEvent(@Nullable final Marker marker) {
         return marker != null && marker.contains(StenoMarker.ARRAY_MARKER);
     }
 
@@ -225,7 +226,7 @@ public abstract class BaseLoggingEncoder extends LayoutWrappingEncoder<ILoggingE
      * @param marker The <code>Marker</code> instance to evaluate.
      * @return True if and only if <code>marker</code> represents a JSON array event.
      */
-    protected boolean isArrayJsonStenoEvent(final Marker marker) {
+    protected boolean isArrayJsonStenoEvent(@Nullable final Marker marker) {
         return marker != null && marker.contains(StenoMarker.ARRAY_JSON_MARKER);
     }
 
@@ -237,7 +238,7 @@ public abstract class BaseLoggingEncoder extends LayoutWrappingEncoder<ILoggingE
      * @param marker The <code>Marker</code> instance to evaluate.
      * @return True if and only if <code>marker</code> represents an array event.
      */
-    protected boolean isMapStenoEvent(final Marker marker) {
+    protected boolean isMapStenoEvent(@Nullable final Marker marker) {
         return marker != null && marker.contains(StenoMarker.MAP_MARKER);
     }
 
@@ -249,7 +250,7 @@ public abstract class BaseLoggingEncoder extends LayoutWrappingEncoder<ILoggingE
      * @param marker The <code>Marker</code> instance to evaluate.
      * @return True if and only if <code>marker</code> represents a JSON map event.
      */
-    protected boolean isMapJsonStenoEvent(final Marker marker) {
+    protected boolean isMapJsonStenoEvent(@Nullable final Marker marker) {
         return marker != null && marker.contains(StenoMarker.MAP_JSON_MARKER);
     }
 
@@ -261,7 +262,7 @@ public abstract class BaseLoggingEncoder extends LayoutWrappingEncoder<ILoggingE
      * @param marker The <code>Marker</code> instance to evaluate.
      * @return True if and only if <code>marker</code> represents an object event.
      */
-    protected boolean isObjectStenoEvent(final Marker marker) {
+    protected boolean isObjectStenoEvent(@Nullable final Marker marker) {
         return marker != null && marker.contains(StenoMarker.OBJECT_MARKER);
     }
 
@@ -273,7 +274,7 @@ public abstract class BaseLoggingEncoder extends LayoutWrappingEncoder<ILoggingE
      * @param marker The <code>Marker</code> instance to evaluate.
      * @return True if and only if <code>marker</code> represents a JSON object event.
      */
-    protected boolean isObjectJsonStenoEvent(final Marker marker) {
+    protected boolean isObjectJsonStenoEvent(@Nullable final Marker marker) {
         return marker != null && marker.contains(StenoMarker.OBJECT_JSON_MARKER);
     }
 
@@ -285,7 +286,7 @@ public abstract class BaseLoggingEncoder extends LayoutWrappingEncoder<ILoggingE
      * @param marker The <code>Marker</code> instance to evaluate.
      * @return True if and only if <code>marker</code> represents a lists event.
      */
-    protected boolean isListsStenoEvent(final Marker marker) {
+    protected boolean isListsStenoEvent(@Nullable final Marker marker) {
         return marker != null && marker.contains(StenoMarker.LISTS_MARKER);
     }
 

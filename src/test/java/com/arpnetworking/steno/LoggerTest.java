@@ -1981,6 +1981,9 @@ public class LoggerTest {
 
     @Test
     public void testCreateKeysFromCollection() {
+        Assert.assertNull(Logger.createKeysFromCollection(null));
+        Assert.assertArrayEquals(new String[0], Logger.createKeysFromCollection(Collections.emptyList()));
+
         Assert.assertTrue(Arrays.equals(
                 new String[]{"Foo"},
                 Logger.createKeysFromCollection(Collections.singletonList("Foo"), new String[]{})));
@@ -2002,6 +2005,9 @@ public class LoggerTest {
 
     @Test
     public void testCreateValuesFromCollection() {
+        Assert.assertNull(Logger.createValuesFromCollection(null));
+        Assert.assertArrayEquals(new String[0], Logger.createValuesFromCollection(Collections.emptyList()));
+
         Assert.assertTrue(Arrays.equals(
                 new Object[]{"Foo"},
                 Logger.createValuesFromCollection(Collections.singletonList("Foo"), new Object[]{})));
@@ -2080,6 +2086,38 @@ public class LoggerTest {
         Assert.assertEquals(TEST_EXCEPTION, Logger.extractThrowable(null, new Object[]{TEST_EXCEPTION}));
         Assert.assertEquals(TEST_EXCEPTION, Logger.extractThrowable(new String[]{}, new Object[]{TEST_EXCEPTION}));
         Assert.assertEquals(TEST_EXCEPTION, Logger.extractThrowable(new String[]{KEY1}, new Object[]{VALUE1, TEST_EXCEPTION}));
+    }
+
+    @Test
+    public void testChompArray() {
+        Assert.assertArrayEquals(
+                new String[]{"a", "b", "c"},
+                Logger.chompArray(
+                        new String[]{"a", "b", "c"},
+                        0));
+        Assert.assertArrayEquals(
+                new String[]{"a", "b"},
+                Logger.chompArray(
+                        new String[]{"a", "b", "c"},
+                        1));
+        Assert.assertArrayEquals(
+                new String[]{},
+                Logger.chompArray(
+                        new String[]{"a", "b", "c"},
+                        3));
+        Assert.assertArrayEquals(
+                new String[]{"a", "b", "c"},
+                Logger.chompArray(
+                        new String[]{"a", "b", "c"},
+                        0));
+        Assert.assertNull(
+                Logger.chompArray(
+                        null,
+                        0));
+        Assert.assertNull(
+                Logger.chompArray(
+                        null,
+                        1));
     }
 
     private static final String TEST_MESSAGE = "test message";

@@ -23,6 +23,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.Serializable;
 import java.io.StringWriter;
+import javax.annotation.Nullable;
 
 /**
  * Serialization strategy for JSON array based message specifications.
@@ -61,8 +62,8 @@ public class ArrayOfJsonSerialziationStrategy implements Serializable {
     public String serialize(
             final ILoggingEvent event,
             final String eventName,
-            final String[] keys,
-            final String[] jsonValues)
+            @Nullable final String[] keys,
+            @Nullable final String[] jsonValues)
             throws Exception {
         final StringWriter jsonWriter = new StringWriter();
         final JsonGenerator jsonGenerator = _jsonFactory.createGenerator(jsonWriter);

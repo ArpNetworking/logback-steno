@@ -25,6 +25,7 @@ import org.slf4j.helpers.MessageFormatter;
 
 import java.util.Arrays;
 import java.util.Map;
+import javax.annotation.Nullable;
 
 /**
  * Logback LoggingEvent wrapper for overriding the message and argumentArray.
@@ -41,7 +42,10 @@ public class LoggingEventWrapper extends LoggingEvent {
      * @param message The message.
      * @param argumentArray The array of arguments for the message.
      */
-    public LoggingEventWrapper(final ILoggingEvent event, final String message, final Object[] argumentArray) {
+    public LoggingEventWrapper(
+            final ILoggingEvent event,
+            final String message,
+            @Nullable final Object[] argumentArray) {
         _wrappedEvent = event;
         _message = message;
         _argumentArray = argumentArray == null ? null : Arrays.copyOf(argumentArray, argumentArray.length);
@@ -75,7 +79,7 @@ public class LoggingEventWrapper extends LoggingEvent {
      * {@inheritDoc}
      */
     @Override
-    public Object[] getArgumentArray() {
+    public @Nullable Object[] getArgumentArray() {
         return _argumentArray == null ? null : Arrays.copyOf(_argumentArray, _argumentArray.length);
     }
 
@@ -182,6 +186,6 @@ public class LoggingEventWrapper extends LoggingEvent {
 
     private final ILoggingEvent _wrappedEvent;
     private final String _message;
-    private final Object[] _argumentArray;
+    private final @Nullable Object[] _argumentArray;
     private transient String _formattedMessage;
 }

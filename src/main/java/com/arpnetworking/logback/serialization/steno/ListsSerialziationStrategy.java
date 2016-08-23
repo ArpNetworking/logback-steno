@@ -24,6 +24,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.Serializable;
 import java.io.StringWriter;
 import java.util.List;
+import javax.annotation.Nullable;
 
 /**
  * Serialization strategy for lists based message specifications.
@@ -64,10 +65,10 @@ public class ListsSerialziationStrategy implements Serializable {
     public String serialize(
             final ILoggingEvent event,
             final String eventName,
-            final List<String> dataKeys,
-            final List<Object> dataValues,
-            final List<String> contextKeys,
-            final List<Object> contextValues)
+            @Nullable final List<String> dataKeys,
+            @Nullable final List<Object> dataValues,
+            @Nullable final List<String> contextKeys,
+            @Nullable final List<Object> contextValues)
             throws Exception {
 
         final StringWriter jsonWriter = new StringWriter();

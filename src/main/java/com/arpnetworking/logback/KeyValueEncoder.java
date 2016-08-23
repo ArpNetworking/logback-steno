@@ -22,6 +22,7 @@ import java.io.StringWriter;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.Nullable;
 
 /**
  * Encoder to take a Steno log event {@link com.arpnetworking.logback.StenoMarker} and convert it to an
@@ -68,9 +69,9 @@ public class KeyValueEncoder extends BaseLoggingEncoder {
     @Override
     protected String buildArrayMessage(
             final ILoggingEvent event,
-            final String eventName,
-            final String[] keys,
-            final Object[] values)
+            @Nullable final String eventName,
+            @Nullable final String[] keys,
+            @Nullable final Object[] values)
             throws EncodingException {
 
         try {
@@ -88,9 +89,9 @@ public class KeyValueEncoder extends BaseLoggingEncoder {
     @Override
     protected String buildArrayJsonMessage(
             final ILoggingEvent event,
-            final String eventName,
-            final String[] keys,
-            final String[] jsonValues)
+            @Nullable final String eventName,
+            @Nullable final String[] keys,
+            @Nullable final String[] jsonValues)
             throws EncodingException {
 
         try {
@@ -109,8 +110,8 @@ public class KeyValueEncoder extends BaseLoggingEncoder {
     @Override
     protected String buildMapMessage(
             final ILoggingEvent event,
-            final String eventName,
-            final Map<String, ? extends Object> map)
+            @Nullable final String eventName,
+            @Nullable final Map<String, ? extends Object> map)
             throws EncodingException {
 
         try {
@@ -143,8 +144,8 @@ public class KeyValueEncoder extends BaseLoggingEncoder {
     @Override
     protected String buildMapJsonMessage(
             final ILoggingEvent event,
-            final String eventName,
-            final Map<String, String> map)
+            @Nullable final String eventName,
+            @Nullable final Map<String, String> map)
             throws EncodingException {
 
         try {
@@ -177,8 +178,8 @@ public class KeyValueEncoder extends BaseLoggingEncoder {
     @Override
     protected String buildObjectMessage(
             final ILoggingEvent event,
-            final String eventName,
-            final Object data)
+            @Nullable final String eventName,
+            @Nullable final Object data)
             throws EncodingException {
 
         try {
@@ -200,7 +201,7 @@ public class KeyValueEncoder extends BaseLoggingEncoder {
     @Override
     protected String buildObjectJsonMessage(
             final ILoggingEvent event,
-            final String eventName,
+            @Nullable final String eventName,
             final String jsonData)
             throws EncodingException {
 
@@ -223,11 +224,11 @@ public class KeyValueEncoder extends BaseLoggingEncoder {
     @Override
     protected String buildListsMessage(
             final ILoggingEvent event,
-            final String eventName,
-            final List<String> dataKeys,
-            final List<Object> dataValues,
-            final List<String> contextKeys,
-            final List<Object> contextValues)
+            @Nullable final String eventName,
+            @Nullable final List<String> dataKeys,
+            @Nullable final List<Object> dataValues,
+            @Nullable final List<String> contextKeys,
+            @Nullable final List<Object> contextValues)
             throws EncodingException {
 
         try {
@@ -307,7 +308,7 @@ public class KeyValueEncoder extends BaseLoggingEncoder {
      * @param keys The argument keys.
      * @return The format <code>String</code>.
      */
-    protected String buildFormatString(final String name, final String[] keys) {
+    protected String buildFormatString(@Nullable final String name, @Nullable final String[] keys) {
         final String effectiveName = name == null ? _logEventName : name;
         final StringWriter stringWriter = new StringWriter();
         stringWriter.append("name=\"").append(effectiveName).append("\"");
@@ -340,9 +341,9 @@ public class KeyValueEncoder extends BaseLoggingEncoder {
 
     /* package private */ String createMessage(
             final ILoggingEvent event,
-            final String eventName,
-            final String[] keys,
-            final Object[] values) {
+            @Nullable final String eventName,
+            @Nullable final String[] keys,
+            @Nullable final Object[] values) {
 
         final String formatString = buildFormatString(eventName, keys);
         final LoggingEventWrapper eventWrapper = new LoggingEventWrapper(event, formatString, values);
@@ -355,8 +356,8 @@ public class KeyValueEncoder extends BaseLoggingEncoder {
 
     /* package private */ Map<String, Object> createSafeContext(
             final ILoggingEvent event,
-            final List<String> contextKeys,
-            final List<Object> contextValues) {
+            @Nullable final List<String> contextKeys,
+            @Nullable final List<Object> contextValues) {
         return KeyValueSerializationHelper.createContext(this, event, contextKeys, contextValues);
     }
 

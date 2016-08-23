@@ -66,7 +66,7 @@ public class LoggingEventWrapperTest {
         Mockito.doReturn(marker).when(wrapped).getMarker();
         Mockito.doReturn(mdcPropertyMap).when(wrapped).getMDCPropertyMap();
         Mockito.doReturn(mdc).when(wrapped).getMdc();
-        Mockito.doReturn(Long.valueOf(1L)).when(wrapped).getTimeStamp();
+        Mockito.doReturn(1L).when(wrapped).getTimeStamp();
 
         final LoggingEventWrapper wrapper = new LoggingEventWrapper(wrapped, message, arguments);
         Assert.assertEquals("threadName", wrapper.getThreadName());
@@ -87,23 +87,25 @@ public class LoggingEventWrapperTest {
 
     @Test
     public void testNullArgumentArray() {
-        final LoggingEventWrapper wrapper = new LoggingEventWrapper(null, null, null);
+        final ILoggingEvent event = Mockito.mock(ILoggingEvent.class);
+        final LoggingEventWrapper wrapper = new LoggingEventWrapper(event, "The event", null);
         Assert.assertNull(wrapper.getArgumentArray());
     }
 
     @Test
     public void testPrepareForDeferredProcessing() {
-        final ILoggingEvent wrapped = Mockito.mock(ILoggingEvent.class);
-        final LoggingEventWrapper wrapper = new LoggingEventWrapper(wrapped, null, null);
+        final ILoggingEvent event = Mockito.mock(ILoggingEvent.class);
+        final LoggingEventWrapper wrapper = new LoggingEventWrapper(event, "The event", null);
         wrapper.prepareForDeferredProcessing();
-        Mockito.verify(wrapped).prepareForDeferredProcessing();
+        Mockito.verify(event).prepareForDeferredProcessing();
     }
 
     @Test
     public void testGetFormattedMessage() {
+        final ILoggingEvent event = Mockito.mock(ILoggingEvent.class);
         final String message = "The message";
         final Object[] arguments = new Object[] {};
-        final LoggingEventWrapper wrapper = new LoggingEventWrapper(null, message, arguments);
+        final LoggingEventWrapper wrapper = new LoggingEventWrapper(event, message, arguments);
         final String formattedMessage1 = wrapper.getFormattedMessage();
         final String formattedMessage2 = wrapper.getFormattedMessage();
         Assert.assertEquals(message, formattedMessage2);
@@ -112,8 +114,9 @@ public class LoggingEventWrapperTest {
 
     @Test
     public void testGetFormattedMessageWithNullArguments() {
+        final ILoggingEvent event = Mockito.mock(ILoggingEvent.class);
         final String message = "The message";
-        final LoggingEventWrapper wrapper = new LoggingEventWrapper(null, message, null);
+        final LoggingEventWrapper wrapper = new LoggingEventWrapper(event, message, null);
         final String formattedMessage1 = wrapper.getFormattedMessage();
         final String formattedMessage2 = wrapper.getFormattedMessage();
         Assert.assertEquals(message, formattedMessage2);
