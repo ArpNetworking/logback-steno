@@ -13,6 +13,10 @@ logback-steno
     <img src="https://img.shields.io/maven-central/v/com.arpnetworking.logback/logback-steno.svg"
          alt="Maven Artifact">
 </a>
+<a href="http://www.javadoc.io/doc/com.arpnetworking.logback/logback-steno">
+    <img src="http://www.javadoc.io/badge/com.arpnetworking.logback/logback-steno.svg"
+         alt="Javadocs">
+</a>
 
 Logback encoders for handling Steno and other formats.  Steno is a JSON based container that standardizes the way log
 messages are encoded.  In particular it defines a standard set of meta-data that may be used for routing, indexing and

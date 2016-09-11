@@ -18,7 +18,7 @@
   <parent>
     <groupId>com.arpnetworking.build</groupId>
     <artifactId>arpnetworking-parent-pom</artifactId>
-    <version>1.0.26</version>
+    <version>1.0.27</version>
     <relativePath />
   </parent>
 
@@ -121,9 +121,6 @@
 
     <!--Plugin versions-->
     <aspectj.maven.plugin.version>1.8</aspectj.maven.plugin.version>
-
-    <!-- Findbugs -->
-    <findbugs.exclude>${project.basedir}/findbugs.exclude.xml</findbugs.exclude>
 
     <!-- Code Coverage -->
     <jacoco.check.line.coverage>1.0</jacoco.check.line.coverage>
