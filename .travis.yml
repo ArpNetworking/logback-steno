@@ -13,6 +13,6 @@ env:
 install: true
 before_script:
 - gpg --import arpnetworking.key
-- if [ \( -n "${TRAVIS_TAG}" \) -a  "${TRAVIS_PULL_REQUEST}" = "false" ]; then export TARGET="deploy -P release"; fi;
+- if [ \( -n "${TRAVIS_TAG}" \) -a  "${TRAVIS_PULL_REQUEST}" = "false" ]; then export TARGET="deploy -P release --settings settings.xml"; fi;
 script:
-- curl -s ${JDKW} | bash /dev/stdin ./mvnw clean ${TARGET} --settings settings.xml -U
+- curl -s ${JDKW} | bash /dev/stdin ./mvnw clean ${TARGET} -U
