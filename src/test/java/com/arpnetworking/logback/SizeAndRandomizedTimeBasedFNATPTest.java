@@ -19,6 +19,8 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.LoggingEvent;
 import ch.qos.logback.core.rolling.RollingFileAppender;
 import ch.qos.logback.core.rolling.TimeBasedRollingPolicy;
+import ch.qos.logback.core.rolling.helper.ArchiveRemover;
+import ch.qos.logback.core.rolling.helper.CustomSizeAndTimeBasedArchiveRemover;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -155,6 +157,12 @@ public class SizeAndRandomizedTimeBasedFNATPTest {
         Mockito.verify(_wrappedPolicy).computeNextCheck();
         Mockito.verify(_wrappedPolicy).getNextCheck();
         Assert.assertEquals(123L, _triggeringPolicy.getNextCheck());
+    }
+
+    @Test
+    public void testCreateArchiveRemover() {
+        final ArchiveRemover archiveRemover = _triggeringPolicy.createArchiveRemover();
+        Assert.assertTrue(archiveRemover instanceof CustomSizeAndTimeBasedArchiveRemover);
     }
 
     private void resetMock(final Object mock) {
