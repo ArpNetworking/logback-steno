@@ -21,6 +21,7 @@ import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Optional;
+import javax.annotation.Nullable;
 
 /**
  * Limits actual log output to at most once per specified <code>Period</code>.
@@ -92,7 +93,7 @@ public class RateLimitLogBuilder implements LogBuilder {
      * {@inheritDoc}
      */
     @Override
-    public LogBuilder addData(final String name, final Object value) {
+    public LogBuilder addData(final String name, @Nullable final Object value) {
         _logBuilder.addData(name, value);
         return this;
     }
@@ -101,7 +102,7 @@ public class RateLimitLogBuilder implements LogBuilder {
      * {@inheritDoc}
      */
     @Override
-    public LogBuilder addContext(final String name, final Object value) {
+    public LogBuilder addContext(final String name, @Nullable final Object value) {
         _logBuilder.addContext(name, value);
         return this;
     }

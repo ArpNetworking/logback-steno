@@ -15,6 +15,8 @@
  */
 package com.arpnetworking.steno;
 
+import javax.annotation.Nullable;
+
 /**
  * Interface for classes which assemble log messages and log them.
  *
@@ -66,7 +68,7 @@ public interface LogBuilder extends DeferredLogBuilder {
      * @return This instance as {@code <T>}.
      */
     @Override
-    LogBuilder addData(String name, Object value);
+    LogBuilder addData(String name, @Nullable Object value);
 
     /**
      * Add context key-value pair.
@@ -78,7 +80,7 @@ public interface LogBuilder extends DeferredLogBuilder {
      * @return This instance as {@code <T>}.
      */
     @Override
-    LogBuilder addContext(String name, Object value);
+    LogBuilder addContext(String name, @Nullable Object value);
 
     /**
      * Log this message.
