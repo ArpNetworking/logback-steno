@@ -15,6 +15,8 @@
  */
 package com.arpnetworking.steno;
 
+import javax.annotation.Nullable;
+
 /**
  * Implementation of <code>LogBuilder</code> which does not log a message.
  *
@@ -50,7 +52,7 @@ public class NoOpLogBuilder implements LogBuilder {
      * {@inheritDoc}
      */
     @Override
-    public LogBuilder addData(final String name, final Object value) {
+    public LogBuilder addData(final String name, @Nullable final Object value) {
         return this;
     }
 
@@ -58,7 +60,7 @@ public class NoOpLogBuilder implements LogBuilder {
      * {@inheritDoc}
      */
     @Override
-    public LogBuilder addContext(final String name, final Object value) {
+    public LogBuilder addContext(final String name, @Nullable final Object value) {
         return this;
     }
 

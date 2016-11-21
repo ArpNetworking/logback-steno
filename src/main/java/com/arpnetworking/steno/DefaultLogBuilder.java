@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.Nullable;
 
 /**
  * Class facilitates type-safe construction of a Steno log message. Instances
@@ -61,7 +62,7 @@ public class DefaultLogBuilder implements LogBuilder {
      * {@inheritDoc}
      */
     @Override
-    public DefaultLogBuilder addData(final String name, final Object value) {
+    public DefaultLogBuilder addData(final String name, @Nullable final Object value) {
         if (_data == null) {
             _data = new LinkedHashMap<>();
         }
@@ -73,7 +74,7 @@ public class DefaultLogBuilder implements LogBuilder {
      * {@inheritDoc}
      */
     @Override
-    public DefaultLogBuilder addContext(final String name, final Object value) {
+    public DefaultLogBuilder addContext(final String name, @Nullable final Object value) {
         if (_context == null) {
             _context = new LinkedHashMap<>();
         }
