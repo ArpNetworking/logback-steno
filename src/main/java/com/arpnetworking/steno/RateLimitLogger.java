@@ -122,6 +122,6 @@ import java.util.concurrent.atomic.AtomicReference;
 
     private final Duration _duration;
     private final Clock _clock;
-    private AtomicReference<Instant> _lastLogTime = new AtomicReference<>();
-    private AtomicInteger _skipped = new AtomicInteger(0);
+    private final AtomicReference<Instant> _lastLogTime = new AtomicReference<>();
+    private final AtomicInteger _skipped = new AtomicInteger(0);
 }
