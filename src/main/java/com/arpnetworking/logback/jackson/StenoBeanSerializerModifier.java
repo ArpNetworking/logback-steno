@@ -171,6 +171,11 @@ public final class StenoBeanSerializerModifier extends BeanSerializerModifier {
             return "BeanIdentifierPropertyWriter";
         }
 
+        @Override
+        public void fixAccess(final SerializationConfig config) {
+            // No need to fix access, the member is synthetic
+        }
+
         private static final PropertyName PROPERTY_NAME = new PropertyName("_id");
         private static final long serialVersionUID = 1031451570210101221L;
     }
@@ -233,6 +238,11 @@ public final class StenoBeanSerializerModifier extends BeanSerializerModifier {
             // of VirtualBeanPropertyWriter because they do not set the name field. Thus, we override the toString method
             // here with something completely useless.
             return "BeanClassPropertyWriter";
+        }
+
+        @Override
+        public void fixAccess(final SerializationConfig config) {
+            // No need to fix access, the member is synthetic
         }
 
         private static final PropertyName PROPERTY_NAME = new PropertyName("_class");
