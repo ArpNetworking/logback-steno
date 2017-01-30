@@ -59,8 +59,8 @@ public class RedactionFilterTest {
         final Map<String, Object> beanMap = new HashMap<>();
         // CHECKSTYLE.ON: IllegalInstantiation
         beanMap.put("foo", "bar");
-        _redactedBean = new RedactedBean("string", 1234, 1.0f, new String[] {"string1", "string2"}, true, beanMap);
-        _nonRedactedBean = new NonRedactedBean("string", 1234, 1.0f, new String[] {"string1", "string2"}, true, beanMap);
+        _redactedBean = new RedactedBean("string", 1234, 1.0d, new String[] {"string1", "string2"}, true, beanMap);
+        _nonRedactedBean = new NonRedactedBean("string", 1234, 1.0d, new String[] {"string1", "string2"}, true, beanMap);
     }
 
     @Test
@@ -159,13 +159,13 @@ public class RedactionFilterTest {
         private NonRedactedBean(
                 final String stringValue,
                 final Integer intValue,
-                final float floatValue,
+                final double doubleValue,
                 final String[] stringArrayValue,
                 final boolean booleanValue,
                 final Map<String, Object> objectMap) {
             _stringValue = stringValue;
             _intValue = intValue;
-            _floatValue = floatValue;
+            _doubleValue = doubleValue;
             _stringArrayValue = Arrays.copyOf(stringArrayValue, stringArrayValue.length);
             _booleanValue = booleanValue;
             _objectMap = objectMap;
@@ -187,8 +187,8 @@ public class RedactionFilterTest {
             return _intValue;
         }
 
-        public float getFloatValue() {
-            return _floatValue;
+        public double getDoubleValue() {
+            return _doubleValue;
         }
 
         public String[] getStringArrayValue() {
@@ -206,7 +206,7 @@ public class RedactionFilterTest {
         private String _nullValue = null;
         private final String _stringValue;
         private final Integer _intValue;
-        private final float _floatValue;
+        private final double _doubleValue;
         private final String[] _stringArrayValue;
         private final boolean _booleanValue;
         private final Map<String, Object> _objectMap;
@@ -219,13 +219,13 @@ public class RedactionFilterTest {
         private RedactedBean(
                 final String stringValue,
                 final Integer intValue,
-                final float floatValue,
+                final double doubleValue,
                 final String[] stringArrayValue,
                 final boolean booleanValue,
                 final Map<String, Object> objectMap) {
             this.stringValue = stringValue;
             this.intValue = intValue;
-            this.floatValue = floatValue;
+            this.doubleValue = doubleValue;
             this.stringArrayValue = Arrays.copyOf(stringArrayValue, stringArrayValue.length);
             this.booleanValue = booleanValue;
             this.objectMap = objectMap;
@@ -245,8 +245,8 @@ public class RedactionFilterTest {
             return intValue;
         }
 
-        public float getFloatValue() {
-            return floatValue;
+        public double getDoubleValue() {
+            return doubleValue;
         }
 
         public String[] getStringArrayValue() {
@@ -275,7 +275,7 @@ public class RedactionFilterTest {
         private final String stringValue;
         @LogRedact
         private final Integer intValue;
-        private final float floatValue;
+        private final double doubleValue;
         @LogRedact
         private final String[] stringArrayValue;
         private final boolean booleanValue;

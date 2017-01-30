@@ -2,7 +2,7 @@
     "nullValue": null,
     "stringValue": "string",
     "intValue": 1234,
-    "floatValue": 1.0,
+    "doubleValue": 1.0,
     "stringArrayValue": ["string1", "string2"],
     "booleanValue": true,
     "objectMap": {

@@ -66,7 +66,7 @@ public class StenoAnnotationIntrospector extends JacksonAnnotationIntrospector {
             final LogValue annotation = _findAnnotation(otherAnnotatedMethod, LogValue.class);
             if (annotation != null) {
                 if (annotation.enabled()) {
-                    return otherAnnotatedMethod.equals(annotatedMethod);
+                    return otherAnnotatedMethod.getAnnotated().equals(annotatedMethod.getAnnotated());
                 } else if (!annotation.fallback()) {
                     return false;
                 }

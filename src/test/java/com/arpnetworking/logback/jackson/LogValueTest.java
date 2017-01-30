@@ -56,31 +56,31 @@ public class LogValueTest {
     @Test
     public void testLogValue() throws JsonProcessingException {
         final String asString = _objectMapper.writeValueAsString(new WidgetWithLogValue("foo"));
-        Assert.assertEquals(asString, "{\"logValue\":\"foo\"}");
+        Assert.assertEquals("{\"logValue\":\"foo\"}", asString);
     }
 
     @Test
     public void testLogValuePrecedence() throws JsonProcessingException {
         final String asString = _objectMapper.writeValueAsString(new WidgetWithLogValueAndJsonValue("foo"));
-        Assert.assertEquals(asString, "{\"logValue\":\"foo\"}");
+        Assert.assertEquals("{\"logValue\":\"foo\"}", asString);
     }
 
     @Test
     public void testLogValueDisabled() throws JsonProcessingException {
         final String asString = _objectMapper.writeValueAsString(new WidgetWithLogValueDisabled("foo"));
-        Assert.assertEquals(asString, "{\"value\":\"foo\"}");
+        Assert.assertEquals("{\"value\":\"foo\"}", asString);
     }
 
     @Test
     public void testLogValueFallback() throws JsonProcessingException {
         final String asString = _objectMapper.writeValueAsString(new WidgetWithLogValueDisabledAndJsonValue("foo"));
-        Assert.assertEquals(asString, "{\"jsonValue\":\"foo\"}");
+        Assert.assertEquals("{\"jsonValue\":\"foo\"}", asString);
     }
 
     @Test
     public void testLogValueNoFallback() throws JsonProcessingException {
         final String asString = _objectMapper.writeValueAsString(new WidgetWithLogValueDisabledNoFallbackAndJsonValue("foo"));
-        Assert.assertEquals(asString, "{\"value\":\"foo\"}");
+        Assert.assertEquals("{\"value\":\"foo\"}", asString);
     }
 
     private ObjectMapper _objectMapper;
