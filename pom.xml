@@ -102,11 +102,11 @@
 
   <properties>
     <!--Dependency versions-->
-    <afterburner.version>2.7.4</afterburner.version>
+    <afterburner.version>2.8.6</afterburner.version>
     <apache.commons.lang3.version>3.4</apache.commons.lang3.version>
     <aspectjrt.version>1.8.9</aspectjrt.version>
     <aspectjtools.version>1.8.9</aspectjtools.version>
-    <findbugs.annotations.version>3.0.0</findbugs.annotations.version>
+    <findbugs.annotations.version>3.0.1</findbugs.annotations.version>
     <jackson.version>2.8.6</jackson.version>
     <jackson-coreutils.version>1.8</jackson-coreutils.version>
     <json-schema-core.version>1.2.5</json-schema-core.version>
@@ -363,7 +363,7 @@
     </dependency>
     <dependency>
       <groupId>com.google.code.findbugs</groupId>
-      <artifactId>annotations</artifactId>
+      <artifactId>findbugs-annotations</artifactId>
       <version>${findbugs.annotations.version}</version>
       <scope>test</scope>
     </dependency>
