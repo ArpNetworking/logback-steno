@@ -18,11 +18,9 @@ package com.arpnetworking.logback;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import org.junit.Assert;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.slf4j.Marker;
 import org.slf4j.helpers.BasicMarkerFactory;
 
-import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -109,29 +107,6 @@ public class BaseLoggingEncoderTest {
         Assert.assertFalse(_encoder.isObjectJsonStenoEvent(StenoMarker.ARRAY_MARKER));
         Assert.assertFalse(_encoder.isObjectJsonStenoEvent(StenoMarker.ARRAY_JSON_MARKER));
         Assert.assertFalse(_encoder.isObjectJsonStenoEvent(StenoMarker.OBJECT_MARKER));
-    }
-
-    @Test
-    public void testImmediateFlushEnabled() throws Exception {
-        final OutputStream outputStream = Mockito.mock(OutputStream.class);
-        _encoder.init(outputStream);
-
-        final ILoggingEvent event = Mockito.mock(ILoggingEvent.class);
-        _encoder.doEncode(event);
-
-        Mockito.verify(outputStream).flush();
-    }
-
-    @Test
-    public void testImmediateFlushDisabled() throws Exception {
-        final OutputStream outputStream = Mockito.mock(OutputStream.class);
-        _encoder.init(outputStream);
-        _encoder.setImmediateFlush(false);
-
-        final ILoggingEvent event = Mockito.mock(ILoggingEvent.class);
-        _encoder.doEncode(event);
-
-        Mockito.verify(outputStream, Mockito.never()).flush();
     }
 
     private BaseLoggingEncoder _encoder = new TestLoggingEncoder();

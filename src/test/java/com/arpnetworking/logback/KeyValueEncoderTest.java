@@ -56,7 +56,7 @@ public class KeyValueEncoderTest {
         _baos = new ByteArrayOutputStream();
         _encoder = new KeyValueEncoder();
         _encoder.setImmediateFlush(true);
-        _encoder.init(_baos);
+
         final PatternLayout layout = new PatternLayout();
         layout.setPattern("[%d{dd MMM yyyy HH:mm:ss.SSS,UTC}] %t - %m%n");
         layout.setContext(_context);
@@ -79,8 +79,9 @@ public class KeyValueEncoderTest {
         argArray[0] = new String[] {"key1", "key2"};
         argArray[1] = new Object[] {Integer.valueOf(1234), "foo"};
         event.setArgumentArray(argArray);
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is how you do it.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("KeyValueEncoderTest.testEncodeArray.log", logOutput);
     }
 
@@ -98,8 +99,9 @@ public class KeyValueEncoderTest {
         argArray[1] = new Object[] {Integer.valueOf(1234), "foo"};
         event.setArgumentArray(argArray);
         _encoder.setLayout(_throwingLayout);
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is how you do it.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("KeyValueEncoderTest.testEncodeArrayThrowsException.log", logOutput);
     }
 
@@ -115,8 +117,9 @@ public class KeyValueEncoderTest {
         argArray[0] = new String[] {"key1", "key2"};
         argArray[1] = new Object[] {Integer.valueOf(1234), "foo"};
         event.setArgumentArray(argArray);
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is how you do it.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("KeyValueEncoderTest.testEncodeArrayDefaultName.log", logOutput);
     }
 
@@ -134,8 +137,9 @@ public class KeyValueEncoderTest {
         argArray[0] = new String[] {"key1", "key2"};
         argArray[1] = new Object[] {Integer.valueOf(1234), "foo"};
         event.setArgumentArray(argArray);
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is how you do it.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("KeyValueEncoderTest.testEncodeArrayCustomDefaultName.log", logOutput);
     }
 
@@ -152,8 +156,9 @@ public class KeyValueEncoderTest {
         argArray[0] = new String[] {"key1", "key2"};
         argArray[1] = new String[] {"{\"foo\":\"bar\"}", "[\"foo\":\"bar\"]"};
         event.setArgumentArray(argArray);
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is how you do it.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("KeyValueEncoderTest.testEncodeArrayJson.log", logOutput);
     }
 
@@ -171,8 +176,9 @@ public class KeyValueEncoderTest {
         argArray[1] = new String[] {"{\"foo\":\"bar\"}", "[\"foo\":\"bar\"]"};
         event.setArgumentArray(argArray);
         _encoder.setLayout(_throwingLayout);
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is how you do it.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("KeyValueEncoderTest.testEncodeArrayJsonThrowsException.log", logOutput);
     }
 
@@ -189,8 +195,9 @@ public class KeyValueEncoderTest {
         argArray[0] = new String[] {"key1", "key2"};
         argArray[1] = null;
         event.setArgumentArray(argArray);
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is how you do it.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("KeyValueEncoderTest.testEncodeArrayJsonNullValues.log", logOutput);
     }
 
@@ -209,8 +216,9 @@ public class KeyValueEncoderTest {
         final Object[] argArray = new Object[1];
         argArray[0] = map;
         event.setArgumentArray(argArray);
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is how you do it.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("KeyValueEncoderTest.testEncodeMap.log", logOutput);
     }
 
@@ -230,8 +238,9 @@ public class KeyValueEncoderTest {
         argArray[0] = map;
         event.setArgumentArray(argArray);
         _encoder.setLayout(_throwingLayout);
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is how you do it.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("KeyValueEncoderTest.testEncodeMapThrowsException.log", logOutput);
     }
 
@@ -247,8 +256,9 @@ public class KeyValueEncoderTest {
         final Object[] argArray = new Object[1];
         argArray[0] = null;
         event.setArgumentArray(argArray);
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is how you do it.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("KeyValueEncoderTest.testEncodeMapNullMap.log", logOutput);
     }
 
@@ -267,8 +277,9 @@ public class KeyValueEncoderTest {
         final Object[] argArray = new Object[1];
         argArray[0] = map;
         event.setArgumentArray(argArray);
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is how you do it.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("KeyValueEncoderTest.testEncodeMapJson.log", logOutput);
     }
 
@@ -288,8 +299,9 @@ public class KeyValueEncoderTest {
         argArray[0] = map;
         event.setArgumentArray(argArray);
         _encoder.setLayout(_throwingLayout);
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is how you do it.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("KeyValueEncoderTest.testEncodeMapJsonThrowsException.log", logOutput);
     }
 
@@ -305,8 +317,9 @@ public class KeyValueEncoderTest {
         final Object[] argArray = new Object[1];
         argArray[0] = null;
         event.setArgumentArray(argArray);
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is how you do it.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("KeyValueEncoderTest.testEncodeMapJsonNullMap.log", logOutput);
     }
 
@@ -322,8 +335,9 @@ public class KeyValueEncoderTest {
         final Object[] argArray = new Object[1];
         argArray[0] = new Widget("foo");
         event.setArgumentArray(argArray);
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is how you do it.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("KeyValueEncoderTest.testEncodeObject.log", logOutput);
     }
 
@@ -340,8 +354,9 @@ public class KeyValueEncoderTest {
         argArray[0] = new Widget("foo");
         event.setArgumentArray(argArray);
         _encoder.setLayout(_throwingLayout);
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is how you do it.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("KeyValueEncoderTest.testEncodeObjectThrowsException.log", logOutput);
     }
 
@@ -357,8 +372,9 @@ public class KeyValueEncoderTest {
         final Object[] argArray = new Object[1];
         argArray[0] = null;
         event.setArgumentArray(argArray);
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is how you do it.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("KeyValueEncoderTest.testEncodeObjectNull.log", logOutput);
     }
 
@@ -374,8 +390,9 @@ public class KeyValueEncoderTest {
         final Object[] argArray = new Object[1];
         argArray[0] = "{\"key\":\"value\"}";
         event.setArgumentArray(argArray);
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is how you do it.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("KeyValueEncoderTest.testEncodeObjectJson.log", logOutput);
     }
 
@@ -392,8 +409,9 @@ public class KeyValueEncoderTest {
         argArray[0] = "{\"key\":\"value\"}";
         event.setArgumentArray(argArray);
         _encoder.setLayout(_throwingLayout);
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is how you do it.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("KeyValueEncoderTest.testEncodeObjectJsonThrowsException.log", logOutput);
     }
 
@@ -409,8 +427,9 @@ public class KeyValueEncoderTest {
         final Object[] argArray = new Object[1];
         argArray[0] = null;
         event.setArgumentArray(argArray);
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is how you do it.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("KeyValueEncoderTest.testEncodeObjectJsonNull.log", logOutput);
     }
 
@@ -429,8 +448,9 @@ public class KeyValueEncoderTest {
         argArray[2] = Collections.singletonList("contextKey");
         argArray[3] = Collections.singletonList("contextValue");
         event.setArgumentArray(argArray);
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is how you do it.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("KeyValueEncoderTest.testEncodeLists.log", logOutput);
     }
 
@@ -450,8 +470,9 @@ public class KeyValueEncoderTest {
         argArray[3] = Collections.singletonList("contextValue");
         event.setArgumentArray(argArray);
         _encoder.setLayout(_throwingLayout);
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is how you do it.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("KeyValueEncoderTest.testEncodeListsThrowsException.log", logOutput);
     }
 
@@ -470,8 +491,9 @@ public class KeyValueEncoderTest {
         argArray[2] = Collections.emptyList();
         argArray[3] = Collections.emptyList();
         event.setArgumentArray(argArray);
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is how you do it.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("KeyValueEncoderTest.testEncodeListsEmpty.log", logOutput);
     }
 
@@ -490,8 +512,9 @@ public class KeyValueEncoderTest {
         argArray[2] = null;
         argArray[3] = null;
         event.setArgumentArray(argArray);
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is how you do it.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("KeyValueEncoderTest.testEncodeListsNull.log", logOutput);
     }
 
@@ -510,8 +533,9 @@ public class KeyValueEncoderTest {
         argArray[2] = Collections.singletonList("contextKey");
         argArray[3] = null;
         event.setArgumentArray(argArray);
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is how you do it.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("KeyValueEncoderTest.testEncodeListsNullValues.log", logOutput);
     }
 
@@ -530,8 +554,9 @@ public class KeyValueEncoderTest {
         argArray[2] = null;
         argArray[3] = Collections.singletonList("contextValue");
         event.setArgumentArray(argArray);
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is how you do it.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("KeyValueEncoderTest.testEncodeListsNullMismatch.log", logOutput);
     }
 
@@ -546,8 +571,9 @@ public class KeyValueEncoderTest {
         final Object[] argArray = new Object[2];
         argArray[0] = "bar";
         event.setArgumentArray(argArray);
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is how you do it.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("KeyValueEncoderTest.testEncodeStandardEvent.log", logOutput);
     }
 
@@ -563,8 +589,9 @@ public class KeyValueEncoderTest {
         argArray[0] = "bar";
         event.setArgumentArray(argArray);
         _encoder.setLayout(_throwingLayout);
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is how you do it.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("KeyValueEncoderTest.testEncodeStandardEventThrowsException.log", logOutput);
     }
 
@@ -581,8 +608,9 @@ public class KeyValueEncoderTest {
         argArray[0] = new String[] {};
         argArray[1] = new Object[] {};
         event.setArgumentArray(argArray);
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is how you do it.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("KeyValueEncoderTest.testEncodeArrayEmptyKeysAndValues.log", logOutput);
     }
 
@@ -599,8 +627,9 @@ public class KeyValueEncoderTest {
         argArray[0] = null;
         argArray[1] = new Object[] {Integer.valueOf(1234), "foo"};
         event.setArgumentArray(argArray);
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is how you do it.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("KeyValueEncoderTest.testEncodeArrayStringNullKeys.log", logOutput);
     }
 

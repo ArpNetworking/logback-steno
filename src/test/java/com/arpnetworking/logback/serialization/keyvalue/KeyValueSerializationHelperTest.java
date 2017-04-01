@@ -43,7 +43,7 @@ public class KeyValueSerializationHelperTest {
         _context.start();
         _baos = new ByteArrayOutputStream();
         _encoder = new KeyValueEncoder();
-        _encoder.init(_baos);
+
         _encoder.setContext(_context);
         _encoder.start();
     }

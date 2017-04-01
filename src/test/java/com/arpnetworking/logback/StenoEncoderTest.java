@@ -81,7 +81,7 @@ public class StenoEncoderTest {
         _encoder.setRedactEnabled(false);
         _encoder.setRedactNull(true);
         _encoder.setImmediateFlush(true);
-        _encoder.init(_baos);
+
         _encoder.setContext(_context);
         _encoder.addJacksonModule(_javaTimeModule);
         _encoder.start();
@@ -99,8 +99,9 @@ public class StenoEncoderTest {
         argArray[0] = new String[]{"key1", "key2"};
         argArray[1] = new Object[]{Integer.valueOf(1234), "foo"};
         event.setArgumentArray(argArray);
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is valid case.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("StenoEncoderTest.testEncodeArray.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
@@ -118,8 +119,9 @@ public class StenoEncoderTest {
         argArray[0] = new String[]{};
         argArray[1] = new Object[]{};
         event.setArgumentArray(argArray);
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is valid case.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("StenoEncoderTest.testEncodeArrayWithException.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
@@ -137,8 +139,9 @@ public class StenoEncoderTest {
         argArray[0] = new String[]{};
         argArray[1] = new Object[]{};
         event.setArgumentArray(argArray);
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is valid case.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("StenoEncoderTest.testEncodeArrayWithCausedException.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
@@ -158,8 +161,11 @@ public class StenoEncoderTest {
         argArray[0] = new String[]{};
         argArray[1] = new Object[]{};
         event.setArgumentArray(argArray);
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is valid case.
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is valid case.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("StenoEncoderTest.testEncodeArrayWithSuppressedException.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
@@ -184,8 +190,9 @@ public class StenoEncoderTest {
         argArray[0] = new String[]{};
         argArray[1] = new Object[]{};
         event.setArgumentArray(argArray);
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is valid case.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("StenoEncoderTest.testEncodeArrayWithNullSuppressedException.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
@@ -204,8 +211,9 @@ public class StenoEncoderTest {
         argArray[1] = new Object[]{date, new Redacted("string", 1L)};
         event.setArgumentArray(argArray);
         _encoder.setRedactEnabled(true);
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is valid case.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("StenoEncoderTest.testEncodeArrayComplexValue.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
@@ -222,8 +230,9 @@ public class StenoEncoderTest {
         argArray[0] = new String[]{"key1", "key2"};
         argArray[1] = null;
         event.setArgumentArray(argArray);
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is valid case.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("StenoEncoderTest.testEncodeArrayNullValues.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
@@ -240,8 +249,9 @@ public class StenoEncoderTest {
         argArray[0] = null;
         argArray[1] = new Object[]{Integer.valueOf(1234), "foo"};
         event.setArgumentArray(argArray);
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is valid case.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("StenoEncoderTest.testEncodeArrayNullKeys.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
@@ -262,9 +272,9 @@ public class StenoEncoderTest {
         final JsonFactory jsonFactory = Mockito.mock(JsonFactory.class);
         Mockito.doThrow(new IOException("Mock Failure")).when(jsonFactory).createGenerator(Mockito.any(Writer.class));
         _encoder = new StenoEncoder(jsonFactory, objectMapper);
-        _encoder.init(_baos);
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is valid case.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("StenoEncoderTest.testEncodeArrayThrowsIOException.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
@@ -281,8 +291,9 @@ public class StenoEncoderTest {
         argArray[0] = new String[]{"key1", "key2"};
         argArray[1] = new String[]{"{\"foo\":\"bar\"}", "[\"foo\",\"bar\"]"};
         event.setArgumentArray(argArray);
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is valid case.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("StenoEncoderTest.testEncodeArrayJson.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
@@ -299,8 +310,9 @@ public class StenoEncoderTest {
         argArray[0] = new String[]{"key1", "key2"};
         argArray[1] = null;
         event.setArgumentArray(argArray);
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is valid case.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("StenoEncoderTest.testEncodeArrayJsonNullValues.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
@@ -317,8 +329,9 @@ public class StenoEncoderTest {
         argArray[0] = null;
         argArray[1] = new String[]{"{\"foo\":\"bar\"}", "[\"foo\",\"bar\"]"};
         event.setArgumentArray(argArray);
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is valid case.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("StenoEncoderTest.testEncodeArrayJsonNullKeys.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
@@ -339,9 +352,9 @@ public class StenoEncoderTest {
         final JsonFactory jsonFactory = Mockito.mock(JsonFactory.class);
         Mockito.doThrow(new IOException("Mock Failure")).when(jsonFactory).createGenerator(Mockito.any(Writer.class));
         _encoder = new StenoEncoder(jsonFactory, objectMapper);
-        _encoder.init(_baos);
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is valid case.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("StenoEncoderTest.testEncodeArrayJsonThrowsIOException.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
@@ -360,8 +373,9 @@ public class StenoEncoderTest {
         final Object[] argArray = new Object[1];
         argArray[0] = map;
         event.setArgumentArray(argArray);
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is valid case.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("StenoEncoderTest.testEncodeMap.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
@@ -380,8 +394,9 @@ public class StenoEncoderTest {
         final Object[] argArray = new Object[1];
         argArray[0] = map;
         event.setArgumentArray(argArray);
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is valid case.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("StenoEncoderTest.testEncodeMapComplexValue.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
@@ -400,8 +415,9 @@ public class StenoEncoderTest {
         final Object[] argArray = new Object[1];
         argArray[0] = map;
         event.setArgumentArray(argArray);
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is valid case.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("StenoEncoderTest.testEncodeMapNullValues.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
@@ -417,8 +433,9 @@ public class StenoEncoderTest {
         final Object[] argArray = new Object[1];
         argArray[0] = null;
         event.setArgumentArray(argArray);
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is valid case.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("StenoEncoderTest.testEncodeMapNullMap.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
@@ -441,9 +458,9 @@ public class StenoEncoderTest {
         final JsonFactory jsonFactory = Mockito.mock(JsonFactory.class);
         Mockito.doThrow(new IOException("Mock Failure")).when(jsonFactory).createGenerator(Mockito.any(Writer.class));
         _encoder = new StenoEncoder(jsonFactory, objectMapper);
-        _encoder.init(_baos);
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is valid case.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("StenoEncoderTest.testEncodeMapThrowsIOException.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
@@ -462,8 +479,9 @@ public class StenoEncoderTest {
         final Object[] argArray = new Object[1];
         argArray[0] = map;
         event.setArgumentArray(argArray);
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is valid case.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("StenoEncoderTest.testEncodeMapJson.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
@@ -482,8 +500,9 @@ public class StenoEncoderTest {
         final Object[] argArray = new Object[1];
         argArray[0] = map;
         event.setArgumentArray(argArray);
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is valid case.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("StenoEncoderTest.testEncodeMapJsonNullValues.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
@@ -499,8 +518,9 @@ public class StenoEncoderTest {
         final Object[] argArray = new Object[1];
         argArray[0] = null;
         event.setArgumentArray(argArray);
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is valid case.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("StenoEncoderTest.testEncodeMapJsonNullMap.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
@@ -523,9 +543,9 @@ public class StenoEncoderTest {
         final JsonFactory jsonFactory = Mockito.mock(JsonFactory.class);
         Mockito.doThrow(new IOException("Mock Failure")).when(jsonFactory).createGenerator(Mockito.any(Writer.class));
         _encoder = new StenoEncoder(jsonFactory, objectMapper);
-        _encoder.init(_baos);
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is valid case.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("StenoEncoderTest.testEncodeMapJsonThrowsIOException.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
@@ -541,8 +561,9 @@ public class StenoEncoderTest {
         final Object[] argArray = new Object[1];
         argArray[0] = new Widget("foo");
         event.setArgumentArray(argArray);
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is valid case.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("StenoEncoderTest.testEncodeObject.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
@@ -561,8 +582,9 @@ public class StenoEncoderTest {
         Assert.assertTrue(_encoder.isSafe());
         _encoder.setSafe(false);
         Assert.assertFalse(_encoder.isSafe());
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is valid case.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("StenoEncoderTest.testEncodeObjectUnsafe.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
@@ -581,8 +603,9 @@ public class StenoEncoderTest {
         Assert.assertFalse(_encoder.isInjectBeanIdentifier());
         _encoder.setInjectBeanIdentifier(true);
         Assert.assertTrue(_encoder.isInjectBeanIdentifier());
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is valid case.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("StenoEncoderTest.testEncodeObjectWithInjectBeanIdentity.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
@@ -604,8 +627,9 @@ public class StenoEncoderTest {
         Assert.assertTrue(_encoder.isSafe());
         _encoder.setSafe(false);
         Assert.assertFalse(_encoder.isSafe());
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is valid case.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("StenoEncoderTest.testEncodeObjectWithInjectBeanIdentityUnsafe.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
@@ -621,8 +645,9 @@ public class StenoEncoderTest {
         final Object[] argArray = new Object[1];
         argArray[0] = new WidgetWithLoggable("foo");
         event.setArgumentArray(argArray);
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is valid case.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("StenoEncoderTest.testEncodeLoggableObject.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
@@ -641,8 +666,9 @@ public class StenoEncoderTest {
         Assert.assertFalse(_encoder.isInjectBeanIdentifier());
         _encoder.setInjectBeanIdentifier(true);
         Assert.assertTrue(_encoder.isInjectBeanIdentifier());
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is valid case.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("StenoEncoderTest.testEncodeLoggableObjectWithInjectBeanIdentity.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
@@ -658,8 +684,9 @@ public class StenoEncoderTest {
         final Object[] argArray = new Object[1];
         argArray[0] = new WidgetWithLogValue("foo");
         event.setArgumentArray(argArray);
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is valid case.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("StenoEncoderTest.testEncodeLogValueObject.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
@@ -678,8 +705,9 @@ public class StenoEncoderTest {
         Assert.assertFalse(_encoder.isInjectBeanIdentifier());
         _encoder.setInjectBeanIdentifier(true);
         Assert.assertTrue(_encoder.isInjectBeanIdentifier());
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is valid case.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("StenoEncoderTest.testEncodeLogValueObjectWithInjectBeanIdentity.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
@@ -704,9 +732,9 @@ public class StenoEncoderTest {
                 .writeValueAsString(Mockito.any(Object.class));
         final JsonFactory jsonFactory = Mockito.mock(JsonFactory.class);
         _encoder = new StenoEncoder(jsonFactory, objectMapper);
-        _encoder.init(_baos);
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is valid case.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("StenoEncoderTest.testEncodeObjectThrowsIOException.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
@@ -722,8 +750,9 @@ public class StenoEncoderTest {
         final Object[] argArray = new Object[1];
         argArray[0] = null;
         event.setArgumentArray(argArray);
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is valid case.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("StenoEncoderTest.testEncodeObjectNull.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
@@ -739,8 +768,9 @@ public class StenoEncoderTest {
         final Object[] argArray = new Object[1];
         argArray[0] = "{\"key\":\"value\"}";
         event.setArgumentArray(argArray);
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is valid case.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("StenoEncoderTest.testEncodeObjectJson.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
@@ -760,9 +790,9 @@ public class StenoEncoderTest {
         final JsonFactory jsonFactory = Mockito.mock(JsonFactory.class);
         Mockito.doThrow(new IOException("Mock Failure")).when(jsonFactory).createGenerator(Mockito.any(Writer.class));
         _encoder = new StenoEncoder(jsonFactory, objectMapper);
-        _encoder.init(_baos);
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is valid case.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("StenoEncoderTest.testEncodeObjectJsonThrowsIOException.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
@@ -778,8 +808,9 @@ public class StenoEncoderTest {
         final Object[] argArray = new Object[1];
         argArray[0] = null;
         event.setArgumentArray(argArray);
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is valid case.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("StenoEncoderTest.testEncodeObjectJsonNull.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
@@ -798,8 +829,9 @@ public class StenoEncoderTest {
         argArray[2] = Arrays.asList("CONTEXT_KEY1", "CONTEXT_KEY2");
         argArray[3] = Arrays.asList("bar", Double.valueOf(1.23));
         event.setArgumentArray(argArray);
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is valid case.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("StenoEncoderTest.testEncodeLists.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
@@ -822,9 +854,9 @@ public class StenoEncoderTest {
         final JsonFactory jsonFactory = Mockito.mock(JsonFactory.class);
         Mockito.doThrow(new IOException("Mock Failure")).when(jsonFactory).createGenerator(Mockito.any(Writer.class));
         _encoder = new StenoEncoder(jsonFactory, objectMapper);
-        _encoder.init(_baos);
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is valid case.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("StenoEncoderTest.testEncodeListsThrowsIOException.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
@@ -843,8 +875,9 @@ public class StenoEncoderTest {
         argArray[2] = Collections.emptyList();
         argArray[3] = Collections.emptyList();
         event.setArgumentArray(argArray);
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is valid case.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("StenoEncoderTest.testEncodeListsEmpty.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
@@ -863,8 +896,9 @@ public class StenoEncoderTest {
         argArray[2] = null;
         argArray[3] = null;
         event.setArgumentArray(argArray);
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is valid case.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("StenoEncoderTest.testEncodeListsEmpty.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
@@ -883,8 +917,9 @@ public class StenoEncoderTest {
         argArray[2] = Collections.singletonList("CONTEXT_KEY1");
         argArray[3] = Arrays.asList("bar", Double.valueOf(1.23));
         event.setArgumentArray(argArray);
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is valid case.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("StenoEncoderTest.testEncodeListsValuesWithoutKeys.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
@@ -903,8 +938,9 @@ public class StenoEncoderTest {
         argArray[2] = Arrays.asList("CONTEXT_KEY1", "CONTEXT_KEY2");
         argArray[3] = null;
         event.setArgumentArray(argArray);
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is valid case.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("StenoEncoderTest.testEncodeListsNullValues.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
@@ -924,8 +960,9 @@ public class StenoEncoderTest {
         argArray[2] = Collections.singletonList("CONTEXT_KEY1");
         argArray[3] = Collections.singletonList(date);
         event.setArgumentArray(argArray);
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is valid case.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("StenoEncoderTest.testEncodeListsComplexValue.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
@@ -941,8 +978,9 @@ public class StenoEncoderTest {
         final Object[] argArray = new Object[1];
         argArray[0] = "bar";
         event.setArgumentArray(argArray);
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is valid case.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("StenoEncoderTest.testEncodeStandardEvent.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
@@ -962,9 +1000,9 @@ public class StenoEncoderTest {
         final JsonFactory jsonFactory = Mockito.mock(JsonFactory.class);
         Mockito.doThrow(new IOException("Mock Failure")).when(jsonFactory).createGenerator(Mockito.any(Writer.class));
         _encoder = new StenoEncoder(jsonFactory, objectMapper);
-        _encoder.init(_baos);
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is valid case.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("StenoEncoderTest.testEncodeStandardEventThrowsIOException.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
@@ -985,8 +1023,9 @@ public class StenoEncoderTest {
         Assert.assertTrue(_encoder.isInjectContextHost());
         Assert.assertTrue(_encoder.isInjectContextThread());
         Assert.assertTrue(_encoder.isInjectContextProcess());
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is valid case.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("StenoEncoderTest.testEncodeStandardEventWithCustomEventName.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
@@ -1006,8 +1045,9 @@ public class StenoEncoderTest {
         _encoder.setInjectContextLogger(true);
         _encoder.setCompressLoggerName(true);
         Assert.assertTrue(_encoder.isCompressLoggerName());
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is valid case.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("StenoEncoderTest.testEncodeStandardEventWithCompressedLoggerName.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
@@ -1034,8 +1074,9 @@ public class StenoEncoderTest {
         Assert.assertFalse(_encoder.isInjectContextProcess());
         _encoder.setInjectContextThread(false);
         Assert.assertFalse(_encoder.isInjectContextThread());
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is valid case.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("StenoEncoderTest.testEncodeStandardEventWithSuppressDefaultContext.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
@@ -1056,8 +1097,9 @@ public class StenoEncoderTest {
         Assert.assertEquals("MDC_KEY", _encoder.iteratorForInjectContextMdc().next());
         Assert.assertTrue(_encoder.isInjectContextMdc("MDC_KEY"));
         Assert.assertFalse(_encoder.isInjectContextMdc("FOO_BAR"));
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is valid case.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("StenoEncoderTest.testEncodeStandardEventWithMdcProperties.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
@@ -1095,8 +1137,9 @@ public class StenoEncoderTest {
         Assert.assertTrue(_encoder.isInjectContextLogger());
         _encoder.setInjectContextMethod(true);
         Assert.assertTrue(_encoder.isInjectContextMethod());
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is valid case.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("StenoEncoderTest.testEncodeStandardEventWithIncludeOptionalContext.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
@@ -1118,8 +1161,9 @@ public class StenoEncoderTest {
         _encoder.setRedactNull(false);
         _encoder.setRedactNull(true);
         _encoder.setRedactEnabled(false);
-        _encoder.doEncode(event);
-        final String fullLogOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is valid case.
+        final String fullLogOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         Assert.assertFalse(_encoder.isRedactEnabled());
         assertOutput("StenoEncoderTest.testRedactSettings.1.json", fullLogOutput);
         assertMatchesJsonSchema(fullLogOutput);
@@ -1127,32 +1171,36 @@ public class StenoEncoderTest {
         _encoder.setRedactEnabled(true);
         _encoder.setRedactEnabled(false);
         _encoder.setRedactNull(false);
-        _encoder.doEncode(event);
-        final String nonRedactedWithNullLogOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is valid case.
+        final String nonRedactedWithNullLogOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         Assert.assertFalse(_encoder.isRedactNull());
         assertOutput("StenoEncoderTest.testRedactSettings.2.json", nonRedactedWithNullLogOutput);
         assertMatchesJsonSchema(nonRedactedWithNullLogOutput);
         _baos.reset();
         _encoder.setRedactEnabled(true);
         _encoder.setRedactNull(true);
-        _encoder.doEncode(event);
-        final String redactedLogOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is valid case.
+        final String redactedLogOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         Assert.assertTrue(_encoder.isRedactEnabled());
         assertOutput("StenoEncoderTest.testRedactSettings.3.json", redactedLogOutput);
         assertMatchesJsonSchema(redactedLogOutput);
         _baos.reset();
         _encoder.setRedactEnabled(true);
         _encoder.setRedactNull(true);
-        _encoder.doEncode(event);
-        final String redactedLogOutput2 = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is valid case.
+        final String redactedLogOutput2 = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         Assert.assertTrue(_encoder.isRedactEnabled());
         assertOutput("StenoEncoderTest.testRedactSettings.4.json", redactedLogOutput2);
         assertMatchesJsonSchema(redactedLogOutput2);
         _baos.reset();
         _encoder.setRedactEnabled(true);
         _encoder.setRedactNull(false);
-        _encoder.doEncode(event);
-        final String redactedWithNullLogOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is valid case.
+        final String redactedWithNullLogOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         Assert.assertFalse(_encoder.isRedactNull());
         assertOutput("StenoEncoderTest.testRedactSettings.5.json", redactedWithNullLogOutput);
         assertMatchesJsonSchema(redactedWithNullLogOutput);
@@ -1173,8 +1221,9 @@ public class StenoEncoderTest {
         argArray[0] = new String[]{"key1", "logValue"};
         argArray[1] = new Object[]{date, new WidgetWithLogValue("FooBar!")};
         event.setArgumentArray(argArray);
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is valid case.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("StenoEncoderTest.testEncodeLogValue.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
@@ -1191,8 +1240,9 @@ public class StenoEncoderTest {
         argArray[0] = new String[]{"enum"};
         argArray[1] = new Object[]{DayOfWeek.FRIDAY};
         event.setArgumentArray(argArray);
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is valid case.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("StenoEncoderTest.testEncodeEnumeration.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
@@ -1211,8 +1261,9 @@ public class StenoEncoderTest {
         argArray[0] = new String[]{"jsonNode"};
         argArray[1] = new Object[]{jsonNode};
         event.setArgumentArray(argArray);
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is valid case.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("StenoEncoderTest.testEncodeJsonNode.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
@@ -1247,12 +1298,13 @@ public class StenoEncoderTest {
         final JsonFactory jsonFactory = Mockito.mock(JsonFactory.class);
         Mockito.doThrow(new RuntimeException("Mock Failure")).when(jsonFactory).createGenerator(Mockito.any(Writer.class));
         _encoder = new StenoEncoder(jsonFactory, objectMapper);
-        _encoder.init(_baos);
+
         _encoder.setInjectContextHost(false);
         _encoder.setInjectContextProcess(false);
         _encoder.setInjectContextThread(false);
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is valid case.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("StenoEncoderTest.testSafeContextWithSuppressDefaultContext.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
@@ -1273,14 +1325,15 @@ public class StenoEncoderTest {
         final JsonFactory jsonFactory = Mockito.mock(JsonFactory.class);
         Mockito.doThrow(new RuntimeException("Mock Failure")).when(jsonFactory).createGenerator(Mockito.any(Writer.class));
         _encoder = new StenoEncoder(jsonFactory, objectMapper);
-        _encoder.init(_baos);
+
         _encoder.setInjectContextHost(false);
         _encoder.setInjectContextProcess(false);
         _encoder.setInjectContextThread(false);
         MDC.put("MDC_KEY", "MDC_VALUE");
         _encoder.addInjectContextMdc("MDC_KEY");
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is valid case.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("StenoEncoderTest.testSafeContextWithMdcProperties.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
@@ -1306,7 +1359,7 @@ public class StenoEncoderTest {
         final JsonFactory jsonFactory = Mockito.mock(JsonFactory.class);
         Mockito.doThrow(new RuntimeException("Mock Failure")).when(jsonFactory).createGenerator(Mockito.any(Writer.class));
         _encoder = new StenoEncoder(jsonFactory, objectMapper);
-        _encoder.init(_baos);
+
         _encoder.setInjectContextHost(false);
         _encoder.setInjectContextProcess(false);
         _encoder.setInjectContextThread(false);
@@ -1316,8 +1369,9 @@ public class StenoEncoderTest {
         _encoder.setInjectContextLine(true);
         _encoder.setInjectContextLogger(true);
         _encoder.setInjectContextMethod(true);
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is valid case.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("StenoEncoderTest.testSafeContextWithIncludeOptionalContext.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
@@ -1358,9 +1412,10 @@ public class StenoEncoderTest {
         _encoder.setInjectContextProcess(false);
         _encoder.setInjectContextThread(false);
         _encoder.setInjectContextHost(false);
-        _encoder.init(_baos);
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is valid case.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("StenoEncoderTest.testSafeContextWithUserDefinedContext.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
@@ -1387,9 +1442,10 @@ public class StenoEncoderTest {
         _encoder.setInjectContextProcess(false);
         _encoder.setInjectContextThread(false);
         _encoder.setInjectContextHost(false);
-        _encoder.init(_baos);
-        _encoder.doEncode(event);
-        final String logOutput = _baos.toString(StandardCharsets.UTF_8.name());
+
+        // CHECKSTYLE.OFF: IllegalInstantiation - This is valid case.
+        final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());
+        // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("StenoEncoderTest.testSafeContextWithUserDefinedContextWithEncoding.json", logOutput);
         assertMatchesJsonSchema(logOutput);
     }
