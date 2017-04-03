@@ -43,9 +43,6 @@ public class CustomSizeAndTimeBasedArchiveRemover extends SizeAndTimeBasedArchiv
         super(fileNamePattern, rollingCalendar);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void clean(final Date now) {
         super.clean(now);
@@ -54,27 +51,18 @@ public class CustomSizeAndTimeBasedArchiveRemover extends SizeAndTimeBasedArchiv
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void setTotalSizeCap(final long totalSizeCap) {
         super.setTotalSizeCap(totalSizeCap);
         _totalSizeCap = totalSizeCap;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void setMaxHistory(final int maxHistory) {
         super.setMaxHistory(maxHistory);
         _maxHistory = maxHistory;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     void capTotalSize(final Date now) {
         int totalSize = 0;

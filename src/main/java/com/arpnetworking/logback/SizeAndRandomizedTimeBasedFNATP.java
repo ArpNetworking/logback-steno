@@ -77,71 +77,47 @@ public class SizeAndRandomizedTimeBasedFNATP<E> extends SizeAndTimeBasedFNATP<E>
         _randomizedTimeBasedFNATP.setMaxOffsetInMillis(maxOffsetInMillis);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void start() {
         _randomizedTimeBasedFNATP.start();
         super.start();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void stop() {
         _randomizedTimeBasedFNATP.stop();
         super.stop();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void setContext(final Context context) {
         _randomizedTimeBasedFNATP.setContext(context);
         super.setContext(context);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void setDateInCurrentPeriod(final Date dateInCurrentPeriod) {
         _randomizedTimeBasedFNATP.setDateInCurrentPeriod(dateInCurrentPeriod);
         super.setDateInCurrentPeriod(dateInCurrentPeriod);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void setCurrentTime(final long timeInMillis) {
         _randomizedTimeBasedFNATP.setCurrentTime(timeInMillis);
         super.setCurrentTime(timeInMillis);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public long getCurrentTime() {
         return _randomizedTimeBasedFNATP.getCurrentTime();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void setTimeBasedRollingPolicy(final TimeBasedRollingPolicy<E> tbrp) {
         _randomizedTimeBasedFNATP.setTimeBasedRollingPolicy(tbrp);
         super.setTimeBasedRollingPolicy(tbrp);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void computeNextCheck() {
         // This is the important override. It is invoked by isTriggerEvent from SizeAndTimeBasedFNATP
@@ -151,18 +127,12 @@ public class SizeAndRandomizedTimeBasedFNATP<E> extends SizeAndTimeBasedFNATP<E>
         nextCheck = _randomizedTimeBasedFNATP.getNextCheck();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void setDateInCurrentPeriod(final long now) {
         _randomizedTimeBasedFNATP.getDateInCurrentPeriod().setTime(now);
         super.setDateInCurrentPeriod(now);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected ArchiveRemover createArchiveRemover() {
         return new CustomSizeAndTimeBasedArchiveRemover(

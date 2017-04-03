@@ -80,9 +80,6 @@ public class RedactionFilter extends SimpleBeanPropertyFilter.SerializeExceptFil
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void serializeAsField(
             final Object pojo,

@@ -193,9 +193,6 @@ public class StenoEncoder extends BaseLoggingEncoder implements Serializable {
         _standardSerializationStrategy = new StandardSerializationStrategy(this, jsonFactory, _objectMapper);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void start() {
         // Add configured Jackson modules
@@ -636,9 +633,6 @@ public class StenoEncoder extends BaseLoggingEncoder implements Serializable {
         return _injectBeanIdentifier;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected String encodeAsString(final ILoggingEvent event, final EncodingException ee) {
         final StringBuilder encoder = new StringBuilder()
@@ -656,9 +650,6 @@ public class StenoEncoder extends BaseLoggingEncoder implements Serializable {
         return encoder.toString();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected String buildStandardMessage(final ILoggingEvent event) throws EncodingException {
         try {
@@ -670,9 +661,6 @@ public class StenoEncoder extends BaseLoggingEncoder implements Serializable {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected String buildArrayMessage(
             final ILoggingEvent event,
@@ -694,9 +682,6 @@ public class StenoEncoder extends BaseLoggingEncoder implements Serializable {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected String buildArrayJsonMessage(
             final ILoggingEvent event,
@@ -718,9 +703,6 @@ public class StenoEncoder extends BaseLoggingEncoder implements Serializable {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected String buildMapMessage(
             final ILoggingEvent event,
@@ -740,9 +722,6 @@ public class StenoEncoder extends BaseLoggingEncoder implements Serializable {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected String buildMapJsonMessage(
             final ILoggingEvent event,
@@ -762,9 +741,6 @@ public class StenoEncoder extends BaseLoggingEncoder implements Serializable {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected String buildObjectMessage(
             final ILoggingEvent event,
@@ -785,9 +761,6 @@ public class StenoEncoder extends BaseLoggingEncoder implements Serializable {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected String buildObjectJsonMessage(
             final ILoggingEvent event,
@@ -807,9 +780,6 @@ public class StenoEncoder extends BaseLoggingEncoder implements Serializable {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected String buildListsMessage(
             final ILoggingEvent event,

@@ -32,9 +32,6 @@ import javax.annotation.Nullable;
  */
 public abstract class BaseLoggingEncoder extends LayoutWrappingEncoder<ILoggingEvent> {
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void doEncode(final ILoggingEvent event) throws IOException {
         final Marker marker = event.getMarker();

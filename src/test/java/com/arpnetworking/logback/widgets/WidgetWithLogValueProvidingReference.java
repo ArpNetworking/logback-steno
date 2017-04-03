@@ -50,9 +50,6 @@ public final class WidgetWithLogValueProvidingReference {
                 .build();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         return "Value=" + _value;
