@@ -39,7 +39,7 @@ public abstract class BaseLoggingEncoder extends LayoutWrappingEncoder<ILoggingE
      */
     @Override
     public Charset getCharset() {
-        return Charset.defaultCharset();
+        return Charset.forName("UTF-8");
     }
 
     /**
