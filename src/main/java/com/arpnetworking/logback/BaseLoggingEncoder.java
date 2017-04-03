@@ -20,9 +20,9 @@ import ch.qos.logback.core.encoder.LayoutWrappingEncoder;
 import org.slf4j.Marker;
 
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import javax.annotation.Nullable;
 
@@ -39,7 +39,7 @@ public abstract class BaseLoggingEncoder extends LayoutWrappingEncoder<ILoggingE
      */
     @Override
     public Charset getCharset() {
-        return Charset.forName("UTF-8");
+        return StandardCharsets.UTF_8;
     }
 
     /**
@@ -61,7 +61,7 @@ public abstract class BaseLoggingEncoder extends LayoutWrappingEncoder<ILoggingE
     }
 
     byte[] encodeString(final String s) {
-            return s.getBytes(Optional.ofNullable(getCharset()).orElse(Charset.defaultCharset()));
+            return s.getBytes(getCharset());
     }
 
     /**
