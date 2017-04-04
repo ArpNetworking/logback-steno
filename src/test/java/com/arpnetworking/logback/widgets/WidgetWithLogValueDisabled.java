@@ -50,9 +50,6 @@ public final class WidgetWithLogValueDisabled {
         // CHECKSTYLE.ON: RegexpSingleline
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         return "Value=" + _value;

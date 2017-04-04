@@ -42,9 +42,6 @@ import java.util.Map;
         return Collections.unmodifiableMap(_context);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         return "EncodingException context=" + _context + " cause=" + getCause();

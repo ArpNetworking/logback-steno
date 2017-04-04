@@ -31,36 +31,24 @@ import javax.annotation.Nullable;
  */
 public class DefaultLogBuilder implements LogBuilder {
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public LogBuilder setEvent(final String value) {
         _event = value;
         return this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public LogBuilder setMessage(final String value) {
         addData(Logger.MESSAGE_DATA_KEY, value);
         return this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public LogBuilder setThrowable(final Throwable value) {
         _throwable = value;
         return this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public DefaultLogBuilder addData(final String name, @Nullable final Object value) {
         if (_data == null) {
@@ -70,9 +58,6 @@ public class DefaultLogBuilder implements LogBuilder {
         return this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public DefaultLogBuilder addContext(final String name, @Nullable final Object value) {
         if (_context == null) {
@@ -82,9 +67,6 @@ public class DefaultLogBuilder implements LogBuilder {
         return this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void log() {
         // TODO(vkoskela): Add STENO_MAPS_MARKER and convert to it.
@@ -110,9 +92,6 @@ public class DefaultLogBuilder implements LogBuilder {
                 _throwable);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         return "{Logger=" + _logger

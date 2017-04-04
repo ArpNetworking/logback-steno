@@ -42,9 +42,6 @@ public final class WidgetWithSerializer {
         return _value;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         return "Value=" + _value;
@@ -57,9 +54,6 @@ public final class WidgetWithSerializer {
      */
     public static class Serializer extends JsonSerializer<WidgetWithSerializer> {
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public void serialize(
                 final WidgetWithSerializer value,
@@ -76,9 +70,6 @@ public final class WidgetWithSerializer {
      */
     public static final class Module extends SimpleModule {
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public void setupModule(final SetupContext context) {
             addSerializer(WidgetWithSerializer.class, new Serializer());

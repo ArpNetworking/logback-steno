@@ -24,49 +24,31 @@ import javax.annotation.Nullable;
  */
 public class NoOpLogBuilder implements LogBuilder {
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public LogBuilder setEvent(final String value) {
         return this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public LogBuilder setMessage(final String value) {
         return this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public LogBuilder setThrowable(final Throwable value) {
         return this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public LogBuilder addData(final String name, @Nullable final Object value) {
         return this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public LogBuilder addContext(final String name, @Nullable final Object value) {
         return this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void log() {
         // Nothing to do.

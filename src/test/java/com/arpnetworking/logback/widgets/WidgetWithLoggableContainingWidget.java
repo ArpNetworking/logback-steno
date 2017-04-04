@@ -43,9 +43,6 @@ public final class WidgetWithLoggableContainingWidget {
         return _subWidget;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         return "Value=" + _value + ", SubWidget=" + _subWidget;

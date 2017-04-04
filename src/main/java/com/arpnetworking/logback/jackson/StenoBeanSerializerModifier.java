@@ -72,9 +72,6 @@ public final class StenoBeanSerializerModifier extends BeanSerializerModifier {
         _stenoEncoder = stenoEncoder;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public List<BeanPropertyWriter> changeProperties(
             final SerializationConfig config,

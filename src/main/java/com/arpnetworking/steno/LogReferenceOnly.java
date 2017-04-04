@@ -51,9 +51,6 @@ public final class LogReferenceOnly {
         return LogValueMapFactory.builder(_object).build();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         return "{id=" + Integer.toHexString(System.identityHashCode(_object))

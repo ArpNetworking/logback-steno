@@ -43,9 +43,6 @@ public final class WidgetWithAnnotatedSerializer {
         return _value;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         return "Value=" + _value;
@@ -58,9 +55,6 @@ public final class WidgetWithAnnotatedSerializer {
      */
     public static class Serializer extends JsonSerializer<WidgetWithAnnotatedSerializer> {
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public void serialize(
                 final WidgetWithAnnotatedSerializer value,

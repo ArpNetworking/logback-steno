@@ -55,17 +55,11 @@ public class KeyValueEncoder extends BaseLoggingEncoder {
         return _logEventName;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected String encodeAsString(final ILoggingEvent event, final EncodingException ee) {
         return ee.toString() + " originalMessage=" + event.getMessage() + "\n";
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected String buildArrayMessage(
             final ILoggingEvent event,
@@ -83,9 +77,6 @@ public class KeyValueEncoder extends BaseLoggingEncoder {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected String buildArrayJsonMessage(
             final ILoggingEvent event,
@@ -104,9 +95,6 @@ public class KeyValueEncoder extends BaseLoggingEncoder {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected String buildMapMessage(
             final ILoggingEvent event,
@@ -138,9 +126,6 @@ public class KeyValueEncoder extends BaseLoggingEncoder {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected String buildMapJsonMessage(
             final ILoggingEvent event,
@@ -172,9 +157,6 @@ public class KeyValueEncoder extends BaseLoggingEncoder {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected String buildObjectMessage(
             final ILoggingEvent event,
@@ -195,9 +177,6 @@ public class KeyValueEncoder extends BaseLoggingEncoder {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected String buildObjectJsonMessage(
             final ILoggingEvent event,
@@ -218,9 +197,6 @@ public class KeyValueEncoder extends BaseLoggingEncoder {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected String buildListsMessage(
             final ILoggingEvent event,
@@ -287,9 +263,6 @@ public class KeyValueEncoder extends BaseLoggingEncoder {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected String buildStandardMessage(final ILoggingEvent event) throws EncodingException {
         try {

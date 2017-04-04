@@ -36,9 +36,6 @@ public class HostConverter extends ClassicConverter {
         this(HostProvider.DEFAULT);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String convert(final ILoggingEvent event) {
         try {

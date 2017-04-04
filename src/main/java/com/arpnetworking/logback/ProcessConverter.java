@@ -36,9 +36,6 @@ public class ProcessConverter extends ClassicConverter {
         this(ProcessProvider.DEFAULT);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String convert(final ILoggingEvent event) {
         try {

@@ -223,9 +223,6 @@ public final class LogValueMapFactory {
             return _data;
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public String toString() {
             final StringBuilder builder = new StringBuilder();

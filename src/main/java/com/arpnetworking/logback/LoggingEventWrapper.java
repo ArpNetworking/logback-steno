@@ -51,114 +51,72 @@ public class LoggingEventWrapper extends LoggingEvent {
         _argumentArray = argumentArray == null ? null : Arrays.copyOf(argumentArray, argumentArray.length);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getThreadName() {
         return _wrappedEvent.getThreadName();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Level getLevel() {
         return _wrappedEvent.getLevel();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getMessage() {
         return _message;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public @Nullable Object[] getArgumentArray() {
         return _argumentArray == null ? null : Arrays.copyOf(_argumentArray, _argumentArray.length);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getLoggerName() {
         return _wrappedEvent.getLoggerName();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public LoggerContextVO getLoggerContextVO() {
         return _wrappedEvent.getLoggerContextVO();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public IThrowableProxy getThrowableProxy() {
         return _wrappedEvent.getThrowableProxy();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public StackTraceElement[] getCallerData() {
         return _wrappedEvent.getCallerData();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean hasCallerData() {
         return _wrappedEvent.hasCallerData();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Marker getMarker() {
         return _wrappedEvent.getMarker();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Map<String, String> getMDCPropertyMap() {
         return _wrappedEvent.getMDCPropertyMap();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     @SuppressWarnings("deprecation")
     public Map<String, String> getMdc() {
         return _wrappedEvent.getMdc();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public long getTimeStamp() {
         return _wrappedEvent.getTimeStamp();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void prepareForDeferredProcessing() {
         _wrappedEvent.prepareForDeferredProcessing();

@@ -62,54 +62,36 @@ public class RateLimitLogBuilder implements LogBuilder {
         _clock = clock;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public LogBuilder setEvent(final String value) {
         _logBuilder.setEvent(value);
         return this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public LogBuilder setMessage(final String value) {
         _logBuilder.setMessage(value);
         return this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public LogBuilder setThrowable(final Throwable value) {
         _logBuilder.setThrowable(value);
         return this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public LogBuilder addData(final String name, @Nullable final Object value) {
         _logBuilder.addData(name, value);
         return this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public LogBuilder addContext(final String name, @Nullable final Object value) {
         _logBuilder.addContext(name, value);
         return this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void log() {
         final Instant now = _clock.instant();
@@ -147,9 +129,6 @@ public class RateLimitLogBuilder implements LogBuilder {
                 .build();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         return toLogValue().toString();

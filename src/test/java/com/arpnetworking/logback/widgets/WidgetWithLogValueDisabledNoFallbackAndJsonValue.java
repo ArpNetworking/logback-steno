@@ -63,9 +63,6 @@ public final class WidgetWithLogValueDisabledNoFallbackAndJsonValue {
         // CHECKSTYLE.ON: RegexpSingleline
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         return "Value=" + _value;

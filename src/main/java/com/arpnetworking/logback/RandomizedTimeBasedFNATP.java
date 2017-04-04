@@ -61,9 +61,6 @@ public class RandomizedTimeBasedFNATP<E> extends DefaultTimeBasedFileNamingAndTr
         _randomNumber = random.nextDouble();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void start() {
         super.start();
@@ -88,9 +85,6 @@ public class RandomizedTimeBasedFNATP<E> extends DefaultTimeBasedFileNamingAndTr
         _randomOffsetInMillis = (int) (_randomNumber * _maxOffsetInMillis);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void computeNextCheck() {
         nextCheck = rc.getNextTriggeringDate(dateInCurrentPeriod).getTime() + _randomOffsetInMillis;

@@ -44,17 +44,11 @@ public class StenoAnnotationIntrospector extends JacksonAnnotationIntrospector {
         _objectMapper = objectMapper;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Object findFilterId(final Annotated annotated) {
         return RedactionFilter.REDACTION_FILTER_ID;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean hasAsValueAnnotation(final AnnotatedMethod annotatedMethod) {
         // The @LogValue annotation if active takes precedence

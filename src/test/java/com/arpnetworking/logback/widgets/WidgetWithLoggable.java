@@ -38,9 +38,6 @@ public final class WidgetWithLoggable {
         return _value;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         return "Value=" + _value;

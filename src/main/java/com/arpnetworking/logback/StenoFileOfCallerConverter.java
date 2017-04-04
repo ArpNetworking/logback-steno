@@ -26,9 +26,6 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
  */
 public class StenoFileOfCallerConverter extends AbstractStenoCallerConverter {
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String convert(final ILoggingEvent loggingEvent) {
         final StackTraceElement callerData = getCallerData(loggingEvent);

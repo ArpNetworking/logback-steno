@@ -34,9 +34,6 @@ import javax.annotation.Nullable;
  */
 public abstract class BaseLoggingEncoder extends LayoutWrappingEncoder<ILoggingEvent> {
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Charset getCharset() {
         return StandardCharsets.UTF_8;

@@ -35,9 +35,6 @@ public final class Widget {
         return _value;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         return "Value=" + _value;
