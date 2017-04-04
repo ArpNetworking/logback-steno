@@ -46,7 +46,7 @@ public class CustomSizeAndTimeBasedArchiveRemover extends SizeAndTimeBasedArchiv
     @Override
     public void clean(final Date now) {
         super.clean(now);
-        if (_totalSizeCap != CoreConstants.UNBOUND_TOTAL_SIZE && _totalSizeCap > 0) {
+        if (_totalSizeCap != CoreConstants.UNBOUNDED_TOTAL_SIZE_CAP && _totalSizeCap > 0) {
             capTotalSize(now);
         }
     }

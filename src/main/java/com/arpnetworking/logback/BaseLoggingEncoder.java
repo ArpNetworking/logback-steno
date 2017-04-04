@@ -19,9 +19,11 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.encoder.LayoutWrappingEncoder;
 import org.slf4j.Marker;
 
-import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
+
 import javax.annotation.Nullable;
 
 /**
@@ -33,7 +35,15 @@ import javax.annotation.Nullable;
 public abstract class BaseLoggingEncoder extends LayoutWrappingEncoder<ILoggingEvent> {
 
     @Override
-    public void doEncode(final ILoggingEvent event) throws IOException {
+    public Charset getCharset() {
+        return StandardCharsets.UTF_8;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public byte[] encode(final ILoggingEvent event) {
         final Marker marker = event.getMarker();
         final String name = event.getMessage();
         final Object[] argumentArray = event.getArgumentArray();
@@ -44,12 +54,11 @@ public abstract class BaseLoggingEncoder extends LayoutWrappingEncoder<ILoggingE
         } catch (final EncodingException ee) {
             output = encodeAsString(event, ee);
         }
+        return encodeString(output);
+    }
 
-        outputStream.write(output.getBytes("UTF8"));
-
-        if (isImmediateFlush()) {
-            outputStream.flush();
-        }
+    byte[] encodeString(final String s) {
+            return s.getBytes(getCharset());
     }
 
     /**
