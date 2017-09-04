@@ -38,7 +38,7 @@ import java.security.SecureRandom;
      * @param seed The seed value to use.
      * @return An instance of <code>SecureRandom</code>.
      */
-    SecureRandom get(final byte[] seed);
+    SecureRandom get(byte[] seed);
 
     /**
      * Default instance of <code>SecureRandomProvider</code>.

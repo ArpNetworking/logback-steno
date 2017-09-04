@@ -27,6 +27,7 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.mockito.hamcrest.MockitoHamcrest;
 
 import java.time.Clock;
 import java.time.Duration;
@@ -105,21 +106,21 @@ public class RateLimitLoggerTest {
         rateLimitLogger.info().setMessage("m4").log();
         Mockito.verify(_slf4jLogger, Mockito.atLeastOnce()).isInfoEnabled();
         Mockito.verify(_slf4jLogger).info(
-                Mockito.argThat(Matchers.sameInstance(StenoMarker.LISTS_MARKER)),
-                Mockito.argThat(Matchers.nullValue(String.class)),
-                Mockito.argThat(Matchers.contains("message", "_skipped", "_lastLogTime")),
+                MockitoHamcrest.argThat(Matchers.sameInstance(StenoMarker.LISTS_MARKER)),
+                MockitoHamcrest.argThat(Matchers.nullValue(String.class)),
+                MockitoHamcrest.argThat(Matchers.contains("message", "_skipped", "_lastLogTime")),
                 // This is brutal; for some reason a capture would not work here and the
                 // contains(Matcher...) was getting mapped to contains(E...) even with
                 // casting. So the matcher chain below manually asserts that the list
                 // contains the three items in question.
-                Mockito.argThat(
+                MockitoHamcrest.argThat(
                         Matchers.allOf(
                                 Matchers.iterableWithSize(3),
                                 Matchers.hasItem("m4"),
                                 Matchers.hasItem(1),
                                 Matchers.hasItem(isBetween(beforeLastLog, afterLastLog)))),
-                Mockito.argThat(Matchers.equalTo(Collections.emptyList())),
-                Mockito.argThat(Matchers.equalTo(Collections.emptyList())));
+                MockitoHamcrest.argThat(Matchers.equalTo(Collections.emptyList())),
+                MockitoHamcrest.argThat(Matchers.equalTo(Collections.emptyList())));
     }
 
     @Test
@@ -173,10 +174,10 @@ public class RateLimitLoggerTest {
         rateLimitLogger.info("m4");
         Mockito.verify(_slf4jLogger, Mockito.atLeastOnce()).isInfoEnabled();
         Mockito.verify(_slf4jLogger).info(
-                Mockito.argThat(Matchers.sameInstance(StenoMarker.ARRAY_MARKER)),
-                Mockito.argThat(Matchers.nullValue(String.class)),
-                Mockito.argThat(Matchers.arrayContaining("message", "_skipped", "_lastLogTime")),
-                Mockito.argThat(
+                MockitoHamcrest.argThat(Matchers.sameInstance(StenoMarker.ARRAY_MARKER)),
+                MockitoHamcrest.argThat(Matchers.nullValue(String.class)),
+                MockitoHamcrest.argThat(Matchers.arrayContaining("message", "_skipped", "_lastLogTime")),
+                MockitoHamcrest.argThat(
                         Matchers.array(new org.hamcrest.Matcher[]{
                                 Matchers.<Object>equalTo("m4"),
                                 Matchers.<Object>equalTo(1),

@@ -37,7 +37,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
-import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
+import com.fasterxml.jackson.databind.util.StdDateFormat;
 import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
 
 import java.io.Serializable;
@@ -169,7 +169,7 @@ public class StenoEncoder extends BaseLoggingEncoder implements Serializable {
         // Setup writing of Date/DateTime values
         _objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         _objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
-        _objectMapper.setDateFormat(new ISO8601DateFormat());
+        _objectMapper.setDateFormat(new StdDateFormat());
 
         // Simple module with customizations
         final SimpleModule module = new SimpleModule();

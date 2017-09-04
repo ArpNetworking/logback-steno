@@ -19,8 +19,12 @@ import com.arpnetworking.logback.annotations.LogValue;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.introspect.Annotated;
 import com.fasterxml.jackson.databind.introspect.AnnotatedClass;
+import com.fasterxml.jackson.databind.introspect.AnnotatedClassResolver;
+import com.fasterxml.jackson.databind.introspect.AnnotatedField;
 import com.fasterxml.jackson.databind.introspect.AnnotatedMethod;
 import com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector;
+
+import javax.annotation.Nullable;
 
 /**
  * Jackson AnnotationIntrospector that:
@@ -50,17 +54,40 @@ public class StenoAnnotationIntrospector extends JacksonAnnotationIntrospector {
     }
 
     @Override
-    public boolean hasAsValueAnnotation(final AnnotatedMethod annotatedMethod) {
+    public @Nullable Boolean hasAsValue(final Annotated annotated) {
+        // IMPORTANT: The @JsonValue only applies to members and fields
+        // IMPORTANT: The @LogValue only applies to members
         // The @LogValue annotation if active takes precedence
-        final Class<?> clazz = annotatedMethod.getDeclaringClass();
-        final AnnotatedClass annotatedClass = AnnotatedClass.construct(
+        if (annotated instanceof AnnotatedMethod) {
+            final LogValue annotation = _findAnnotation(annotated, LogValue.class);
+            if (annotation != null) {
+                if (annotation.enabled()) {
+                    return true;
+                } else if (!annotation.fallback()) {
+                    return false;
+                } else {
+                    return super.hasAsValue(annotated);
+                }
+            }
+        }
+        // Otherwise check if the @JsonValue annotation should be suppressed
+        final Class<?> clazz;
+        if (annotated instanceof AnnotatedField) {
+            clazz = ((AnnotatedField) annotated).getDeclaringClass();
+        } else if (annotated instanceof AnnotatedMethod) {
+            clazz = ((AnnotatedMethod) annotated).getDeclaringClass();
+        } else {
+            return super.hasAsValue(annotated);
+        }
+        final AnnotatedClass annotatedClass = AnnotatedClassResolver.resolve(
+                _objectMapper.getSerializationConfig(),
                 _objectMapper.constructType(clazz),
                 _objectMapper.getSerializationConfig());
         for (final AnnotatedMethod otherAnnotatedMethod : annotatedClass.memberMethods()) {
             final LogValue annotation = _findAnnotation(otherAnnotatedMethod, LogValue.class);
             if (annotation != null) {
                 if (annotation.enabled()) {
-                    return otherAnnotatedMethod.getAnnotated().equals(annotatedMethod.getAnnotated());
+                    return null;
                 } else if (!annotation.fallback()) {
                     return false;
                 }
@@ -68,7 +95,7 @@ public class StenoAnnotationIntrospector extends JacksonAnnotationIntrospector {
         }
 
         // Otherwise use default logic (e.g respect @JsonValue)
-        return super.hasAsValueAnnotation(annotatedMethod);
+        return super.hasAsValue(annotated);
     }
 
     private final ObjectMapper _objectMapper;

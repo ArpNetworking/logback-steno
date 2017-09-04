@@ -28,7 +28,6 @@ import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Matchers;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -99,10 +98,10 @@ public class RedactionFilterTest {
         final RedactionFilter mockFilter = Mockito.mock(RedactionFilter.class);
         Mockito.doAnswer(new SerializeAsFieldAnswer(new RedactionFilter(true)))
                 .when(mockFilter).serializeAsField(
-                        Matchers.any(),
-                        Matchers.any(JsonGenerator.class),
-                        Matchers.any(SerializerProvider.class),
-                        Matchers.any(PropertyWriter.class));
+                        Mockito.any(),
+                        Mockito.any(JsonGenerator.class),
+                        Mockito.any(SerializerProvider.class),
+                        Mockito.any(PropertyWriter.class));
 
         // CHECKSTYLE.OFF: IllegalInstantiation - No Guava dependency here.
         final Map<String, Object> filterMap = new HashMap<>();
@@ -123,10 +122,10 @@ public class RedactionFilterTest {
         final RedactionFilter mockFilter = Mockito.mock(RedactionFilter.class);
         Mockito.doAnswer(new SerializeAsFieldAnswer(new RedactionFilter(false)))
                 .when(mockFilter).serializeAsField(
-                        Matchers.any(),
-                        Matchers.any(JsonGenerator.class),
-                        Matchers.any(SerializerProvider.class),
-                        Matchers.any(PropertyWriter.class));
+                        Mockito.any(),
+                        Mockito.any(JsonGenerator.class),
+                        Mockito.any(SerializerProvider.class),
+                        Mockito.any(PropertyWriter.class));
 
         // CHECKSTYLE.OFF: IllegalInstantiation - No Guava dependency here.
         final Map<String, Object> filterMap = new HashMap<>();

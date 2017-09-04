@@ -24,7 +24,6 @@ import ch.qos.logback.core.rolling.helper.CustomSizeAndTimeBasedArchiveRemover;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -67,7 +66,7 @@ public class SizeAndRandomizedTimeBasedFNATPTest {
         resetMock(_wrappedPolicy);
 
         _triggeringPolicy.setMaxOffsetInMillis(123);
-        Mockito.verify(_wrappedPolicy).setMaxOffsetInMillis(Matchers.eq(123));
+        Mockito.verify(_wrappedPolicy).setMaxOffsetInMillis(Mockito.eq(123));
     }
 
     @Test

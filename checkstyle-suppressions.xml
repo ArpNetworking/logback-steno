@@ -52,4 +52,11 @@
     <suppress checks="MethodCount" files="src/main/java/com/arpnetworking/steno/Logger\.java"/>
     <suppress checks="MethodCount" files="src/test/java/com/arpnetworking/steno/LoggerTest\.java"/>
 
+    <!-- Exclude all regex checks until inline suppressions are supported -->
+    <!-- See: https://github.com/checkstyle/checkstyle/issues/4841 -->
+    <suppress checks="RegexpSingleline" files=".*Test\.java"/>
+    <suppress checks="RegexpSingleline" files=".*IT\.java"/>
+    <suppress checks="RegexpSingleline" files=".*PT\.java"/>
+    <suppress checks="RegexpSingleline" files=".*/widgets.*\.java"/>
+
 </suppressions>
