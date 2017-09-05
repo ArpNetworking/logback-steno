@@ -230,20 +230,20 @@ import javax.annotation.Nullable;
     };
 
     public abstract void log(
-            final org.slf4j.Logger logger,
-            @Nullable final String event,
-            @Nullable final String[] keys,
-            @Nullable final Object[] values,
-            @Nullable final Throwable throwable);
+            org.slf4j.Logger logger,
+            @Nullable String event,
+            @Nullable String[] keys,
+            @Nullable Object[] values,
+            @Nullable Throwable throwable);
 
     public abstract void log(
-            final org.slf4j.Logger logger,
-            @Nullable final String event,
-            final List<String> dataKeys,
-            final List<Object> dataValues,
-            final List<String> contextKeys,
-            final List<Object> contextValues,
-            @Nullable final Throwable throwable);
+            org.slf4j.Logger logger,
+            @Nullable String event,
+            List<String> dataKeys,
+            List<Object> dataValues,
+            List<String> contextKeys,
+            List<Object> contextValues,
+            @Nullable Throwable throwable);
 
-    public abstract boolean isEnabled(final org.slf4j.Logger logger);
+    public abstract boolean isEnabled(org.slf4j.Logger logger);
 }

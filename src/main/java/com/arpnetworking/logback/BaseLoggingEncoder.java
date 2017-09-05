@@ -23,7 +23,6 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
-
 import javax.annotation.Nullable;
 
 /**
@@ -70,7 +69,7 @@ public abstract class BaseLoggingEncoder extends LayoutWrappingEncoder<ILoggingE
      * @param ee Instance of <code>EncodingException</code> to encode.
      * @return Encoded version of <code>EncodingException</code>.
      */
-    protected abstract String encodeAsString(final ILoggingEvent event, final EncodingException ee);
+    protected abstract String encodeAsString(ILoggingEvent event, EncodingException ee);
 
     /**
      * Encode an array based message into a <code>String</code>.
@@ -210,7 +209,7 @@ public abstract class BaseLoggingEncoder extends LayoutWrappingEncoder<ILoggingE
      * @return Message encoded as a <code>String</code>.
      * @throws EncodingException If encoding fails for any reason.
      */
-    protected abstract String buildStandardMessage(final ILoggingEvent event) throws EncodingException;
+    protected abstract String buildStandardMessage(ILoggingEvent event) throws EncodingException;
 
     /**
      * Determine whether the <code>marker</code> represents an array event.
