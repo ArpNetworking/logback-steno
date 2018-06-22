@@ -6,7 +6,6 @@ sudo: false
 env:
   global:
   - TARGET=install
-  - JDKW=https://raw.githubusercontent.com/vjkoskela/jdk-wrapper/master/jdk-wrapper.sh
   - secure: TEAIvQ6sAVXzdRQxCJ4cuw8oN7GFhiLCVKIiVe9kdAgdvkz2hstCDgF2GuLnzscizzSQ9J8os28c8oW8XeXwTz7TWO5OaW0gMbQVt5hcKKuY4ilfs0El9Oq/TjMP87zkaEmsVG1Xhbo2KDmNy2LmvvPUEPVujrvgaHZQ3kyrxrk=
   - secure: DRRZdbdlFVoR0GzLGw6+l0ZRKt1OLVy4BmAA/CQPobIWkXU4W/IBMwzemRQ0CWlxsjFdTMZntlXlNPRv3rYJH1eKmcsep0H/g9qDg07va2JmlgdYXuVOlU6laXGaanhnjjqcjBEofJhnt1+NS3Jj4UaJdqmMtQxwdD8aANwgqXM=
   - secure: bm9EkLcbdHMNx7bO7dck5idTAmwfH2qsqhoSlT+cCdi5KY49K/3h3hPPuzaNM1/MpU1DpDQFOSMcfEtVVdS3KvJ+L9IZkUxnfBND3csMOim8jrSiZ7236VefYtj0+T7axtSb+EBOf1TYSKmcuL37NYSdo8vTel9YMIYj+IX9kpI=
@@ -15,4 +14,4 @@ before_script:
 - gpg --import arpnetworking.key
 - if [ \( -n "${TRAVIS_TAG}" \) -a  "${TRAVIS_PULL_REQUEST}" = "false" ]; then export TARGET="deploy -P release --settings settings.xml"; fi;
 script:
-- curl -s ${JDKW} | bash /dev/stdin ./mvnw clean ${TARGET} -U
+- ./jdk-wrapper.sh ./mvnw clean ${TARGET} -U
