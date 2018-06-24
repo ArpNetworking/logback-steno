@@ -16,6 +16,7 @@
 package com.arpnetworking.steno.aspect;
 
 import com.arpnetworking.steno.LogBuilder;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
@@ -28,6 +29,7 @@ import org.aspectj.lang.reflect.SourceLocation;
  * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
  */
 @Aspect
+@SuppressFBWarnings("MS_SHOULD_BE_FINAL")
 public class LogBuilderAspect {
 
     /**
