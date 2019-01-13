@@ -144,6 +144,6 @@ public class LoggingEventWrapper extends LoggingEvent {
 
     private final ILoggingEvent _wrappedEvent;
     private final String _message;
-    private final @Nullable Object[] _argumentArray;
+    @Nullable private final Object[] _argumentArray;
     private transient String _formattedMessage;
 }
