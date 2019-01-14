@@ -433,7 +433,7 @@ public class Logger {
      * @param message The message to be logged.
      * @param throwable The exception (<code>Throwable</code>) to be logged.
      */
-    public void debug(@Nullable final String message, final @Nullable Throwable throwable) {
+    public void debug(@Nullable final String message, @Nullable final Throwable throwable) {
         log(LogLevel.DEBUG, DEFAULT_EVENT, message, EMPTY_STRING_ARRAY, EMPTY_OBJECT_ARRAY, throwable);
     }
 

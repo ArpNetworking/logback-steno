@@ -52,6 +52,12 @@
     <suppress checks="MethodCount" files="src/main/java/com/arpnetworking/steno/Logger\.java"/>
     <suppress checks="MethodCount" files="src/test/java/com/arpnetworking/steno/LoggerTest\.java"/>
 
+    <!-- Do not require a package-info.java in external package path -->
+    <suppress checks="JavadocPackage" files="src/main/java/ch/qos/logback/core/rolling/helper/CustomSizeAndTimeBasedArchiveRemover.java"/>
+
+    <!-- Do not require a package-info.java for AspectJ files -->
+    <suppress checks="JavadocPackage" files="src/main/aspect/com/arpnetworking/steno/aspect/LogBuilderAspect.java"/>
+
     <!-- Exclude all regex checks until inline suppressions are supported -->
     <!-- See: https://github.com/checkstyle/checkstyle/issues/4841 -->
     <suppress checks="RegexpSingleline" files=".*Test\.java"/>
