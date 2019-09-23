@@ -18,7 +18,7 @@
   <parent>
     <groupId>com.arpnetworking.build</groupId>
     <artifactId>arpnetworking-parent-pom</artifactId>
-    <version>1.1.10</version>
+    <version>2.0.1</version>
     <relativePath />
   </parent>
 
@@ -44,9 +44,9 @@
     <developer>
       <id>barp</id>
       <name>Brandon Arp</name>
-      <email>brandon.arp@inscopemetrics.com</email>
+      <email>brandon.arp@inscopemetrics.io</email>
       <organization>Inscope Metrics</organization>
-      <organizationUrl>http://www.inscopemetrics.com</organizationUrl>
+      <organizationUrl>http://www.inscopemetrics.io</organizationUrl>
       <roles>
         <role>developer</role>
       </roles>
@@ -84,9 +84,9 @@
     <developer>
       <id>vkoskela</id>
       <name>Ville Koskela</name>
-      <email>ville.koskela@inscopemetrics.com</email>
-      <organization>Groupon</organization>
-      <organizationUrl>http://www.inscopemetrics.com</organizationUrl>
+      <email>ville.koskela@inscopemetrics.io</email>
+      <organization>Inscope Metrics</organization>
+      <organizationUrl>http://www.inscopemetrics.io</organizationUrl>
       <roles>
         <role>developer</role>
       </roles>
@@ -102,21 +102,21 @@
 
   <properties>
     <!--Dependency versions-->
-    <afterburner.version>2.9.8</afterburner.version>
-    <apache.commons.lang3.version>3.8.1</apache.commons.lang3.version>
-    <aspectjrt.version>1.9.2</aspectjrt.version>
-    <aspectjtools.version>1.9.2</aspectjtools.version>
-    <findbugs.annotations.version>3.0.1</findbugs.annotations.version>
-    <jackson.version>2.9.8</jackson.version>
-    <jackson-coreutils.version>1.9</jackson-coreutils.version>
-    <json-schema-core.version>1.2.10</json-schema-core.version>
-    <json-schema-validator.version>2.2.10</json-schema-validator.version>
+    <afterburner.version>2.9.10</afterburner.version>
+    <apache.commons.lang3.version>3.9</apache.commons.lang3.version>
+    <aspectjrt.version>1.9.4</aspectjrt.version>
+    <aspectjtools.version>1.9.4</aspectjtools.version>
+    <jackson.version>2.9.10</jackson.version>
+    <jackson-coreutils.version>1.10</jackson-coreutils.version>
+    <json-schema-core.version>1.2.11</json-schema-core.version>
+    <json-schema-validator.version>2.2.11</json-schema-validator.version>
     <jsr305.version>3.0.2</jsr305.version>
     <hamcrest.version>2.1</hamcrest.version>
     <junit.version>4.12</junit.version>
     <logback.version>1.2.3</logback.version>
     <mockito.version>2.23.4</mockito.version>
     <slf4j.version>1.7.25</slf4j.version>
+    <spotbugs.annotations.version>3.1.12</spotbugs.annotations.version>
 
     <!--Plugin versions-->
     <aspectj.maven.plugin.version>1.11</aspectj.maven.plugin.version>
@@ -149,8 +149,8 @@
         <artifactId>maven-failsafe-plugin</artifactId>
       </plugin>
       <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>findbugs-maven-plugin</artifactId>
+        <groupId>com.github.spotbugs</groupId>
+        <artifactId>spotbugs-maven-plugin</artifactId>
       </plugin>
       <plugin>
         <groupId>com.rimerosolutions.maven.plugins</groupId>
@@ -343,6 +343,11 @@
       <artifactId>jsr305</artifactId>
       <version>${jsr305.version}</version>
     </dependency>
+    <dependency>
+      <groupId>com.github.spotbugs</groupId>
+      <artifactId>spotbugs-annotations</artifactId>
+      <version>${spotbugs.annotations.version}</version>
+    </dependency>
 
     <!-- Test dependencies -->
     <dependency>
@@ -373,23 +378,17 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>com.google.code.findbugs</groupId>
-      <artifactId>findbugs-annotations</artifactId>
-      <version>${findbugs.annotations.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>com.github.java-json-tools</groupId>
       <artifactId>json-schema-validator</artifactId>
       <version>${json-schema-validator.version}</version>
       <scope>test</scope>
-      <!-- TODO(ville): Pending external upgrade:
-          https://github.com/java-json-tools/json-schema-validator/pull/284
-       -->
       <exclusions>
+        <!-- TODO(ville): Dependency needs to be updated.
+            https://github.com/java-json-tools/json-schema-validator/blob/master/build.gradle#L43
+        -->
         <exclusion>
-          <groupId>com.google.code.findbugs</groupId>
-          <artifactId>jsr305</artifactId>
+          <groupId>com.github.java-json-tools</groupId>
+          <artifactId>json-schema-core</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -398,15 +397,6 @@
       <artifactId>json-schema-core</artifactId>
       <version>${json-schema-core.version}</version>
       <scope>test</scope>
-      <!-- TODO(ville): Pending external upgrade:
-          https://github.com/java-json-tools/json-schema-core/pull/50
-       -->
-      <exclusions>
-        <exclusion>
-          <groupId>com.google.code.findbugs</groupId>
-          <artifactId>jsr305</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>com.github.java-json-tools</groupId>

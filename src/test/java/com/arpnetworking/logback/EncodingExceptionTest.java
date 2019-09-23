@@ -21,9 +21,9 @@ import org.junit.Test;
 import java.util.Collections;
 
 /**
- * Tests for <code>EncodingExceptionTest</code>.
+ * Tests for {@link EncodingExceptionTest}.
  *
- * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot io)
  */
 public class EncodingExceptionTest {
 

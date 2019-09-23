@@ -21,7 +21,7 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 /**
  * Steno specific caller method converter.
  *
- * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot io)
  * @since 1.14.0
  */
 public class StenoMethodOfCallerConverter extends AbstractStenoCallerConverter {

@@ -18,9 +18,9 @@ package com.arpnetworking.logback.jackson;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
- * Jackson mix-in for <code>Throwable</code>.
+ * Jackson mix-in for {@link Throwable}.
  *
- * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot io)
  * @since 1.13.1
  */
 public interface ThrowableMixIn {

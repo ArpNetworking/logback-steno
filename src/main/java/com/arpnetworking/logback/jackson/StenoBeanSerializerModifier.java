@@ -43,10 +43,11 @@ import java.util.concurrent.ConcurrentHashMap;
  * Modified for Jackson's BeanSerializer.
  *
  * First, allows injection of bean identifying properties, namely its instance and class, either when configured to
- * do so by the <code>StenoEncoder</code> or when the bean is not annotated with <code>Loggable</code>.
+ * do so by the {@link StenoEncoder} or when the bean is not annotated with {@link Loggable}.
  *
- * Second, if the bean is not annotated with <code>Loggable</code> any fields discovered by Jackson should be
- * suppressed. Since this acts only on the <code>BeanSerializer</code> it is already ensured that:
+ * Second, if the bean is not annotated with {@link Loggable} any fields discovered by Jackson should be
+ * suppressed. Since this acts only on the {@link com.fasterxml.jackson.databind.ser.BeanSerializer} it is already
+ * ensured that:
  *
  * <ul>
  *     <li>The value is not null which would bypass all serializers.</li>
@@ -56,7 +57,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *     <li>The type does not have a custom serializer registered.</li>
  * </ul>
  *
- * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot io)
  * @since 1.9.0
  */
 public final class StenoBeanSerializerModifier extends BeanSerializerModifier {
@@ -66,7 +67,7 @@ public final class StenoBeanSerializerModifier extends BeanSerializerModifier {
      *
      * @since 1.9.0
      *
-     * @param stenoEncoder The instance of <code>StenoEncoder</code>.
+     * @param stenoEncoder The instance of {@link StenoEncoder}.
      */
     public StenoBeanSerializerModifier(final StenoEncoder stenoEncoder) {
         _stenoEncoder = stenoEncoder;
@@ -138,7 +139,7 @@ public final class StenoBeanSerializerModifier extends BeanSerializerModifier {
         /**
          * {@inheritDoc}
          *
-         * @deprecated See <code>BeanPropertyWriter</code>.
+         * @deprecated See {@link BeanPropertyWriter}.
          */
         @Deprecated
         @Override
@@ -208,7 +209,7 @@ public final class StenoBeanSerializerModifier extends BeanSerializerModifier {
         /**
          * {@inheritDoc}
          *
-         * @deprecated See <code>BeanPropertyWriter</code>.
+         * @deprecated See {@link BeanPropertyWriter}.
          */
         @Deprecated
         @Override

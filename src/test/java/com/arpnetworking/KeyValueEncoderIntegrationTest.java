@@ -19,9 +19,9 @@ import com.arpnetworking.logback.StenoMarker;
 import org.junit.Test;
 
 /**
- * Simple integration test of the <code>KeyValueEncoder</code>.
+ * Simple integration test of the {@link KeyValueEncoder}.
  *
- * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot io)
  */
 public class KeyValueEncoderIntegrationTest extends BaseKeyValueIntegrationTest {
 

@@ -41,10 +41,10 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * Tests for <code>KeyValueEncoder</code>.
+ * Tests for {@link KeyValueEncoder}.
  *
  * @author Gil Markham (gil at groupon dot com)
- * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot io)
  */
 public class KeyValueEncoderTest {
 

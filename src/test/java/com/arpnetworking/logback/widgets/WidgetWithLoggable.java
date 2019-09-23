@@ -20,7 +20,7 @@ import com.arpnetworking.logback.annotations.Loggable;
 /**
  * Class to test object serialization.
  *
- * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot io)
  */
 @Loggable
 public final class WidgetWithLoggable {

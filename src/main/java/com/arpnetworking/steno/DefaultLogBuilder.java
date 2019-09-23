@@ -27,7 +27,7 @@ import javax.annotation.Nullable;
  *
  * @since 1.3.0
  *
- * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot io)
  */
 public class DefaultLogBuilder implements LogBuilder {
 

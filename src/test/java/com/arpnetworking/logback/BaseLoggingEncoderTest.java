@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Tests for <code>BaseLoggingEncoder</code>.
+ * Tests for {@link BaseLoggingEncoder}.
  *
  * @author Gil Markham (gil at groupon dot com)
  */
@@ -112,7 +112,7 @@ public class BaseLoggingEncoderTest {
     private BaseLoggingEncoder _encoder = new TestLoggingEncoder();
 
     /**
-     * Implementation of <code>BaseLoggingEncoder</code> for tests.
+     * Implementation of {@link BaseLoggingEncoder} for tests.
      */
     public static class TestLoggingEncoder extends BaseLoggingEncoder {
 

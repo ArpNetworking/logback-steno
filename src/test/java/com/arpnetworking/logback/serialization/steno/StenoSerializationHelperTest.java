@@ -29,9 +29,9 @@ import java.lang.reflect.Constructor;
 import java.math.BigInteger;
 
 /**
- * Tests for <code>StenoSerializationHelper</code>.
+ * Tests for {@link StenoSerializationHelper}.
  *
- * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot io)
  */
 public class StenoSerializationHelperTest {
 

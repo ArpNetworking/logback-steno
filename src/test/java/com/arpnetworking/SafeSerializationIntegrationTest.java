@@ -30,9 +30,9 @@ import com.arpnetworking.logback.widgets.WidgetWithSerializer;
 import org.junit.Test;
 
 /**
- * Integration test of safe <code>Object</code> logging.
+ * Integration test of safe {@link Object} logging.
  *
- * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot io)
  */
 public class SafeSerializationIntegrationTest extends BaseStenoIntegrationTest {
 

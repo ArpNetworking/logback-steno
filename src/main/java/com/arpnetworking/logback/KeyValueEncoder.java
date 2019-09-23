@@ -275,11 +275,11 @@ public class KeyValueEncoder extends BaseLoggingEncoder {
     }
 
     /**
-     * Create a format <code>String</code> compatible with <code>MessageFormatter</code>.
+     * Create a format {@link String} compatible with {@link org.slf4j.helpers.MessageFormatter}.
      *
      * @param name The name.
      * @param keys The argument keys.
-     * @return The format <code>String</code>.
+     * @return The format {@link String}.
      */
     protected String buildFormatString(@Nullable final String name, @Nullable final String[] keys) {
         final String effectiveName = name == null ? _logEventName : name;
@@ -294,7 +294,7 @@ public class KeyValueEncoder extends BaseLoggingEncoder {
     }
 
     /**
-     * Escape all <code>String</code> instances.
+     * Escape all {@link String} instances.
      *
      * @param values Arguments to encode.
      * @return Encoded arguments.

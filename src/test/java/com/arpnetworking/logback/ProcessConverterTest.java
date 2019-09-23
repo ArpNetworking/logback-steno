@@ -23,9 +23,9 @@ import org.mockito.Mockito;
 import java.util.regex.Pattern;
 
 /**
- * Tests for <code>ProcessConverter</code>.
+ * Tests for {@link ProcessConverter}.
  *
- * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot io)
  */
 public class ProcessConverterTest {
 

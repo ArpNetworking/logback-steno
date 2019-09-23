@@ -23,9 +23,9 @@ import java.security.SecureRandom;
 import java.util.UUID;
 
 /**
- * Tests for <code>SecureRandomProvider</code>.
+ * Tests for {@link SecureRandomProvider}.
  *
- * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot io)
  */
 public class SecureRandomProviderTest {
 

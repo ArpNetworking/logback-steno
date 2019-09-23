@@ -31,21 +31,21 @@ import javax.annotation.Nullable;
 /**
  * Helper functions and functors for Key-Value serialziation.
  *
- * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot io)
  * @since 1.9.0
  */
 public final class KeyValueSerializationHelper {
 
     /**
-     * Create a context based on the <code>KeyValueEncoder</code> configuration.
+     * Create a context based on the {@link KeyValueEncoder} configuration.
      *
      * @since 1.9.0
      *
-     * @param encoder The <code>KeyValueEncoder</code> instance.
-     * @param event The <code>ILoggingEvent</code> instance.
+     * @param encoder The {@link KeyValueEncoder} instance.
+     * @param event The {@link ILoggingEvent} instance.
      * @param contextKeys The additional user provided context keys.
      * @param contextValues The additional user provided context values matching the keys.
-     * @return <code>Map</code> with event context.
+     * @return {@link Map} with event context.
      */
     public static Map<String, Object> createContext(
             final KeyValueEncoder encoder,

@@ -20,7 +20,7 @@ import javax.annotation.Nullable;
 /**
  * Interface for classes which assemble log messages and log them.
  *
- * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot io)
  */
 public interface LogBuilder extends DeferredLogBuilder {
 
@@ -47,11 +47,11 @@ public interface LogBuilder extends DeferredLogBuilder {
     LogBuilder setMessage(String value);
 
     /**
-     * Set the exception (<code>Throwable</code>).
+     * Set the exception ({@link Throwable}).
      *
      * @since 1.3.0
      *
-     * @param value The exception (<code>Throwable</code>).
+     * @param value The exception ({@link Throwable}).
      * @return This instance as {@code <T>}.
      */
     @Override

@@ -31,9 +31,9 @@ import java.util.Collections;
 import java.util.Map;
 
 /**
- * Tests for <code>KeyValueSerializationHelper</code>.
+ * Tests for {@link KeyValueSerializationHelper}.
  *
- * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot io)
  */
 public class KeyValueSerializationHelperTest {
 

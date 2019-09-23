@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 /**
  * Interface for providing the process identifier.
  *
- * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot io)
  * @since 1.1.0
  */
 /* package private */ interface ProcessProvider {
@@ -35,12 +35,12 @@ import java.util.regex.Pattern;
     String get();
 
     /**
-     * Default instance of <code>ProcessProvider</code>.
+     * Default instance of {@link ProcessProvider}.
      */
     ProcessProvider DEFAULT = new DefaultProcessProvider(Pattern.compile("^([\\d]+)@.*$"));
 
     /**
-     * Default implementation of <code>ProcessProvider</code> using <code>ManagementFactory</code>.
+     * Default implementation of {@link ProcessProvider} using {@link ManagementFactory}.
      */
     /* package private static */ final class DefaultProcessProvider implements ProcessProvider {
 

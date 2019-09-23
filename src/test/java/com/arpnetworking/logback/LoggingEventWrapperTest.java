@@ -29,9 +29,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Tests for <code>LoggingEventWrapper</code>.
+ * Tests for {@link LoggingEventWrapper}.
  *
- * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot io)
  */
 public class LoggingEventWrapperTest {
 

@@ -24,7 +24,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * Generate the process id for a logging event. This implementation uses the current process id and therefore will not
  * work as expected if log events are serialized on a remote system.
  *
- * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot io)
  * @since 1.1.0
  */
 public class ProcessConverter extends ClassicConverter {

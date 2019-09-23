@@ -20,9 +20,9 @@ import com.arpnetworking.logback.widgets.TestExceptionWithLoggable;
 import org.junit.Test;
 
 /**
- * Simple integration test for <code>Exception</code> serialization with the <code>StenoEncoder</code>.
+ * Simple integration test for {@link Exception} serialization with the {@link com.arpnetworking.logback.StenoEncoder}.
  *
- * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot io)
  */
 public class StenoEncoderExceptionIntegrationTest extends BaseStenoIntegrationTest {
 

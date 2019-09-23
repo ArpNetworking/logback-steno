@@ -38,7 +38,7 @@ public class LoggingEventWrapper extends LoggingEvent {
     /**
      * Public constructor.
      *
-     * @param event Instance of <code>ILoggingEvent</code>.
+     * @param event Instance of {@link ILoggingEvent}.
      * @param message The message.
      * @param argumentArray The array of arguments for the message.
      */

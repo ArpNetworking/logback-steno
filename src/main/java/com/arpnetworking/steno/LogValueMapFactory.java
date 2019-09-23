@@ -28,37 +28,37 @@ import java.util.Optional;
 import javax.annotation.Nullable;
 
 /**
- * Factory for creating <code>ImmutableMap</code> instances from key-value
- * data which may contain null keys or values. Most <code>Map</code>
+ * Factory for creating {@link LogValueMap} instances from key-value
+ * data which may contain null keys or values. Most {@link Map}
  * implementations cannot contain either. This factory discards any such
  * keys or values and adds keys "_nullKeys" and/or "_nullValues" with value
  * true. If no null keys/values are found then no additional data is inserted.
  *
- * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot io)
  * @since 1.7.0
  */
 public final class LogValueMapFactory {
 
     /**
-     * Create a <code>Builder</code> for a null-safe immutable map. It is strongly recommended
+     * Create a {@link Builder} for a null-safe immutable map. It is strongly recommended
      * that you use the static factory accepting the target instance unless that is not applicable.
      *
      * @since 1.7.0
      *
-     * @return New <code>Builder</code> instance.
+     * @return New {@link Builder} instance.
      */
     public static Builder builder() {
         return new Builder(Optional.empty());
     }
 
     /**
-     * Create a <code>Builder</code> for a null-safe immutable map with a reference to the target
+     * Create a {@link Builder} for a null-safe immutable map with a reference to the target
      * instance being logged. This permits injection of bean identifier attributes if so configured.
      *
      * @since 1.9.0
      *
-     * @param o Instance of the <code>Object</code> being logged.
-     * @return New <code>Builder</code> instance.
+     * @param o Instance of the {@link Object} being logged.
+     * @return New {@link Builder} instance.
      */
     public static Builder builder(@Nullable final Object o) {
         return new Builder(Optional.ofNullable(o));
@@ -72,7 +72,7 @@ public final class LogValueMapFactory {
      *
      * @param k1 Key one.
      * @param v1 Value one.
-     * @return New <code>LogValueMap</code>.
+     * @return New {@link LogValueMap}.
      */
     public static LogValueMap of(final String k1, final Object v1) {
         return builder()
@@ -90,7 +90,7 @@ public final class LogValueMapFactory {
      * @param v1 Value one.
      * @param k2 Key two.
      * @param v2 Value two.
-     * @return New <code>LogValueMap</code>.
+     * @return New {@link LogValueMap}.
      */
     public static LogValueMap of(
             final String k1, final Object v1,
@@ -113,7 +113,7 @@ public final class LogValueMapFactory {
      * @param v2 Value two.
      * @param k3 Key three.
      * @param v3 Value three.
-     * @return New <code>LogValueMap</code>.
+     * @return New {@link LogValueMap}.
      */
     public static LogValueMap of(
             final String k1, final Object v1,
@@ -140,7 +140,7 @@ public final class LogValueMapFactory {
      * @param v3 Value three.
      * @param k4 Key four.
      * @param v4 Value four.
-     * @return New <code>LogValueMap</code>.
+     * @return New {@link LogValueMap}.
      */
     // CHECKSTYLE.OFF: ParameterNumber - Provided for compatibility wth ImmutableMap.of
     public static LogValueMap of(
@@ -173,7 +173,7 @@ public final class LogValueMapFactory {
      * @param v4 Value four.
      * @param k5 Key five.
      * @param v5 Value five.
-     * @return New <code>LogValueMap</code>.
+     * @return New {@link LogValueMap}.
      */
     // CHECKSTYLE.OFF: ParameterNumber - Provided for compatibility wth ImmutableMap.of
     public static LogValueMap of(
@@ -195,7 +195,7 @@ public final class LogValueMapFactory {
     private LogValueMapFactory() {}
 
     /**
-     * Custom <code>Map</code> implementation for custom serialization.
+     * Custom {@link Map} implementation for custom serialization.
      *
      * @since 1.9.0
      */
@@ -304,7 +304,7 @@ public final class LogValueMapFactory {
          *
          * @param key The entry key.
          * @param value The entry value.
-         * @return This <code>Builder</code> instance.
+         * @return This {@link Builder} instance.
          */
         public Builder put(@Nullable final String key, @Nullable final Object value) {
             if (key == null) {

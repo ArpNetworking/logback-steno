@@ -31,7 +31,7 @@ import java.time.ZonedDateTime;
 import java.util.Date;
 
 /**
- * Tests for <code>RandomizedTimeBasedFNATP</code>.
+ * Tests for {@link RandomizedTimeBasedFNATP}.
  *
  * @author Gil Markham (gil at groupon dot com)
  */

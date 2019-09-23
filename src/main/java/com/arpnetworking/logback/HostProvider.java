@@ -21,7 +21,7 @@ import java.net.UnknownHostException;
 /**
  * Interface for providing the local host name.
  *
- * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot io)
  * @since 1.1.0
  */
 /*package private*/ interface HostProvider {
@@ -35,12 +35,12 @@ import java.net.UnknownHostException;
     String get() throws UnknownHostException;
 
     /**
-     * Default instance of <code>HostProvider</code>.
+     * Default instance of {@link HostProvider}.
      */
     HostProvider DEFAULT = new DefaultHostProvider();
 
     /**
-     * Default implementation of <code>HostProvider</code> using <code>InetAddress</code>.
+     * Default implementation of {@link HostProvider} using {@link InetAddress}.
      */
     /* package private static */ final class DefaultHostProvider implements HostProvider {
 

@@ -23,9 +23,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.time.Duration;
 
 /**
- * Tests for <code>LoggerFactory</code>.
+ * Tests for {@link LoggerFactory}.
  *
- * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot io)
  */
 public class LoggerFactoryTest {
 

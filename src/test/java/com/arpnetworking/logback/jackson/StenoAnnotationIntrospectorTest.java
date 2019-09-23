@@ -28,9 +28,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Tests for <code>StenoAnnotationIntrospector</code>.
+ * Tests for {@link StenoAnnotationIntrospector}.
  *
- * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot io)
  */
 public final class StenoAnnotationIntrospectorTest {
 

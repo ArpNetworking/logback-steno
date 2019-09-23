@@ -21,9 +21,9 @@ import org.junit.Test;
 import java.util.Collections;
 
 /**
- * Integration test between <code>StenoEncoder</code> and runtime context injection.
+ * Integration test between {@link com.arpnetworking.logback.StenoEncoder} and runtime context injection.
  *
- * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot io)
  */
 public class StenoEncoderRuntimeContextIntegrationTest extends BaseStenoIntegrationTest {
 

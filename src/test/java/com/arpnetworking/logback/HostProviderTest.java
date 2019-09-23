@@ -21,9 +21,9 @@ import org.junit.Test;
 import java.net.UnknownHostException;
 
 /**
- * Tests for <code>HostProvider</code>.
+ * Tests for {@link HostProvider}.
  *
- * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot io)
  */
 public class HostProviderTest {
 

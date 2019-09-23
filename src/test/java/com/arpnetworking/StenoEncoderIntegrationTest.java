@@ -19,9 +19,9 @@ import com.arpnetworking.logback.StenoMarker;
 import org.junit.Test;
 
 /**
- * Simple integration test of the <code>StenoEncoder</code>.
+ * Simple integration test of the {@link com.arpnetworking.logback.StenoEncoder}.
  *
- * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot io)
  */
 public class StenoEncoderIntegrationTest extends BaseStenoIntegrationTest {
 

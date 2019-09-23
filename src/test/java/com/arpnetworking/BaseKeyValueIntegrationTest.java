@@ -16,9 +16,9 @@
 package com.arpnetworking;
 
 /**
- * Base integration test for <code>KeyValueEncoder</code>.
+ * Base integration test for {@link com.arpnetworking.logback.KeyValueEncoder}.
  *
- * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot io)
  */
 public abstract class BaseKeyValueIntegrationTest extends BaseIntegrationTest {
 

@@ -26,21 +26,21 @@ import ch.qos.logback.core.rolling.helper.FileNamePattern;
 import java.util.Date;
 
 /**
- * Extends <code>RandomizedTimeBasedFNATP</code> to also support file rolling
+ * Extends {@link RandomizedTimeBasedFNATP} to also support file rolling
  * when a maximum file size is exceeded. The extension leverages existing code
- * in <code>SizeAndTimeBasedFNATP</code>.
+ * in {@link SizeAndTimeBasedFNATP}.
  *
  * Unfortunately, the "extension" is done in a rather round-about manner. The
- * <code>SizeAndTimeBasedFNATP</code> class as a part of Logback is released
+ * {@link SizeAndTimeBasedFNATP} class as a part of Logback is released
  * under EPL which is not compatible with AL2. Therefore, we can't just copy
  * that class into this library and change the parent class. Instead the
- * resulting implementation extends <code>SizeAndTimeBasedFNATP</code> and
+ * resulting implementation extends {@link SizeAndTimeBasedFNATP} and
  * either splits (e.g. calls methods on both parent and encapsulated FNATPs)
  * or delegates (e.g. calls only method on parent or encapsulated FNATP).
  *
  * @param <E> The event type.
  *
- * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot io)
  * @since 1.10.0
  */
 @NoAutoStart

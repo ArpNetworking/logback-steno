@@ -38,19 +38,19 @@ import javax.annotation.Nullable;
 /**
  * Helper functions and for safe serialziation.
  *
- * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot io)
  * @since 1.11.2
  */
 public final class SafeSerializationHelper {
 
     /**
-     * Create a serialization safe context based on the <code>StenoEncoder</code> configuration.
+     * Create a serialization safe context based on the {@link StenoEncoder} configuration.
      *
      * @since 1.11.2
-     * @param encoder The <code>StenoEncoder</code> instance.
-     * @param event The <code>ILoggingEvent</code> instance.
-     * @param objectMapper <code>ObjectMapper</code> instance.
-     * @return <code>Map</code> with event context.
+     * @param encoder The {@link StenoEncoder} instance.
+     * @param event The {@link ILoggingEvent} instance.
+     * @param objectMapper {@link ObjectMapper} instance.
+     * @return {@link Map} with event context.
      */
     public static Map<String, Object> createSafeContext(
             final StenoEncoder encoder,
@@ -60,15 +60,15 @@ public final class SafeSerializationHelper {
     }
 
     /**
-     * Create a serialization safe context based on the <code>StenoEncoder</code> configuration.
+     * Create a serialization safe context based on the {@link StenoEncoder} configuration.
      *
      * @since 1.11.2
-     * @param encoder The <code>StenoEncoder</code> instance.
-     * @param event The <code>ILoggingEvent</code> instance.
-     * @param objectMapper <code>ObjectMapper</code> instance.
+     * @param encoder The {@link StenoEncoder} instance.
+     * @param event The {@link ILoggingEvent} instance.
+     * @param objectMapper {@link ObjectMapper} instance.
      * @param contextKeys The additional user provided context keys.
      * @param contextValues The additional user provided context values matching the keys.
-     * @return <code>Map</code> with event context.
+     * @return {@link Map} with event context.
      */
     public static Map<String, Object> createSafeContext(
             final StenoEncoder encoder,
@@ -83,8 +83,8 @@ public final class SafeSerializationHelper {
      * Safely serialize a value.
      *
      * @since 1.11.2
-     * @param encoder The <code>StenoEncoder</code> instance.
-     * @param value The <code>Object</code> instance to safely serialize.
+     * @param encoder The {@link StenoEncoder} instance.
+     * @param value The {@link Object} instance to safely serialize.
      */
     public static void safeEncodeValue(final StringBuilder encoder, @Nullable final Object value) {
         if (value == null) {

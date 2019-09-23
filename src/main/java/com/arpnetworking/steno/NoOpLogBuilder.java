@@ -18,9 +18,9 @@ package com.arpnetworking.steno;
 import javax.annotation.Nullable;
 
 /**
- * Implementation of <code>LogBuilder</code> which does not log a message.
+ * Implementation of {@link LogBuilder} which does not log a message.
  *
- * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot io)
  */
 public class NoOpLogBuilder implements LogBuilder {
 

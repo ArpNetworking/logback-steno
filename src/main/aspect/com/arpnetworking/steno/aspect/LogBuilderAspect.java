@@ -23,10 +23,10 @@ import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.reflect.SourceLocation;
 
 /**
- * Aspect for <code>LogBuilder</code> weaving line, file and class into the
- * context block of each <code>LogBuilder</code> message.
+ * Aspect for {@link LogBuilder} weaving line, file and class into the
+ * context block of each {@link LogBuilder} message.
  *
- * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot io)
  */
 @Aspect
 @SuppressFBWarnings("MS_SHOULD_BE_FINAL")
@@ -35,7 +35,7 @@ public class LogBuilderAspect {
     /**
      * Before outputting the message inject additional context.
      *
-     * @param joinPoint The <code>JoinPoint</code>.
+     * @param joinPoint The {@link JoinPoint}.
      */
     @Before("call(* com.arpnetworking.steno.LogBuilder.log())")
     public void addToContextLineAndMethod(final JoinPoint joinPoint) {
