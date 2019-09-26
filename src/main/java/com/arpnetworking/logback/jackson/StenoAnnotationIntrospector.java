@@ -34,7 +34,7 @@ import javax.annotation.Nullable;
  * </ul>
  *
  * @author Gil Markham (gil at groupon dot com)
- * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot io)
  * @since 1.3.3
  */
 public class StenoAnnotationIntrospector extends JacksonAnnotationIntrospector {
@@ -42,7 +42,7 @@ public class StenoAnnotationIntrospector extends JacksonAnnotationIntrospector {
     /**
      * Public constructor.
      *
-     * @param objectMapper Instance of <code>ObjectMapper</code>.
+     * @param objectMapper Instance of {@link ObjectMapper}.
      */
     public StenoAnnotationIntrospector(final ObjectMapper objectMapper) {
         _objectMapper = objectMapper;

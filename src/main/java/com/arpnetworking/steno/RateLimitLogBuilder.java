@@ -24,13 +24,13 @@ import java.util.Optional;
 import javax.annotation.Nullable;
 
 /**
- * Limits actual log output to at most once per specified <code>Period</code>.
- * The implementation will add two data attributes <code>_skipped</code> and
- * <code>_lastLogTime</code> to the wrapped <code>LogBuilder</code> instance.
+ * Limits actual log output to at most once per specified {@link Duration}.
+ * The implementation will add two data attributes {@link #_skipped} and
+ * {@link #_lastLogTime} to the wrapped {@link LogBuilder} instance.
  *
- * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot io)
  * @since 1.9.0
- * @deprecated This class is not thread safe and easily leads to misuse. Use <code>RateLimitLogger</code>.
+ * @deprecated This class is not thread safe and easily leads to misuse. Use {@link RateLimitLogger}.
  */
 @Deprecated
 public class RateLimitLogBuilder implements LogBuilder {
@@ -40,7 +40,7 @@ public class RateLimitLogBuilder implements LogBuilder {
      *
      * @since 1.9.0
      *
-     * @param logBuilder Instance of <code>LogBuilder</code>.
+     * @param logBuilder Instance of {@link LogBuilder}.
      * @param duration Minimum time between log message output.
      */
     public RateLimitLogBuilder(final LogBuilder logBuilder, final Duration duration) {
@@ -52,9 +52,9 @@ public class RateLimitLogBuilder implements LogBuilder {
      *
      * @since 1.9.0
      *
-     * @param logBuilder Instance of <code>LogBuilder</code>.
+     * @param logBuilder Instance of {@link LogBuilder}.
      * @param duration Minimum time between log message output.
-     * @param clock Instance of <code>Clock</code>.
+     * @param clock Instance of {@link Clock}.
      */
     /* package private */ RateLimitLogBuilder(final LogBuilder logBuilder, final Duration duration, final Clock clock) {
         _logBuilder = logBuilder;

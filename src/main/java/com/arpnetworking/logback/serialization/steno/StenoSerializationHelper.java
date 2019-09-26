@@ -50,7 +50,7 @@ import javax.annotation.Nullable;
 /**
  * Helper functions and functors for Steno serialziation.
  *
- * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot io)
  * @since 1.7.0
  */
 public final class StenoSerializationHelper {
@@ -60,10 +60,10 @@ public final class StenoSerializationHelper {
      *
      * @since 1.8.0
      *
-     * @param event Instance of <code>ILoggingEvent</code>.
+     * @param event Instance of {@link ILoggingEvent}.
      * @param eventName The name of the event.
-     * @param jsonGenerator <code>JsonGenerator</code> instance.
-     * @param objectMapper <code>ObjectMapper</code> instance.
+     * @param jsonGenerator {@link JsonGenerator} instance.
+     * @param objectMapper {@link ObjectMapper} instance.
      * @throws java.io.IOException If writing JSON fails.
      */
     public static void startStenoWrapper(
@@ -87,11 +87,11 @@ public final class StenoSerializationHelper {
      *
      * @since 1.8.0
      *
-     * @param event Instance of <code>ILoggingEvent</code>.
+     * @param event Instance of {@link ILoggingEvent}.
      * @param eventName The name of the event.
-     * @param jsonGenerator <code>JsonGenerator</code> instance.
-     * @param objectMapper <code>ObjectMapper</code> instance.
-     * @param encoder <code>StenoEncoder</code> instance.
+     * @param jsonGenerator {@link JsonGenerator} instance.
+     * @param objectMapper {@link ObjectMapper} instance.
+     * @param encoder {@link StenoEncoder} instance.
      * @throws IOException If writing JSON fails.
      */
     public static void endStenoWrapper(
@@ -116,13 +116,13 @@ public final class StenoSerializationHelper {
      *
      * @since 1.8.0
      *
-     * @param event Instance of <code>ILoggingEvent</code>.
+     * @param event Instance of {@link ILoggingEvent}.
      * @param eventName The name of the event.
-     * @param contextKeys The <code>List</code> of context keys.
-     * @param contextValues The <code>List</code> of context values.
-     * @param jsonGenerator <code>JsonGenerator</code> instance.
-     * @param objectMapper <code>ObjectMapper</code> instance.
-     * @param encoder <code>StenoEncoder</code> instance.
+     * @param contextKeys The {@link List} of context keys.
+     * @param contextValues The {@link List} of context values.
+     * @param jsonGenerator {@link JsonGenerator} instance.
+     * @param objectMapper {@link ObjectMapper} instance.
+     * @param encoder {@link StenoEncoder} instance.
      * @throws IOException If writing JSON fails.
      */
     public static void endStenoWrapper(
@@ -155,11 +155,11 @@ public final class StenoSerializationHelper {
      * Write specified key-value pairs into the current block.
      *
      * @since 1.7.0
-     * @param keys The <code>List</code> of keys.
-     * @param values The <code>List</code> of values.
-     * @param jsonGenerator <code>JsonGenerator</code> instance.
-     * @param objectMapper <code>ObjectMapper</code> instance.
-     * @param encoder Instance of <code>StenoEncoder</code>.
+     * @param keys The {@link List} of keys.
+     * @param values The {@link List} of values.
+     * @param jsonGenerator {@link JsonGenerator} instance.
+     * @param objectMapper {@link ObjectMapper} instance.
+     * @param encoder Instance of {@link StenoEncoder}.
      * @throws IOException If writing JSON fails.
      */
     public static void writeKeyValuePairs(
@@ -191,12 +191,12 @@ public final class StenoSerializationHelper {
     }
 
     /**
-     * Write a <code>Throwable</code> via <code>IThrowableProxy</code> as JSON.
+     * Write a {@link Throwable} via {@link IThrowableProxy} as JSON.
      *
      * @since 1.7.0
      * @param throwableProxy Throwable to serialize
-     * @param jsonGenerator  <code>JsonGenerator</code> instance.
-     * @param objectMapper <code>ObjectMapper</code> instance.
+     * @param jsonGenerator  {@link JsonGenerator} instance.
+     * @param objectMapper {@link ObjectMapper} instance.
      * @throws IOException If writing JSON fails.
      */
     public static void writeThrowable(
@@ -218,9 +218,9 @@ public final class StenoSerializationHelper {
      *
      * @since 1.7.0
      * @param throwableProxy Throwable to serialize
-     * @param jsonGenerator  <code>JsonGenerator</code> instance after exception object is started
-     * @param objectMapper <code>ObjectMapper</code> instance.
-     * @throws IOException If writing the <code>Throwable</code> as JSON fails.
+     * @param jsonGenerator  {@link JsonGenerator} instance after exception object is started
+     * @param objectMapper {@link ObjectMapper} instance.
+     * @throws IOException If writing the {@link Throwable} as JSON fails.
      */
     public static void serializeThrowable(
             final IThrowableProxy throwableProxy,
@@ -266,15 +266,15 @@ public final class StenoSerializationHelper {
     }
 
     /**
-     * Create a context based on the <code>StenoEncoder</code> configuration.
+     * Create a context based on the {@link StenoEncoder} configuration.
      *
      * @since 1.7.0
-     * @param encoder The <code>StenoEncoder</code> instance.
-     * @param event The <code>ILoggingEvent</code> instance.
-     * @param objectMapper <code>ObjectMapper</code> instance.
+     * @param encoder The {@link StenoEncoder} instance.
+     * @param event The {@link ILoggingEvent} instance.
+     * @param objectMapper {@link ObjectMapper} instance.
      * @param contextKeys The additional user provided context keys.
      * @param contextValues The additional user provided context values matching the keys.
-     * @return <code>Map</code> with event context.
+     * @return {@link Map} with event context.
      */
     public static Map<String, Object> createContext(
             final StenoEncoder encoder,
@@ -333,7 +333,7 @@ public final class StenoSerializationHelper {
      * Create a Steno compatible identifier.
      *
      * @since 1.7.0
-     * @return New identifier as a <code>String</code>.
+     * @return New identifier as a {@link String}.
      */
     public static String createId() {
         return UUID.randomUUID().toString();
@@ -341,11 +341,11 @@ public final class StenoSerializationHelper {
 
     /**
      * Determine if an object represents a primitive Json type. These include
-     * instances of <code>Number</code>, <code>String</code> and <code>Boolean</code>.
+     * instances of {@link Number}, {@link String} and {@link Boolean}.
      *
      * @since 1.7.0
-     * @param obj The <code>Object</code> to analyze.
-     * @return <code>True</code> if and only if the <code>Object</code> is a simple type.
+     * @param obj The {@link Object} to analyze.
+     * @return {@code True} if and only if the {@link Object} is a simple type.
      */
     public static boolean isSimpleType(@Nullable final Object obj) {
         if (obj == null) {
@@ -477,11 +477,11 @@ public final class StenoSerializationHelper {
         }
 
         /**
-         * Find the <code>StenoLevel</code> corresponding to the Logback <code>Level</code>.
+         * Find the {@link StenoLevel} corresponding to the Logback {@link Level}.
          *
          * @since 1.7.0
-         * @param logbackLevel The Logback <code>Level</code> to map to a <code>StenoLevel</code>.
-         * @return The matching <code>StenoLevel</code> or null if one is not found.
+         * @param logbackLevel The Logback {@link Level} to map to a {@link StenoLevel}.
+         * @return The matching {@link StenoLevel} or null if one is not found.
          */
         public static StenoLevel findByLogbackLevel(final Level logbackLevel) {
             return LOGBACK_LEVEL_MAP.get(logbackLevel);

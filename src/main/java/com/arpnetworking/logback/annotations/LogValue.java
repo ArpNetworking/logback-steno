@@ -23,19 +23,19 @@ import java.lang.annotation.Target;
 /**
  * Annotate a method which returns as its value the instance to be serialized
  * as the representation of the class under serialization. For example, add
- * this method to the <code>toString</code> of a <code>Runnable</code>
- * implementation in order to serialize instances of that <code>Runnable</code>
- * using the result of <code>toString</code> instead of Jackson's standard
+ * this method to the {@link #toString} of a {@link Runnable}
+ * implementation in order to serialize instances of that {@link Runnable}
+ * using the result of {@link #toString} instead of Jackson's standard
  * bean serialization.
  *
  * This annotation when active takes precedence over @JsonValue. When inactive
- * the annotation introspector <code>StenoAnnotationIntrospector</code> will
- * by default fallback to @JsonValue if present. Adding @LogValue settings its
- * <code>disabled</code> and <code>fallback</code> properties to <code>false</code>
+ * the annotation introspector {@link com.arpnetworking.logback.jackson.StenoAnnotationIntrospector}
+ * will by default fallback to @JsonValue if present. Adding @LogValue settings
+ * its {@code disabled} and {@code fallback} properties to {@code false}
  * causes the introspector to ignore both @LogValue and @JsonValue and perform
  * standard bean serialization.
  *
- * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot io)
  * @since 1.3.3
  */
 @Target({ElementType.METHOD})
@@ -44,17 +44,17 @@ public @interface LogValue {
 
     // CHECKSTYLE.OFF: JavadocMethod - Mismatch between Javadoc annotation spec (correct) and Checkstyle (incorrect).
     /**
-     * Optional argument defines whether the annotation is active or not. The only use for a value of <code>false</code>
+     * Optional argument defines whether the annotation is active or not. The only use for a value of {@code false}
      * is when overriding a method with this annotation.
      *
-     * @return <code>True</code> if and only if the annotation is active.
+     * @return {@code True} if and only if the annotation is active.
      */
     boolean enabled() default true;
 
     /**
      * Optional argument defines whether to fallback to @JsonValue if this annotation is not active.
      *
-     * @return <code>True</code> if and only if fallback is enabled.
+     * @return {@code True} if and only if fallback is enabled.
      */
     boolean fallback() default true;
     // CHECKSTYLE.ON: JavadocMethod

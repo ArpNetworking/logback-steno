@@ -19,9 +19,9 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * Tests for <code>LogReferenceOnly</code>.
+ * Tests for {@link LogReferenceOnly}.
  *
- * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot io)
  */
 public class LogReferenceOnlyTest {
 

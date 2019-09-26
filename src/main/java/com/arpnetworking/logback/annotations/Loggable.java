@@ -23,22 +23,22 @@ import java.lang.annotation.Target;
 /**
  * Annotation that marks types for serialization as-is by Jackson when logged. The annotation is not required if:
  * <ul>
- *     <li>The type is a <code>Number</code>, <code>Boolean</code> and <code>String</code>.</li>
- *     <li>The type is a <code>JsonNode</code>.</li>
+ *     <li>The type is a {@link Number}, {@link Boolean} and {@link String}.</li>
+ *     <li>The type is a {@link com.fasterxml.jackson.databind.JsonNode}.</li>
  *     <li>Custom serializer is registered with @JsonSerialize.</li>
  *     <li>Custom serializer is registered with a Module.</li>
  *     <li>The type has a valid @JsonValue or @LogValue annotated method.</li>
  * </ul>on
  *
- * Otherwise values of the type are serialized as <code>LogReferenceOnly</code> which outputs the id of the instance in
- * hexadecimal as well as the full class name.
+ * Otherwise values of the type are serialized as {@link com.arpnetworking.steno.LogReferenceOnly} which outputs the id
+ * of the instance in hexadecimal as well as the full class name.
  *
- * Alternatively, all types may be serialized as-is by configuring the <code>StenoEncoder</code> with <code>safe</code>
- * set to <code>false</code>. However, this is not recommended because types in many third-party libraries can cause
- * the serializer to fail if they are included in the log message or transitively in any types included in the log
- * message.
+ * Alternatively, all types may be serialized as-is by configuring the {@link com.arpnetworking.logback.StenoEncoder}
+ * with {@link com.arpnetworking.logback.StenoEncoder#setSafe(boolean)} set to {@code false}. However, this is not
+ * recommended because types in many third-party libraries can cause the serializer to fail if they are included in the
+ * log message or transitively in any types included in the log message.
  *
- * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot io)
  * @see com.arpnetworking.logback.jackson.RedactionFilter
  * @since 1.8.0
  */

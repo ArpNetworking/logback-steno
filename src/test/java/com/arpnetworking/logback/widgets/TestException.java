@@ -18,7 +18,7 @@ package com.arpnetworking.logback.widgets;
 /**
  * Class to test exception serialization.
  *
- * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot io)
  */
 public class TestException extends Exception {
 

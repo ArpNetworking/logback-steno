@@ -18,77 +18,77 @@ package com.arpnetworking.steno;
 import java.time.Duration;
 
 /**
- * Factory class creates instances of <code>Logger</code>. To include the
+ * Factory class creates instances of {@link Logger}. To include the
  * context class or name in the context block of the Steno encoder's
  * output remember to enable context logger injection via:
  *
- * <code>setInjectContextLogger</code>
+ * {@link com.arpnetworking.logback.StenoEncoder#setInjectContextLogger}
  *
  * @since 1.3.0
  *
- * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot io)
  */
 public final class LoggerFactory {
 
     /**
-     * Return a Steno <code>Logger</code> for a context class.
+     * Return a Steno {@link Logger} for a context class.
      *
-     * @param clazz The <code>Logger</code> context class.
-     * @return Steno <code>Logger</code> instance.
+     * @param clazz The {@link Logger} context class.
+     * @return Steno {@link Logger} instance.
      */
     public static Logger getLogger(final Class<?> clazz) {
         return new Logger(org.slf4j.LoggerFactory.getLogger(clazz));
     }
 
     /**
-     * Return a rate limited Steno <code>Logger</code> for a context class.
+     * Return a rate limited Steno {@link Logger} for a context class.
      *
-     * @param clazz The <code>Logger</code> context class.
+     * @param clazz The {@link Logger} context class.
      * @param duration Minimum time between log message output.
-     * @return Steno <code>Logger</code> instance.
+     * @return Steno {@link Logger} instance.
      */
     public static Logger getRateLimitLogger(final Class<?> clazz, final Duration duration) {
         return new RateLimitLogger(org.slf4j.LoggerFactory.getLogger(clazz), duration);
     }
 
     /**
-     * Return a Steno <code>Logger</code> for a context name.
+     * Return a Steno {@link Logger} for a context name.
      *
-     * @param name The <code>Logger</code> context name.
-     * @return Steno <code>Logger</code> instance.
+     * @param name The {@link Logger} context name.
+     * @return Steno {@link Logger} instance.
      */
     public static Logger getLogger(final String name) {
         return new Logger(org.slf4j.LoggerFactory.getLogger(name));
     }
 
     /**
-     * Return a rate limited Steno <code>Logger</code> for a context name.
+     * Return a rate limited Steno {@link Logger} for a context name.
      *
-     * @param name The <code>Logger</code> context name.
+     * @param name The {@link Logger} context name.
      * @param duration Minimum time between log message output.
-     * @return Steno <code>Logger</code> instance.
+     * @return Steno {@link Logger} instance.
      */
     public static Logger getRateLimitLogger(final String name, final Duration duration) {
         return new RateLimitLogger(org.slf4j.LoggerFactory.getLogger(name), duration);
     }
 
     /**
-     * Return a Steno <code>Logger</code> for an already instantiated <code>org.slf4j.Logger</code> instance.
+     * Return a Steno {@link Logger} for an already instantiated {@link org.slf4j.Logger} instance.
      *
-     * @param logger The <code>org.slf4j.Logger</code> instance.
-     * @return Steno <code>Logger</code> instance.
+     * @param logger The {@link org.slf4j.Logger} instance.
+     * @return Steno {@link Logger} instance.
      */
     public static Logger getLogger(final org.slf4j.Logger logger) {
         return new Logger(logger);
     }
 
     /**
-     * Return a rate limited Steno <code>Logger</code> for an already instantiated <code>org.slf4j.Logger</code>
+     * Return a rate limited Steno {@link Logger} for an already instantiated {@link org.slf4j.Logger}
      * instance.
      *
-     * @param logger The <code>org.slf4j.Logger</code> instance.
+     * @param logger The {@link org.slf4j.Logger} instance.
      * @param duration Minimum time between log message output.
-     * @return Steno <code>Logger</code> instance.
+     * @return Steno {@link Logger} instance.
      */
     public static Logger getRateLimitLogger(final org.slf4j.Logger logger, final Duration duration) {
         return new RateLimitLogger(logger, duration);

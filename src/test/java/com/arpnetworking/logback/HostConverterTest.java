@@ -24,9 +24,9 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 /**
- * Tests for <code>HostConverter</code>.
+ * Tests for {@link HostConverter}.
  *
- * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot io)
  */
 public class HostConverterTest {
 

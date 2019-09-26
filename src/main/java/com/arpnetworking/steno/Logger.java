@@ -25,7 +25,7 @@ import javax.annotation.Nullable;
 
 /**
  * Logger designed for use particularly with Steno encoder. Although not
- * interface compatible with the SLF4J <code>Logger</code> this class
+ * interface compatible with the SLF4J {@link Logger} this class
  * attempts to provide some common methods to ease the transition. However,
  * its purpose is to provide more concrete methods of data and context
  * injection for Steno versus the general marker methods in the SFL4J
@@ -35,7 +35,7 @@ import javax.annotation.Nullable;
  *
  * @author Stuart Siegrist (fsiegrist at groupon dot com)
  * @author Gil Markham (gil at groupon dot com)
- * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot io)
  */
 public class Logger {
 
@@ -52,11 +52,11 @@ public class Logger {
 
     /**
      * Create a new log event at the trace level. Do not pre-build and cache
-     * <code>LogBuilder</code> instances.
+     * {@link LogBuilder} instances.
      *
      * @since 1.12.0
      *
-     * @return Instance of <code>LogBuilder</code>.
+     * @return Instance of {@link LogBuilder}.
      */
     public LogBuilder trace() {
         if (getSlf4jLogger().isTraceEnabled()) {
@@ -67,14 +67,14 @@ public class Logger {
     }
 
     /**
-     * Create a new log event at the trace level. The provided <code>Consumer</code>
-     * populates a <code>DeferredLogBuilder</code> to define the log event. The
+     * Create a new log event at the trace level. The provided {@link Consumer}
+     * populates a {@link DeferredLogBuilder} to define the log event. The
      * consumer may not be invoked if it is not necessary. Therefore it is
-     * important not to include side-effects in the provided <code>Consumer</code>.
+     * important not to include side-effects in the provided {@link Consumer}.
      *
      * @since 1.12.0
      *
-     * @param consumer Function to populate the <code>DeferredLogBuilder</code>.
+     * @param consumer Function to populate the {@link DeferredLogBuilder}.
      */
     public void trace(final Consumer<DeferredLogBuilder> consumer) {
         if (_slf4jLogger.isTraceEnabled()) {
@@ -88,7 +88,7 @@ public class Logger {
      * Log a message at the trace level. Default values are used for all other
      * parameters.
      *
-     * This method is also found in the SLF4J <code>Logger</code>. It is
+     * This method is also found in the SLF4J {@link Logger}. It is
      * intended to simplify migration; however, it's use is not recommended
      * as it lacks an identifying event and typically includes serialized
      * as opposed to structured data.
@@ -102,10 +102,10 @@ public class Logger {
     }
 
     /**
-     * Log a message with a <code>Throwable</code> at the trace level. Default
+     * Log a message with a {@link Throwable} at the trace level. Default
      * values are used for all other parameters.
      *
-     * This method is also found in the SLF4J <code>Logger</code>. It is
+     * This method is also found in the SLF4J {@link Logger}. It is
      * intended to simplify migration; however, it's use is not recommended
      * as it lacks an identifying event and typically includes serialized
      * as opposed to structured data.
@@ -113,7 +113,7 @@ public class Logger {
      * @since 1.3.0
      *
      * @param message The message to be logged.
-     * @param throwable The exception (<code>Throwable</code>) to be logged.
+     * @param throwable The exception ({@link Throwable}) to be logged.
      */
     public void trace(@Nullable final String message, @Nullable final Throwable throwable) {
         log(LogLevel.TRACE, DEFAULT_EVENT, message, EMPTY_STRING_ARRAY, EMPTY_OBJECT_ARRAY, throwable);
@@ -133,14 +133,14 @@ public class Logger {
     }
 
     /**
-     * Log a message for a canonical event with a <code>Throwable</code> at the
+     * Log a message for a canonical event with a {@link Throwable} at the
      * trace level. Default values are used for all other parameters.
      *
      * @since 1.3.0
      *
      * @param event The canonical event that occurred.
      * @param message The message to be logged.
-     * @param throwable The exception (<code>Throwable</code>) to be logged.
+     * @param throwable The exception ({@link Throwable}) to be logged.
      */
     public void trace(@Nullable final String event, @Nullable final String message, @Nullable final Throwable throwable) {
         log(LogLevel.TRACE, event, message, EMPTY_STRING_ARRAY, EMPTY_OBJECT_ARRAY, throwable);
@@ -172,7 +172,7 @@ public class Logger {
      * @param event The canonical event that occurred.
      * @param message The message to be logged.
      * @param data Map of data key-value pairs.
-     * @param throwable The exception (<code>Throwable</code>) to be logged.
+     * @param throwable The exception ({@link Throwable}) to be logged.
      */
     public void trace(
             @Nullable final String event,
@@ -197,12 +197,12 @@ public class Logger {
      * Log a message for a canonical event with supporting key-value pairs at
      * the trace level.
      *
-     * The number of elements in the <code>dataNames</code> array should
-     * match the number of arguments provided as <code>data</code>
-     * unless a <code>Throwable</code> is specified as the final argument in
-     * <code>data</code> in which case there would be one fewer element
-     * in the <code>dataNames</code> array compared to the number of
-     * arguments provided as <code>data</code>.
+     * The number of elements in the {@code dataKeys} array should
+     * match the number of arguments provided as {@code dataValues}
+     * unless a {@link Throwable} is specified as the final argument in
+     * {@code dataValues} in which case there would be one fewer element
+     * in the {@code dataNames} array compared to the number of
+     * arguments provided as {@code dataValues}.
      *
      * @since 1.3.0
      *
@@ -210,7 +210,7 @@ public class Logger {
      * @param message The message to be logged.
      * @param dataKeys Array of data keys.
      * @param dataValues data values matching data keys by index. The
-     * final data argument may be a <code>Throwable</code> which does
+     * final data argument may be a {@link Throwable} which does
      * not require a matching data name.
      */
     public void trace(
@@ -232,7 +232,7 @@ public class Logger {
      * @param message The message to be logged.
      * @param dataKeys Array of data keys.
      * @param dataValues Array of data values.
-     * @param throwable The exception (<code>Throwable</code>) to be logged.
+     * @param throwable The exception ({@link Throwable}) to be logged.
      */
     public void trace(
             @Nullable final String event,
@@ -271,7 +271,7 @@ public class Logger {
 
     /**
      * Log a message for a canonical event with supporting key-value pairs and
-     * a <code>Throwable</code> at the trace level. This method is provided
+     * a {@link Throwable} at the trace level. This method is provided
      * only for efficiency over the var-args method above as it avoids an array
      * creation during invocation.
      *
@@ -281,7 +281,7 @@ public class Logger {
      * @param message The message to be logged.
      * @param dataKey1 First data name.
      * @param dataValue1 First data value.
-     * @param throwable The exception (<code>Throwable</code>) to be logged.
+     * @param throwable The exception ({@link Throwable}) to be logged.
      */
     public void trace(
             @Nullable final String event,
@@ -325,7 +325,7 @@ public class Logger {
 
     /**
      * Log a message for a canonical event with supporting key-value pairs and
-     * a <code>Throwable</code> at the trace level. This method is provided
+     * a {@link Throwable} at the trace level. This method is provided
      * only for efficiency over the var-args method above as it avoids an array
      * creation during invocation.
      *
@@ -337,7 +337,7 @@ public class Logger {
      * @param dataKey2 Second data name.
      * @param dataValue1 First data value.
      * @param dataValue2 Second data value.
-     * @param throwable The exception (<code>Throwable</code>) to be logged.
+     * @param throwable The exception ({@link Throwable}) to be logged.
      */
     public void trace(
             @Nullable final String event,
@@ -370,11 +370,11 @@ public class Logger {
 
     /**
      * Create a new log event at the debug level. Do not pre-build and cache
-     * <code>LogBuilder</code> instances.
+     * {@link LogBuilder} instances.
      *
      * @since 1.3.1
      *
-     * @return Instance of <code>LogBuilder</code>.
+     * @return Instance of {@link LogBuilder}.
      */
     public LogBuilder debug() {
         if (getSlf4jLogger().isDebugEnabled()) {
@@ -385,14 +385,14 @@ public class Logger {
     }
 
     /**
-     * Create a new log event at the debug level. The provided <code>Consumer</code>
-     * populates a <code>DeferredLogBuilder</code> to define the log event. The
+     * Create a new log event at the debug level. The provided {@link Consumer}
+     * populates a {@link DeferredLogBuilder} to define the log event. The
      * consumer may not be invoked if it is not necessary. Therefore it is
-     * important not to include side-effects in the provided <code>Consumer</code>.
+     * important not to include side-effects in the provided {@link Consumer}.
      *
      * @since 1.12.0
      *
-     * @param consumer Function to populate the <code>DeferredLogBuilder</code>.
+     * @param consumer Function to populate the {@link DeferredLogBuilder}.
      */
     public void debug(final Consumer<DeferredLogBuilder> consumer) {
         if (_slf4jLogger.isDebugEnabled()) {
@@ -406,7 +406,7 @@ public class Logger {
      * Log a message at the debug level. Default values are used for all other
      * parameters.
      *
-     * This method is also found in the SLF4J <code>Logger</code>. It is
+     * This method is also found in the SLF4J {@link Logger}. It is
      * intended to simplify migration; however, it's use is not recommended
      * as it lacks an identifying event and typically includes serialized
      * as opposed to structured data.
@@ -420,10 +420,10 @@ public class Logger {
     }
 
     /**
-     * Log a message with a <code>Throwable</code> at the debug level. Default
+     * Log a message with a {@link Throwable} at the debug level. Default
      * values are used for all other parameters.
      *
-     * This method is also found in the SLF4J <code>Logger</code>. It is
+     * This method is also found in the SLF4J {@link Logger}. It is
      * intended to simplify migration; however, it's use is not recommended
      * as it lacks an identifying event and typically includes serialized
      * as opposed to structured data.
@@ -431,7 +431,7 @@ public class Logger {
      * @since 1.3.0
      *
      * @param message The message to be logged.
-     * @param throwable The exception (<code>Throwable</code>) to be logged.
+     * @param throwable The exception ({@link Throwable}) to be logged.
      */
     public void debug(@Nullable final String message, @Nullable final Throwable throwable) {
         log(LogLevel.DEBUG, DEFAULT_EVENT, message, EMPTY_STRING_ARRAY, EMPTY_OBJECT_ARRAY, throwable);
@@ -451,14 +451,14 @@ public class Logger {
     }
 
     /**
-     * Log a message for a canonical event with a <code>Throwable</code> at the
+     * Log a message for a canonical event with a {@link Throwable} at the
      * debug level. Default values are used for all other parameters.
      *
      * @since 1.3.0
      *
      * @param event The canonical event that occurred.
      * @param message The message to be logged.
-     * @param throwable The exception (<code>Throwable</code>) to be logged.
+     * @param throwable The exception ({@link Throwable}) to be logged.
      */
     public void debug(@Nullable final String event, @Nullable final String message, @Nullable final Throwable throwable) {
         log(LogLevel.DEBUG, event, message, EMPTY_STRING_ARRAY, EMPTY_OBJECT_ARRAY, throwable);
@@ -490,7 +490,7 @@ public class Logger {
      * @param event The canonical event that occurred.
      * @param message The message to be logged.
      * @param data Map of data key-value pairs.
-     * @param throwable The exception (<code>Throwable</code>) to be logged.
+     * @param throwable The exception ({@link Throwable}) to be logged.
      */
     public void debug(
             @Nullable final String event,
@@ -515,12 +515,12 @@ public class Logger {
      * Log a message for a canonical event with supporting key-value pairs at
      * the debug level.
      *
-     * The number of elements in the <code>dataNames</code> array should
-     * match the number of arguments provided as <code>data</code>
-     * unless a <code>Throwable</code> is specified as the final argument in
-     * <code>data</code> in which case there would be one fewer element
-     * in the <code>dataNames</code> array compared to the number of
-     * arguments provided as <code>data</code>.
+     * The number of elements in the {@code dataKeys} array should
+     * match the number of arguments provided as {@code dataValues}
+     * unless a {@link Throwable} is specified as the final argument in
+     * {@code dataValues} in which case there would be one fewer element
+     * in the {@code dataKeys} array compared to the number of
+     * arguments provided as {@code dataValues}.
      *
      * @since 1.3.0
      *
@@ -528,7 +528,7 @@ public class Logger {
      * @param message The message to be logged.
      * @param dataKeys Array of data keys.
      * @param dataValues data values matching data keys by index. The
-     * final data argument may be a <code>Throwable</code> which does
+     * final data argument may be a {@link Throwable} which does
      * not require a matching data name.
      */
     public void debug(
@@ -550,7 +550,7 @@ public class Logger {
      * @param message The message to be logged.
      * @param dataKeys Array of data keys.
      * @param dataValues Array of data values.
-     * @param throwable The exception (<code>Throwable</code>) to be logged.
+     * @param throwable The exception ({@link Throwable}) to be logged.
      */
     public void debug(
             @Nullable final String event,
@@ -589,7 +589,7 @@ public class Logger {
 
     /**
      * Log a message for a canonical event with supporting key-value pairs and
-     * a <code>Throwable</code> at the debug level. This method is provided
+     * a {@link Throwable} at the debug level. This method is provided
      * only for efficiency over the var-args method above as it avoids an array
      * creation during invocation.
      *
@@ -599,7 +599,7 @@ public class Logger {
      * @param message The message to be logged.
      * @param dataKey1 First data name.
      * @param dataValue1 First data value.
-     * @param throwable The exception (<code>Throwable</code>) to be logged.
+     * @param throwable The exception ({@link Throwable}) to be logged.
      */
     public void debug(
             @Nullable final String event,
@@ -643,7 +643,7 @@ public class Logger {
 
     /**
      * Log a message for a canonical event with supporting key-value pairs and
-     * a <code>Throwable</code> at the debug level. This method is provided
+     * a {@link Throwable} at the debug level. This method is provided
      * only for efficiency over the var-args method above as it avoids an array
      * creation during invocation.
      *
@@ -655,7 +655,7 @@ public class Logger {
      * @param dataKey2 Second data name.
      * @param dataValue1 First data value.
      * @param dataValue2 Second data value.
-     * @param throwable The exception (<code>Throwable</code>) to be logged.
+     * @param throwable The exception ({@link Throwable}) to be logged.
      */
     public void debug(
             @Nullable final String event,
@@ -688,11 +688,11 @@ public class Logger {
 
     /**
      * Create a new log event at the info level. Do not pre-build and cache
-     * <code>LogBuilder</code> instances.
+     * {@link LogBuilder} instances.
      *
      * @since 1.3.1
      *
-     * @return Instance of <code>LogBuilder</code>.
+     * @return Instance of {@link LogBuilder}.
      */
     public LogBuilder info() {
         if (getSlf4jLogger().isInfoEnabled()) {
@@ -703,14 +703,14 @@ public class Logger {
     }
 
     /**
-     * Create a new log event at the info level. The provided <code>Consumer</code>
-     * populates a <code>DeferredLogBuilder</code> to define the log event. The
+     * Create a new log event at the info level. The provided {@link Consumer}
+     * populates a {@link DeferredLogBuilder} to define the log event. The
      * consumer may not be invoked if it is not necessary. Therefore it is
-     * important not to include side-effects in the provided <code>Consumer</code>.
+     * important not to include side-effects in the provided {@link Consumer}.
      *
      * @since 1.12.0
      *
-     * @param consumer Function to populate the <code>DeferredLogBuilder</code>.
+     * @param consumer Function to populate the {@link DeferredLogBuilder}.
      */
     public void info(final Consumer<DeferredLogBuilder> consumer) {
         if (_slf4jLogger.isInfoEnabled()) {
@@ -724,7 +724,7 @@ public class Logger {
      * Log a message at the info level. Default values are used for all other
      * parameters.
      *
-     * This method is also found in the SLF4J <code>Logger</code>. It is
+     * This method is also found in the SLF4J {@link Logger}. It is
      * intended to simplify migration; however, it's use is not recommended
      * as it lacks an identifying event and typically includes serialized
      * as opposed to structured data.
@@ -738,10 +738,10 @@ public class Logger {
     }
 
     /**
-     * Log a message with a <code>Throwable</code> at the info level. Default
+     * Log a message with a {@link Throwable} at the info level. Default
      * values are used for all other parameters.
      *
-     * This method is also found in the SLF4J <code>Logger</code>. It is
+     * This method is also found in the SLF4J {@link Logger}. It is
      * intended to simplify migration; however, it's use is not recommended
      * as it lacks an identifying event and typically includes serialized
      * as opposed to structured data.
@@ -749,7 +749,7 @@ public class Logger {
      * @since 1.3.0
      *
      * @param message The message to be logged.
-     * @param throwable The exception (<code>Throwable</code>) to be logged.
+     * @param throwable The exception ({@link Throwable}) to be logged.
      */
     public void info(@Nullable final String message, @Nullable final Throwable throwable) {
         log(LogLevel.INFO, DEFAULT_EVENT, message, EMPTY_STRING_ARRAY, EMPTY_OBJECT_ARRAY, throwable);
@@ -769,14 +769,14 @@ public class Logger {
     }
 
     /**
-     * Log a message for a canonical event with a <code>Throwable</code> at the
+     * Log a message for a canonical event with a {@link Throwable} at the
      * info level. Default values are used for all other parameters.
      *
      * @since 1.3.0
      *
      * @param event The canonical event that occurred.
      * @param message The message to be logged.
-     * @param throwable The exception (<code>Throwable</code>) to be logged.
+     * @param throwable The exception ({@link Throwable}) to be logged.
      */
     public void info(@Nullable final String event, @Nullable final String message, @Nullable final Throwable throwable) {
         log(LogLevel.INFO, event, message, EMPTY_STRING_ARRAY, EMPTY_OBJECT_ARRAY, throwable);
@@ -808,7 +808,7 @@ public class Logger {
      * @param event The canonical event that occurred.
      * @param message The message to be logged.
      * @param data Map of data key-value pairs.
-     * @param throwable The exception (<code>Throwable</code>) to be logged.
+     * @param throwable The exception ({@link Throwable}) to be logged.
      */
     public void info(
             @Nullable final String event,
@@ -833,12 +833,12 @@ public class Logger {
      * Log a message for a canonical event with supporting key-value pairs at
      * the info level.
      *
-     * The number of elements in the <code>dataNames</code> array should
-     * match the number of arguments provided as <code>data</code>
-     * unless a <code>Throwable</code> is specified as the final argument in
-     * <code>data</code> in which case there would be one fewer element
-     * in the <code>dataNames</code> array compared to the number of
-     * arguments provided as <code>data</code>.
+     * The number of elements in the {@code dataKeys} array should
+     * match the number of arguments provided as {@code dataValues}
+     * unless a {@link Throwable} is specified as the final argument in
+     * {@code dataValues} in which case there would be one fewer element
+     * in the {@code dataKeys} array compared to the number of
+     * arguments provided as {@code dataValues}.
      *
      * @since 1.3.0
      *
@@ -846,7 +846,7 @@ public class Logger {
      * @param message The message to be logged.
      * @param dataKeys Array of data keys.
      * @param dataValues data values matching data keys by index. The
-     * final data argument may be a <code>Throwable</code> which does
+     * final data argument may be a {@link Throwable} which does
      * not require a matching data name.
      */
     public void info(
@@ -868,7 +868,7 @@ public class Logger {
      * @param message The message to be logged.
      * @param dataKeys Array of data keys.
      * @param dataValues Array of data values.
-     * @param throwable The exception (<code>Throwable</code>) to be logged.
+     * @param throwable The exception ({@link Throwable}) to be logged.
      */
     public void info(
             @Nullable final String event,
@@ -907,7 +907,7 @@ public class Logger {
 
     /**
      * Log a message for a canonical event with supporting key-value pairs and
-     * a <code>Throwable</code> at the info level. This method is provided
+     * a {@link Throwable} at the info level. This method is provided
      * only for efficiency over the var-args method above as it avoids an array
      * creation during invocation.
      *
@@ -917,7 +917,7 @@ public class Logger {
      * @param message The message to be logged.
      * @param dataKey1 First data name.
      * @param dataValue1 First data value.
-     * @param throwable The exception (<code>Throwable</code>) to be logged.
+     * @param throwable The exception ({@link Throwable}) to be logged.
      */
     public void info(
             @Nullable final String event,
@@ -961,7 +961,7 @@ public class Logger {
 
     /**
      * Log a message for a canonical event with supporting key-value pairs and
-     * a <code>Throwable</code> at the info level. This method is provided
+     * a {@link Throwable} at the info level. This method is provided
      * only for efficiency over the var-args method above as it avoids an array
      * creation during invocation.
      *
@@ -973,7 +973,7 @@ public class Logger {
      * @param dataKey2 Second data name.
      * @param dataValue1 First data value.
      * @param dataValue2 Second data value.
-     * @param throwable The exception (<code>Throwable</code>) to be logged.
+     * @param throwable The exception ({@link Throwable}) to be logged.
      */
     public void info(
             @Nullable final String event,
@@ -1006,11 +1006,11 @@ public class Logger {
 
     /**
      * Create a new log event at the warn level. Do not pre-build and cache
-     * <code>LogBuilder</code> instances.
+     * {@link LogBuilder} instances.
      *
      * @since 1.3.1
      *
-     * @return Instance of <code>LogBuilder</code>.
+     * @return Instance of {@link LogBuilder}.
      */
     public LogBuilder warn() {
         if (getSlf4jLogger().isWarnEnabled()) {
@@ -1022,14 +1022,14 @@ public class Logger {
 
 
     /**
-     * Create a new log event at the warn level. The provided <code>Consumer</code>
-     * populates a <code>DeferredLogBuilder</code> to define the log event. The
+     * Create a new log event at the warn level. The provided {@link Consumer}
+     * populates a {@link DeferredLogBuilder} to define the log event. The
      * consumer may not be invoked if it is not necessary. Therefore it is
-     * important not to include side-effects in the provided <code>Consumer</code>.
+     * important not to include side-effects in the provided {@link Consumer}.
      *
      * @since 1.12.0
      *
-     * @param consumer Function to populate the <code>DeferredLogBuilder</code>.
+     * @param consumer Function to populate the {@link DeferredLogBuilder}.
      */
     public void warn(final Consumer<DeferredLogBuilder> consumer) {
         if (_slf4jLogger.isWarnEnabled()) {
@@ -1043,7 +1043,7 @@ public class Logger {
      * Log a message at the warn level. Default values are used for all other
      * parameters.
      *
-     * This method is also found in the SLF4J <code>Logger</code>. It is
+     * This method is also found in the SLF4J {@link Logger}. It is
      * intended to simplify migration; however, it's use is not recommended
      * as it lacks an identifying event and typically includes serialized
      * as opposed to structured data.
@@ -1057,10 +1057,10 @@ public class Logger {
     }
 
     /**
-     * Log a message with a <code>Throwable</code> at the warn level. Default
+     * Log a message with a {@link Throwable} at the warn level. Default
      * values are used for all other parameters.
      *
-     * This method is also found in the SLF4J <code>Logger</code>. It is
+     * This method is also found in the SLF4J {@link Logger}. It is
      * intended to simplify migration; however, it's use is not recommended
      * as it lacks an identifying event and typically includes serialized
      * as opposed to structured data.
@@ -1068,7 +1068,7 @@ public class Logger {
      * @since 1.3.0
      *
      * @param message The message to be logged.
-     * @param throwable The exception (<code>Throwable</code>) to be logged.
+     * @param throwable The exception ({@link Throwable}) to be logged.
      */
     public void warn(@Nullable final String message, @Nullable final Throwable throwable) {
         log(LogLevel.WARN, DEFAULT_EVENT, message, EMPTY_STRING_ARRAY, EMPTY_OBJECT_ARRAY, throwable);
@@ -1088,14 +1088,14 @@ public class Logger {
     }
 
     /**
-     * Log a message for a canonical event with a <code>Throwable</code> at the
+     * Log a message for a canonical event with a {@link Throwable} at the
      * warn level. Default values are used for all other parameters.
      *
      * @since 1.3.0
      *
      * @param event The canonical event that occurred.
      * @param message The message to be logged.
-     * @param throwable The exception (<code>Throwable</code>) to be logged.
+     * @param throwable The exception ({@link Throwable}) to be logged.
      */
     public void warn(@Nullable final String event, @Nullable final String message, @Nullable final Throwable throwable) {
         log(LogLevel.WARN, event, message, EMPTY_STRING_ARRAY, EMPTY_OBJECT_ARRAY, throwable);
@@ -1127,7 +1127,7 @@ public class Logger {
      * @param event The canonical event that occurred.
      * @param message The message to be logged.
      * @param data Map of data key-value pairs.
-     * @param throwable The exception (<code>Throwable</code>) to be logged.
+     * @param throwable The exception ({@link Throwable}) to be logged.
      */
     public void warn(
             @Nullable final String event,
@@ -1152,12 +1152,12 @@ public class Logger {
      * Log a message for a canonical event with supporting key-value pairs at
      * the warn level.
      *
-     * The number of elements in the <code>dataNames</code> array should
-     * match the number of arguments provided as <code>data</code>
-     * unless a <code>Throwable</code> is specified as the final argument in
-     * <code>data</code> in which case there would be one fewer element
-     * in the <code>dataNames</code> array compared to the number of
-     * arguments provided as <code>data</code>.
+     * The number of elements in the {@code dataKeys} array should
+     * match the number of arguments provided as {@code dataValues}
+     * unless a {@link Throwable} is specified as the final argument in
+     * {@code dataValues} in which case there would be one fewer element
+     * in the {@code dataKeys} array compared to the number of
+     * arguments provided as {@code dataValues}.
      *
      * @since 1.3.0
      *
@@ -1165,7 +1165,7 @@ public class Logger {
      * @param message The message to be logged.
      * @param dataKeys Array of data keys.
      * @param dataValues data values matching data keys by index. The
-     * final data argument may be a <code>Throwable</code> which does
+     * final data argument may be a {@link Throwable} which does
      * not require a matching data name.
      */
     public void warn(
@@ -1187,7 +1187,7 @@ public class Logger {
      * @param message The message to be logged.
      * @param dataKeys Array of data keys.
      * @param dataValues Array of data values.
-     * @param throwable The exception (<code>Throwable</code>) to be logged.
+     * @param throwable The exception ({@link Throwable}) to be logged.
      */
     public void warn(
             @Nullable final String event,
@@ -1226,7 +1226,7 @@ public class Logger {
 
     /**
      * Log a message for a canonical event with supporting key-value pairs and
-     * a <code>Throwable</code> at the warn level. This method is provided
+     * a {@link Throwable} at the warn level. This method is provided
      * only for efficiency over the var-args method above as it avoids an array
      * creation during invocation.
      *
@@ -1236,7 +1236,7 @@ public class Logger {
      * @param message The message to be logged.
      * @param dataKey1 First data name.
      * @param dataValue1 First data value.
-     * @param throwable The exception (<code>Throwable</code>) to be logged.
+     * @param throwable The exception ({@link Throwable}) to be logged.
      */
     public void warn(
             @Nullable final String event,
@@ -1280,7 +1280,7 @@ public class Logger {
 
     /**
      * Log a message for a canonical event with supporting key-value pairs and
-     * a <code>Throwable</code> at the warn level. This method is provided
+     * a {@link Throwable} at the warn level. This method is provided
      * only for efficiency over the var-args method above as it avoids an array
      * creation during invocation.
      *
@@ -1292,7 +1292,7 @@ public class Logger {
      * @param dataKey2 Second data name.
      * @param dataValue1 First data value.
      * @param dataValue2 Second data value.
-     * @param throwable The exception (<code>Throwable</code>) to be logged.
+     * @param throwable The exception ({@link Throwable}) to be logged.
      */
     public void warn(
             @Nullable final String event,
@@ -1325,11 +1325,11 @@ public class Logger {
 
     /**
      * Create a new log event at the error level. Do not pre-build and cache
-     * <code>LogBuilder</code> instances.
+     * {@link LogBuilder} instances.
      *
      * @since 1.3.1
      *
-     * @return Instance of <code>LogBuilder</code>.
+     * @return Instance of {@link LogBuilder}.
      */
     public LogBuilder error() {
         if (getSlf4jLogger().isErrorEnabled()) {
@@ -1340,14 +1340,14 @@ public class Logger {
     }
 
     /**
-     * Create a new log event at the error level. The provided <code>Consumer</code>
-     * populates a <code>DeferredLogBuilder</code> to define the log event. The
+     * Create a new log event at the error level. The provided {@link Consumer}
+     * populates a {@link DeferredLogBuilder} to define the log event. The
      * consumer may not be invoked if it is not necessary. Therefore it is
-     * important not to include side-effects in the provided <code>Consumer</code>.
+     * important not to include side-effects in the provided {@link Consumer}.
      *
      * @since 1.12.0
      *
-     * @param consumer Function to populate the <code>DeferredLogBuilder</code>.
+     * @param consumer Function to populate the {@link DeferredLogBuilder}.
      */
     public void error(final Consumer<DeferredLogBuilder> consumer) {
         if (_slf4jLogger.isErrorEnabled()) {
@@ -1361,7 +1361,7 @@ public class Logger {
      * Log a message at the error level. Default values are used for all other
      * parameters.
      *
-     * This method is also found in the SLF4J <code>Logger</code>. It is
+     * This method is also found in the SLF4J {@link Logger}. It is
      * intended to simplify migration; however, it's use is not recommended
      * as it lacks an identifying event and typically includes serialized
      * as opposed to structured data.
@@ -1375,10 +1375,10 @@ public class Logger {
     }
 
     /**
-     * Log a message with a <code>Throwable</code> at the error level. Default
+     * Log a message with a {@link Throwable} at the error level. Default
      * values are used for all other parameters.
      *
-     * This method is also found in the SLF4J <code>Logger</code>. It is
+     * This method is also found in the SLF4J {@link Logger}. It is
      * intended to simplify migration; however, it's use is not recommended
      * as it lacks an identifying event and typically includes serialized
      * as opposed to structured data.
@@ -1386,7 +1386,7 @@ public class Logger {
      * @since 1.3.0
      *
      * @param message The message to be logged.
-     * @param throwable The exception (<code>Throwable</code>) to be logged.
+     * @param throwable The exception ({@link Throwable}) to be logged.
      */
     public void error(@Nullable final String message, @Nullable final Throwable throwable) {
         log(LogLevel.ERROR, DEFAULT_EVENT, message, EMPTY_STRING_ARRAY, EMPTY_OBJECT_ARRAY, throwable);
@@ -1406,14 +1406,14 @@ public class Logger {
     }
 
     /**
-     * Log a message for a canonical event with a <code>Throwable</code> at the
+     * Log a message for a canonical event with a {@link Throwable} at the
      * error level. Default values are used for all other parameters.
      *
      * @since 1.3.0
      *
      * @param event The canonical event that occurred.
      * @param message The message to be logged.
-     * @param throwable The exception (<code>Throwable</code>) to be logged.
+     * @param throwable The exception ({@link Throwable}) to be logged.
      */
     public void error(@Nullable final String event, @Nullable final String message, @Nullable final Throwable throwable) {
         log(LogLevel.ERROR, event, message, EMPTY_STRING_ARRAY, EMPTY_OBJECT_ARRAY, throwable);
@@ -1445,7 +1445,7 @@ public class Logger {
      * @param event The canonical event that occurred.
      * @param message The message to be logged.
      * @param data Map of data key-value pairs.
-     * @param throwable The exception (<code>Throwable</code>) to be logged.
+     * @param throwable The exception ({@link Throwable}) to be logged.
      */
     public void error(
             @Nullable final String event,
@@ -1470,12 +1470,12 @@ public class Logger {
      * Log a message for a canonical event with supporting key-value pairs at
      * the error level.
      *
-     * The number of elements in the <code>dataNames</code> array should
-     * match the number of arguments provided as <code>data</code>
-     * unless a <code>Throwable</code> is specified as the final argument in
-     * <code>data</code> in which case there would be one fewer element
-     * in the <code>dataNames</code> array compared to the number of
-     * arguments provided as <code>data</code>.
+     * The number of elements in the {@code dataKeys} array should
+     * match the number of arguments provided as {@code dataValues}
+     * unless a {@link Throwable} is specified as the final argument in
+     * {@code dataValues} in which case there would be one fewer element
+     * in the {@code dataKeys} array compared to the number of
+     * arguments provided as {@code dataValues}.
      *
      * @since 1.3.0
      *
@@ -1483,7 +1483,7 @@ public class Logger {
      * @param message The message to be logged.
      * @param dataKeys Array of data keys.
      * @param dataValues data values matching data keys by index. The
-     * final data argument may be a <code>Throwable</code> which does
+     * final data argument may be a {@link Throwable} which does
      * not require a matching data name.
      */
     public void error(
@@ -1505,7 +1505,7 @@ public class Logger {
      * @param message The message to be logged.
      * @param dataKeys Array of data keys.
      * @param dataValues Array of data values.
-     * @param throwable The exception (<code>Throwable</code>) to be logged.
+     * @param throwable The exception ({@link Throwable}) to be logged.
      */
     public void error(
             @Nullable final String event,
@@ -1544,7 +1544,7 @@ public class Logger {
 
     /**
      * Log a message for a canonical event with supporting key-value pairs and
-     * a <code>Throwable</code> at the error level. This method is provided
+     * a {@link Throwable} at the error level. This method is provided
      * only for efficiency over the var-args method above as it avoids an array
      * creation during invocation.
      *
@@ -1554,7 +1554,7 @@ public class Logger {
      * @param message The message to be logged.
      * @param dataKey1 First data name.
      * @param dataValue1 First data value.
-     * @param throwable The exception (<code>Throwable</code>) to be logged.
+     * @param throwable The exception ({@link Throwable}) to be logged.
      */
     public void error(
             @Nullable final String event,
@@ -1598,7 +1598,7 @@ public class Logger {
 
     /**
      * Log a message for a canonical event with supporting key-value pairs and
-     * a <code>Throwable</code> at the error level. This method is provided
+     * a {@link Throwable} at the error level. This method is provided
      * only for efficiency over the var-args method above as it avoids an array
      * creation during invocation.
      *
@@ -1610,7 +1610,7 @@ public class Logger {
      * @param dataKey2 Second data name.
      * @param dataValue1 First data value.
      * @param dataValue2 Second data value.
-     * @param throwable The exception (<code>Throwable</code>) to be logged.
+     * @param throwable The exception ({@link Throwable}) to be logged.
      */
     public void error(
             @Nullable final String event,
@@ -1631,23 +1631,23 @@ public class Logger {
     }
 
     /**
-     * Accessor for underluing <code>org.slf4j.Logger</code> instance.
+     * Accessor for underluing {@link org.slf4j.Logger} instance.
      *
-     * @return Instance of underlying <code>org.slf4j.Logger</code>.
+     * @return Instance of underlying {@link org.slf4j.Logger}.
      */
     protected org.slf4j.Logger getSlf4jLogger() {
         return _slf4jLogger;
     }
 
     /**
-     * Log for a particular level using the <code>ARRAY_MARKER</code>.
+     * Log for a particular level using the {@link ARRAY_MARKER}.
      *
      * @param level The log event level.
      * @param event The log event name.
      * @param message The log event message.
      * @param dataKeys The array of data keys.
      * @param dataValues The array of data values.
-     * @param throwable The <code>Throwable</code>.
+     * @param throwable The {@link Throwable}.
      */
     /* package private */ void log(
             final LogLevel level,
@@ -1665,19 +1665,19 @@ public class Logger {
     }
 
     /**
-     * Log for a particular level using the <code>LISTS_MARKER</code>.
+     * Log for a particular level using the {@link LISTS_MARKER}.
      *
      * @param level The log event level.
      * @param event The log event name.
-     * @param dataKeys The <code>List</code> of data keys. The
-     * <code>List</code> may be modified.
-     * @param dataValues The <code>List</code> of data values. The
-     * <code>List</code> may be modified.
-     * @param contextKeys The <code>List</code> of context keys. The
-     * <code>List</code> may be modified.
-     * @param contextValues The <code>List</code> of context values. The
-     * <code>List</code> may be modified.
-     * @param throwable The <code>Throwable</code>.
+     * @param dataKeys The {@link List} of data keys. The
+     * {@link List} may be modified.
+     * @param dataValues The {@link List} of data values. The
+     * {@link List} may be modified.
+     * @param contextKeys The {@link List} of context keys. The
+     * {@link List} may be modified.
+     * @param contextValues The {@link List} of context values. The
+     * {@link List} may be modified.
+     * @param throwable The {@link Throwable}.
      */
     /* package private */ void log(
             final LogLevel level,
@@ -1831,7 +1831,7 @@ public class Logger {
     /**
      * Protected constructor for extension.
      *
-     * @param slf4jLogger Instance of underlying <code>org.slf4j.Logger</code>.
+     * @param slf4jLogger Instance of underlying {@link org.slf4j.Logger}.
      */
     /* package private */ Logger(final org.slf4j.Logger slf4jLogger) {
         _slf4jLogger = slf4jLogger;

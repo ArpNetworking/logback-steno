@@ -28,9 +28,9 @@ import org.junit.Assert;
 import java.io.IOException;
 
 /**
- * Base integration test for <code>StenoEncoder</code>.
+ * Base integration test for {@link com.arpnetworking.logback.StenoEncoder}.
  *
- * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot io)
  */
 public abstract class BaseStenoIntegrationTest extends BaseIntegrationTest {
 

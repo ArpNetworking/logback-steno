@@ -26,9 +26,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Tests for <code>SafeSerializationHelper</code>.
+ * Tests for {@link SafeSerializationHelper}.
  *
- * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot io)
  */
 public class SafeSerializationHelperTest {
 

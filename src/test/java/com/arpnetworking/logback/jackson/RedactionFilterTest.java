@@ -38,7 +38,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Tests for <code>RedactionFilter</code>.
+ * Tests for {@link RedactionFilter}.
  *
  * @author Gil Markham (gil at groupon dot com)
  */

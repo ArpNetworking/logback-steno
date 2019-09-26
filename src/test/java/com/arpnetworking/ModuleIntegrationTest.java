@@ -22,7 +22,7 @@ import org.junit.Test;
 /**
  * Integration test of module integration.
  *
- * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot io)
  */
 public class ModuleIntegrationTest extends BaseStenoIntegrationTest {
 

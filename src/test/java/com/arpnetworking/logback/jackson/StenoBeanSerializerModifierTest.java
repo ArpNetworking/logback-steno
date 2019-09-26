@@ -20,9 +20,9 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * Tests for <code>StenoBeanSerializerModifier</code>.
+ * Tests for {@link StenoBeanSerializerModifier}.
  *
- * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot io)
  */
 public class StenoBeanSerializerModifierTest {
 

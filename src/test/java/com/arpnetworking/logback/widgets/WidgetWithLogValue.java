@@ -21,7 +21,7 @@ import com.arpnetworking.steno.LogValueMapFactory;
 /**
  * Class to test object serialization.
  *
- * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot io)
  */
 public final class WidgetWithLogValue {
 

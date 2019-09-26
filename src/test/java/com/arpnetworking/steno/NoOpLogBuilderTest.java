@@ -19,9 +19,9 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * Tests for <code>NoOpLogBuilder</code>.
+ * Tests for {@link NoOpLogBuilder}.
  *
- * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot io)
  */
 public class NoOpLogBuilderTest {
 

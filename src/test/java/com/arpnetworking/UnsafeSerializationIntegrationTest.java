@@ -21,9 +21,9 @@ import com.arpnetworking.logback.widgets.WidgetWithLoggableContainingWidget;
 import org.junit.Test;
 
 /**
- * Integration test of unsafe <code>Object</code> logging.
+ * Integration test of unsafe {@link Object} logging.
  *
- * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot io)
  */
 public class UnsafeSerializationIntegrationTest extends BaseStenoIntegrationTest {
 

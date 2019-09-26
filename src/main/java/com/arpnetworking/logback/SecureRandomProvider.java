@@ -18,35 +18,35 @@ package com.arpnetworking.logback;
 import java.security.SecureRandom;
 
 /**
- * Interface for providing the <code>SecureRandom</code> instances.
+ * Interface for providing the {@link SecureRandom} instances.
  *
- * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot io)
  * @since 1.1.0
  */
 /*package private*/ interface SecureRandomProvider {
 
     /**
-     * Return an instance of <code>SecureRandom</code>.
+     * Return an instance of {@link SecureRandom}.
      *
-     * @return An instance of <code>SecureRandom</code>.
+     * @return An instance of {@link SecureRandom}.
      */
     SecureRandom get();
 
     /**
-     * Return an instance of <code>SecureRandom</code> seeded with the specified data.
+     * Return an instance of {@link SecureRandom} seeded with the specified data.
      *
      * @param seed The seed value to use.
-     * @return An instance of <code>SecureRandom</code>.
+     * @return An instance of {@link SecureRandom}.
      */
     SecureRandom get(byte[] seed);
 
     /**
-     * Default instance of <code>SecureRandomProvider</code>.
+     * Default instance of {@link SecureRandomProvider}.
      */
     SecureRandomProvider DEFAULT = new DefaultSecureRandomProvider();
 
     /**
-     * Default implementation of <code>SecureRandomProvider</code>.
+     * Default implementation of {@link SecureRandomProvider}.
      */
     /* package private static */ final class DefaultSecureRandomProvider implements SecureRandomProvider {
 

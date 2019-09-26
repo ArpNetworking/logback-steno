@@ -31,9 +31,9 @@ import org.mockito.MockitoAnnotations;
 import java.util.Date;
 
 /**
- * Tests for <code>SizeAndRandomizedTimeBasedFNATP</code>.
+ * Tests for {@link SizeAndRandomizedTimeBasedFNATP}.
  *
- * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot io)
  */
 public class SizeAndRandomizedTimeBasedFNATPTest {
 

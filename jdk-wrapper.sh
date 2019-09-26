@@ -99,15 +99,13 @@ safe_command "rm \"${l_fifo}\""
 command=
 cmd_configuration=
 for arg in "$@"; do
-  if [ -z ${in_command} ]; then
-    jdkw_arg=$(echo "${arg}" | grep '^JDKW_.*')
-    jdkw_base_dir_arg=$(echo "${arg}" | grep '^JDKW_BASE_DIR.*')
-    if [ -n "${jdkw_base_dir_arg}" ]; then
-      eval ${arg}
-    fi
-    if [ -n "${jdkw_arg}" ]; then
-      cmd_configuration="${cmd_configuration}${arg} "
-    fi
+  jdkw_arg=$(echo "${arg}" | grep '^JDKW_.*')
+  jdkw_base_dir_arg=$(echo "${arg}" | grep '^JDKW_BASE_DIR.*')
+  if [ -n "${jdkw_base_dir_arg}" ]; then
+    eval ${arg}
+  fi
+  if [ -n "${jdkw_arg}" ]; then
+    cmd_configuration="${cmd_configuration}${arg} "
   fi
   case "${arg}" in
     *\'*)

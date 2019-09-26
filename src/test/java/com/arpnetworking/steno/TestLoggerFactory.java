@@ -16,17 +16,17 @@
 package com.arpnetworking.steno;
 
 /**
- * Wraps a <code>org.slf4j.Logger</code> instance in a <code>com.arpnetwoprking.steno.Logger</code> instance.
+ * Wraps a {@link org.slf4j.Logger} instance in a {@link com.arpnetwoprking.steno.Logger} instance.
  *
- * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot io)
  */
 public final class TestLoggerFactory {
 
     /**
-     * Return a Steno <code>Logger</code> around a <code>org.slf4j.Logger</code> instance.
+     * Return a Steno {@link Logger} around a {@link org.slf4j.Logger} instance.
      *
-     * @param logger The  <code>org.slf4j.Logger</code> instance.
-     * @return Steno <code>Logger</code> instance.
+     * @param logger The  {@link org.slf4j.Logger} instance.
+     * @return Steno {@link Logger} instance.
      */
     public static Logger getLogger(final org.slf4j.Logger logger) {
         return new Logger(logger);

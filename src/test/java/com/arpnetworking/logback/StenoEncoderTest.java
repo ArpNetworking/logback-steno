@@ -66,7 +66,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * Tests for <code>StenoEncoder</code>.
+ * Tests for {@link StenoEncoder}.
  *
  * @author Gil Markham (gil at groupon dot com)
  */

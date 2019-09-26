@@ -50,7 +50,7 @@ public class RedactionFilter extends SimpleBeanPropertyFilter.SerializeExceptFil
      *
      * @param allowNull Whether to allow null field values to pass as-is even
      * if those fields are annotated as redacted.
-     * @param properties Additional properties for <code>SimpleBeanPropertyFilter</code>.
+     * @param properties Additional properties for {@link SimpleBeanPropertyFilter}.
      */
     public RedactionFilter(final boolean allowNull, final Set<String> properties) {
         super(properties);
@@ -107,12 +107,12 @@ public class RedactionFilter extends SimpleBeanPropertyFilter.SerializeExceptFil
     private static final long serialVersionUID = -3087655661573890897L;
 
     /**
-     * The identifier of the <code>RedactionFilter</code> filter.
+     * The identifier of the {@link RedactionFilter} filter.
      */
     public static final String REDACTION_FILTER_ID = "com.arpnetworking.logback.jackson.RedactionFilterId";
 
     /**
-     * The <code>String</code> to replace field values annotated as redacted.
+     * The {@link String} to replace field values annotated as redacted.
      */
     public static final String REDACTION_STRING = "<REDACTED>";
 }

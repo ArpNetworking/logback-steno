@@ -27,7 +27,7 @@ import java.io.StringWriter;
 /**
  * Serialization strategy for standard message specification.
  *
- * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot io)
  * @since 1.3.1
  */
 public class StandardSerializationStrategy implements Serializable {
@@ -35,9 +35,9 @@ public class StandardSerializationStrategy implements Serializable {
     /**
      * Public constructor.
      *
-     * @param encoder Instance of <code>StenoEncoder</code>.
-     * @param jsonFactory Instance of <code>JsonFactory</code>.
-     * @param objectMapper Instance of <code>ObjectMapper</code>.
+     * @param encoder Instance of {@link StenoEncoder}.
+     * @param jsonFactory Instance of {@link JsonFactory}.
+     * @param objectMapper Instance of {@link ObjectMapper}.
      */
     public StandardSerializationStrategy(
             final StenoEncoder encoder,
@@ -53,8 +53,8 @@ public class StandardSerializationStrategy implements Serializable {
      *
      * @param event The event.
      * @param eventName The event name.
-     * @return Serialization of message as a <code>String</code>.
-     * @throws Exception Serialization may throw any <code>Exception</code>.
+     * @return Serialization of message as a {@link String}.
+     * @throws Exception Serialization may throw any {@link Exception}.
      */
     public String serialize(
         final ILoggingEvent event,

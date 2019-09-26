@@ -28,7 +28,7 @@ import javax.annotation.Nullable;
 /**
  * Serialization strategy for array based message specifications.
  *
- * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot io)
  * @since 1.3.1
  */
 public class ArraySerialziationStrategy implements Serializable {
@@ -36,9 +36,9 @@ public class ArraySerialziationStrategy implements Serializable {
     /**
      * Public constructor.
      *
-     * @param encoder Instance of <code>StenoEncoder</code>.
-     * @param jsonFactory Instance of <code>JsonFactory</code>.
-     * @param objectMapper Instance of <code>ObjectMapper</code>.
+     * @param encoder Instance of {@link StenoEncoder}.
+     * @param jsonFactory Instance of {@link JsonFactory}.
+     * @param objectMapper Instance of {@link ObjectMapper}.
      */
     public ArraySerialziationStrategy(
             final StenoEncoder encoder,
@@ -56,8 +56,8 @@ public class ArraySerialziationStrategy implements Serializable {
      * @param eventName The event name.
      * @param keys The message keys.
      * @param values The message values.
-     * @return Serialization of message as a <code>String</code>.
-     * @throws Exception Serialization may throw any <code>Exception</code>.
+     * @return Serialization of message as a {@link String}.
+     * @throws Exception Serialization may throw any {@link Exception}.
      */
     public String serialize(
             final ILoggingEvent event,

@@ -37,9 +37,9 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Tests for <code>RateLimitLogger</code>.
+ * Tests for {@link RateLimitLogger}.
  *
- * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot io)
  */
 public class RateLimitLoggerTest {
 

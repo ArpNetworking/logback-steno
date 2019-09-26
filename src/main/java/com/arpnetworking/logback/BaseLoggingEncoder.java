@@ -61,26 +61,26 @@ public abstract class BaseLoggingEncoder extends LayoutWrappingEncoder<ILoggingE
     }
 
     /**
-     * Safely encode an instance of <code>EncodingException</code>.
+     * Safely encode an instance of {@link EncodingException}.
      *
      * @since 1.9.0
      *
-     * @param event Instance of <code>ILoggingEvent</code>.
-     * @param ee Instance of <code>EncodingException</code> to encode.
-     * @return Encoded version of <code>EncodingException</code>.
+     * @param event Instance of {@link ILoggingEvent}.
+     * @param ee Instance of {@link EncodingException} to encode.
+     * @return Encoded version of {@link EncodingException}.
      */
     protected abstract String encodeAsString(ILoggingEvent event, EncodingException ee);
 
     /**
-     * Encode an array based message into a <code>String</code>.
+     * Encode an array based message into a {@link String}.
      *
      * @since 1.7.0
      *
-     * @param event Instance of <code>ILoggingEvent</code>.
+     * @param event Instance of {@link ILoggingEvent}.
      * @param eventName The name of the event.
      * @param keys Array of keys; indices must match value indices.
      * @param values Array of values; indices must match key indices.
-     * @return Message encoded as a <code>String</code>.
+     * @return Message encoded as a {@link String}.
      * @throws EncodingException If encoding fails for any reason.
      */
     protected abstract String buildArrayMessage(
@@ -91,15 +91,15 @@ public abstract class BaseLoggingEncoder extends LayoutWrappingEncoder<ILoggingE
             throws EncodingException;
 
     /**
-     * Encode a JSON array based message into a <code>String</code>.
+     * Encode a JSON array based message into a {@link String}.
      *
      * @since 1.7.0
      *
-     * @param event Instance of <code>ILoggingEvent</code>.
+     * @param event Instance of {@link ILoggingEvent}.
      * @param eventName The name of the event.
      * @param keys Array of keys; indices must match value indices.
      * @param jsonValues Array of values encoded in JSON; indices must match key indices.
-     * @return Message encoded as a <code>String</code>.
+     * @return Message encoded as a {@link String}.
      * @throws EncodingException If encoding fails for any reason.
      */
     protected abstract String buildArrayJsonMessage(
@@ -110,14 +110,14 @@ public abstract class BaseLoggingEncoder extends LayoutWrappingEncoder<ILoggingE
             throws EncodingException;
 
     /**
-     * Encode a map based message into a <code>String</code>.
+     * Encode a map based message into a {@link String}.
      *
      * @since 1.7.0
      *
-     * @param event Instance of <code>ILoggingEvent</code>.
+     * @param event Instance of {@link ILoggingEvent}.
      * @param eventName The name of the event.
      * @param map Map of key to value pairs.
-     * @return Message encoded as a <code>String</code>.
+     * @return Message encoded as a {@link String}.
      * @throws EncodingException If encoding fails for any reason.
      */
     protected abstract String buildMapMessage(
@@ -127,14 +127,14 @@ public abstract class BaseLoggingEncoder extends LayoutWrappingEncoder<ILoggingE
             throws EncodingException;
 
     /**
-     * Encode a map of encoded JSON values based message into a <code>String</code>.
+     * Encode a map of encoded JSON values based message into a {@link String}.
      *
      * @since 1.7.0
      *
-     * @param event Instance of <code>ILoggingEvent</code>.
+     * @param event Instance of {@link ILoggingEvent}.
      * @param eventName The name of the event.
      * @param map Map of key to json encoded value pairs.
-     * @return Message encoded as a <code>String</code>.
+     * @return Message encoded as a {@link String}.
      * @throws EncodingException If encoding fails for any reason.
      */
     protected abstract String buildMapJsonMessage(
@@ -144,14 +144,14 @@ public abstract class BaseLoggingEncoder extends LayoutWrappingEncoder<ILoggingE
             throws EncodingException;
 
     /**
-     * Encode an object value based message into a <code>String</code>.
+     * Encode an object value based message into a {@link String}.
      *
      * @since 1.7.0
      *
-     * @param event Instance of <code>ILoggingEvent</code>.
+     * @param event Instance of {@link ILoggingEvent}.
      * @param eventName The name of the event.
      * @param data Object to be serialized as the data.
-     * @return Message encoded as a <code>String</code>.
+     * @return Message encoded as a {@link String}.
      * @throws EncodingException If encoding fails for any reason.
      */
     protected abstract String buildObjectMessage(
@@ -161,14 +161,14 @@ public abstract class BaseLoggingEncoder extends LayoutWrappingEncoder<ILoggingE
             throws EncodingException;
 
     /**
-     * Encode a JSON encoded object value based message into a <code>String</code>.
+     * Encode a JSON encoded object value based message into a {@link String}.
      *
      * @since 1.7.0
      *
-     * @param event Instance of <code>ILoggingEvent</code>.
+     * @param event Instance of {@link ILoggingEvent}.
      * @param eventName The name of the event.
      * @param jsonData JSON encoded object to be serialized as the data.
-     * @return Message encoded as a <code>String</code>.
+     * @return Message encoded as a {@link String}.
      * @throws EncodingException If encoding fails for any reason.
      */
     protected abstract String buildObjectJsonMessage(
@@ -182,13 +182,13 @@ public abstract class BaseLoggingEncoder extends LayoutWrappingEncoder<ILoggingE
      *
      * @since 1.7.0
      *
-     * @param event Instance of <code>ILoggingEvent</code>.
+     * @param event Instance of {@link ILoggingEvent}.
      * @param eventName The name of the event.
      * @param dataKeys List of data keys.
      * @param dataValues List of data values.
      * @param contextKeys List of context keys.
      * @param contextValues List of context values.
-     * @return Message encoded as a <code>String</code>.
+     * @return Message encoded as a {@link String}.
      * @throws EncodingException If encoding fails for any reason.
      */
     protected abstract String buildListsMessage(
@@ -201,95 +201,95 @@ public abstract class BaseLoggingEncoder extends LayoutWrappingEncoder<ILoggingE
             throws EncodingException;
 
     /**
-     * Encode a standard message into a <code>String</code>.
+     * Encode a standard message into a {@link String}.
      *
      * @since 1.7.0
      *
-     * @param event Instance of <code>ILoggingEvent</code>.
-     * @return Message encoded as a <code>String</code>.
+     * @param event Instance of {@link ILoggingEvent}.
+     * @return Message encoded as a {@link String}.
      * @throws EncodingException If encoding fails for any reason.
      */
     protected abstract String buildStandardMessage(ILoggingEvent event) throws EncodingException;
 
     /**
-     * Determine whether the <code>marker</code> represents an array event.
+     * Determine whether the {@code marker} represents an array event.
      *
      * @since 1.0.0
      *
-     * @param marker The <code>Marker</code> instance to evaluate.
-     * @return True if and only if <code>marker</code> represents an array event.
+     * @param marker The {@link Marker} instance to evaluate.
+     * @return True if and only if {@code marker} represents an array event.
      */
     protected boolean isArrayStenoEvent(@Nullable final Marker marker) {
         return marker != null && marker.contains(StenoMarker.ARRAY_MARKER);
     }
 
     /**
-     * Determine whether the <code>marker</code> represents a JSON array event.
+     * Determine whether the {@code marker} represents a JSON array event.
      *
      * @since 1.0.4
      *
-     * @param marker The <code>Marker</code> instance to evaluate.
-     * @return True if and only if <code>marker</code> represents a JSON array event.
+     * @param marker The {@link Marker} instance to evaluate.
+     * @return True if and only if {@code marker} represents a JSON array event.
      */
     protected boolean isArrayJsonStenoEvent(@Nullable final Marker marker) {
         return marker != null && marker.contains(StenoMarker.ARRAY_JSON_MARKER);
     }
 
     /**
-     * Determine whether the <code>marker</code> represents a map event.
+     * Determine whether the {@code marker} represents a map event.
      *
      * @since 1.0.4
      *
-     * @param marker The <code>Marker</code> instance to evaluate.
-     * @return True if and only if <code>marker</code> represents an array event.
+     * @param marker The {@link Marker} instance to evaluate.
+     * @return True if and only if {@code marker} represents an array event.
      */
     protected boolean isMapStenoEvent(@Nullable final Marker marker) {
         return marker != null && marker.contains(StenoMarker.MAP_MARKER);
     }
 
     /**
-     * Determine whether the <code>marker</code> represents a JSON map event.
+     * Determine whether the {@code marker} represents a JSON map event.
      *
      * @since 1.0.4
      *
-     * @param marker The <code>Marker</code> instance to evaluate.
-     * @return True if and only if <code>marker</code> represents a JSON map event.
+     * @param marker The {@link Marker} instance to evaluate.
+     * @return True if and only if {@code marker} represents a JSON map event.
      */
     protected boolean isMapJsonStenoEvent(@Nullable final Marker marker) {
         return marker != null && marker.contains(StenoMarker.MAP_JSON_MARKER);
     }
 
     /**
-     * Determine whether the <code>marker</code> represents an object event.
+     * Determine whether the {@code marker} represents an object event.
      *
      * @since 1.1.0
      *
-     * @param marker The <code>Marker</code> instance to evaluate.
-     * @return True if and only if <code>marker</code> represents an object event.
+     * @param marker The {@link Marker} instance to evaluate.
+     * @return True if and only if {@code marker} represents an object event.
      */
     protected boolean isObjectStenoEvent(@Nullable final Marker marker) {
         return marker != null && marker.contains(StenoMarker.OBJECT_MARKER);
     }
 
     /**
-     * Determine whether the <code>marker</code> represents a JSON object event.
+     * Determine whether the {@code marker} represents a JSON object event.
      *
      * @since 1.1.0
      *
-     * @param marker The <code>Marker</code> instance to evaluate.
-     * @return True if and only if <code>marker</code> represents a JSON object event.
+     * @param marker The {@link Marker} instance to evaluate.
+     * @return True if and only if {@code marker} represents a JSON object event.
      */
     protected boolean isObjectJsonStenoEvent(@Nullable final Marker marker) {
         return marker != null && marker.contains(StenoMarker.OBJECT_JSON_MARKER);
     }
 
     /**
-     * Determine whether the <code>marker</code> represents a lists event.
+     * Determine whether the {@code marker} represents a lists event.
      *
      * @since 1.3.0
      *
-     * @param marker The <code>Marker</code> instance to evaluate.
-     * @return True if and only if <code>marker</code> represents a lists event.
+     * @param marker The {@link Marker} instance to evaluate.
+     * @return True if and only if {@code marker} represents a lists event.
      */
     protected boolean isListsStenoEvent(@Nullable final Marker marker) {
         return marker != null && marker.contains(StenoMarker.LISTS_MARKER);

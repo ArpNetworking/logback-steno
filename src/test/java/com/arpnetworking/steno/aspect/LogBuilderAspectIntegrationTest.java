@@ -20,9 +20,9 @@ import com.arpnetworking.steno.Logger;
 import org.junit.Test;
 
 /**
- * Integration test of <code>LogBuilderAspect</code>a spect weaving.
+ * Integration test of {@link LogBuilderAspect}a spect weaving.
  *
- * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot io)
  */
 public class LogBuilderAspectIntegrationTest extends BaseStenoIntegrationTest {
 

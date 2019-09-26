@@ -63,7 +63,7 @@ import javax.annotation.Nullable;
  * name is specifically configured on the encoder.
  * <br><br>
  * <i>Example Output:</i>
- * <pre><code>
+ * <pre>{@code
  * {
  *   "time":"2011-11-11T00:00:00.000Z",
  *   "name":"log",
@@ -78,18 +78,18 @@ import javax.annotation.Nullable;
  *   },
  *   "id":"oRw59PrARvatGNC7fiWw4A"
  * }
- * </code></pre>
+ * }</pre>
  * For logging events that have the {@link com.arpnetworking.logback.StenoMarker#ARRAY_MARKER} Marker the logging event is
  * expected to contain the name of the event as the 'message', with the first argument being a String array (String[])
  * containing the keys to be added to the 'data' object and the second argument being an Object array (Object[])
  * containing the values for each key.
  * <br><br>
  * <i>Example logger call:</i>
- * <pre><code>
+ * <pre>{@code
  * log.info(StenoMarker.ARRAY_MARKER, "log", new String[] {"key1","key2"}, new Object[] {1234, "foo"});
- * </code></pre>
+ * }</pre>
  * Example Output:
- * <pre><code>
+ * <pre>{@code
  * {
  *   "time":"2011-11-11T00:00:00.000Z",
  *   "name":"log",
@@ -105,17 +105,17 @@ import javax.annotation.Nullable;
  *   },
  *   "id":"oRw59PrARvatGNC7fiWw4A"
  * }
- * </code></pre>
+ * }</pre>
  * For logging events that have the {@link com.arpnetworking.logback.StenoMarker#MAP_MARKER} Marker the logging event is
  * expected to contain the name of the event as the 'message', with the first argument being a map of key to value to be
  * included inside the 'data' object.
  * <br><br>
  * <i>Example logger call:</i>
- * <pre><code>
+ * <pre>{@code
  * log.info(StenoMarker.MAP_MARKER, "log", ImmutableMap.of("key1", 1234, "key2", "foo"));
- * </code></pre>
+ * }</pre>
  * <i>Example Output:</i>
- * <pre><code>
+ * <pre>{@code
  * {
  *   "time":"2011-11-11T00:00:00.000Z",
  *   "name":"log",
@@ -131,10 +131,10 @@ import javax.annotation.Nullable;
  *   },
  *   "id":"oRw59PrARvatGNC7fiWw4A"
  * }
- * </code></pre>
+ * }</pre>
  *
  * @author Gil Markham (gil at groupon dot com)
- * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot io)
  * @since 1.0.0
  */
 public class StenoEncoder extends BaseLoggingEncoder implements Serializable {
@@ -360,7 +360,7 @@ public class StenoEncoder extends BaseLoggingEncoder implements Serializable {
      * is false.
      *
      * <i>Note:</i> This field does not strictly conform to the current Steno standard. The current Steno standard is
-     * documented as a Json Schema in <code>resources/steno.schema.json</code>. For this reason the logger context
+     * documented as a Json Schema in {@code resources/steno.schema.json}. For this reason the logger context
      * field is disabled by default.
      *
      * @param value Whether to inject the logger name.
@@ -536,9 +536,9 @@ public class StenoEncoder extends BaseLoggingEncoder implements Serializable {
     }
 
     /**
-     * Add Jackson <code>Module</code>.
+     * Add Jackson {@link Module}.
      *
-     * @param module The Jackson <code>Module</code>.
+     * @param module The Jackson {@link Module}.
      *
      * @since 1.5.0
      */
@@ -547,9 +547,9 @@ public class StenoEncoder extends BaseLoggingEncoder implements Serializable {
     }
 
     /**
-     * Which Jackson <code>Module</code> instances are configured.
+     * Which Jackson {@link Module} instances are configured.
      *
-     * @return The iterator over configured Jackson <code>Module</code> instances.
+     * @return The iterator over configured Jackson {@link Module} instances.
      *
      * @since 1.5.0
      */
@@ -558,10 +558,10 @@ public class StenoEncoder extends BaseLoggingEncoder implements Serializable {
     }
 
     /**
-     * Determine if the specific Jackson <code>Module</code> is configured.
+     * Determine if the specific Jackson {@link Module} is configured.
      *
-     * @param module The Jackson <code>Module</code>.
-     * @return True if and only if the <code>Module</code> is configured.
+     * @param module The Jackson {@link Module}.
+     * @return True if and only if the {@link Module} is configured.
      *
      * @since 1.5.0
      */

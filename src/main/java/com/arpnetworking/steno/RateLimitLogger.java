@@ -29,19 +29,19 @@ import java.util.concurrent.atomic.AtomicReference;
  *
  * @since 1.12.0
  *
- * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot io)
  */
 /* package private */ class RateLimitLogger extends Logger {
 
     /**
-     * Log for a particular level using the <code>ARRAY_MARKER</code>.
+     * Log for a particular level using the {@link com.arpnetworking.logback.StenoMarker#ARRAY_MARKER}.
      *
      * @param level The log event level.
      * @param event The log event name.
      * @param message The log event message.
      * @param dataKeys The array of data keys.
      * @param dataValues The array of data values.
-     * @param throwable The <code>Throwable</code>.
+     * @param throwable The {@link Throwable}.
      */
     @Override
     /* package private */ void log(
@@ -65,15 +65,15 @@ import java.util.concurrent.atomic.AtomicReference;
     }
 
     /**
-     * Log for a particular level using the <code>LISTS_MARKER</code>.
+     * Log for a particular level using the {@link com.arpnetworking.logback.StenoMarker#LISTS_MARKER}.
      *
      * @param level The log event level.
      * @param event The log event name.
-     * @param dataKeys The <code>List</code> of data keys.
-     * @param dataValues The <code>List</code> of data values.
-     * @param contextKeys The <code>List</code> of context keys.
-     * @param contextValues The <code>List</code> of context values.
-     * @param throwable The <code>Throwable</code>.
+     * @param dataKeys The {@link List} of data keys.
+     * @param dataValues The {@link List} of data values.
+     * @param contextKeys The {@link List} of context keys.
+     * @param contextValues The {@link List} of context values.
+     * @param throwable The {@link Throwable}.
      */
     @Override
     /* package private */ void log(

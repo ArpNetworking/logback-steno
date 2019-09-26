@@ -25,7 +25,7 @@ import java.io.IOException;
 /**
  * Class to test object serialization.
  *
- * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot io)
  */
 public final class WidgetWithSerializer {
 
@@ -50,7 +50,7 @@ public final class WidgetWithSerializer {
     private final String _value;
 
     /**
-     * <code>JsonSerializer</code> implementation for <code>WidgetWithSerializer</code>.
+     * {@link JsonSerializer} implementation for {@link WidgetWithSerializer}.
      */
     public static class Serializer extends JsonSerializer<WidgetWithSerializer> {
 
@@ -66,7 +66,7 @@ public final class WidgetWithSerializer {
     }
 
     /**
-     * Jackson <code>Module</code> for serializing <code>WidgetWithSerializer</code> instances.
+     * Jackson {@link Module} for serializing {@link WidgetWithSerializer} instances.
      */
     public static final class Module extends SimpleModule {
 

@@ -24,9 +24,9 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Tests for <code>DefaultLogBuilder</code>.
+ * Tests for {@link DefaultLogBuilder}.
  *
- * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot io)
  */
 public class DefaultLogBuilderTest {
 

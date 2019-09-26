@@ -29,9 +29,9 @@ import java.time.Instant;
 import java.util.Optional;
 
 /**
- * Tests for <code>RateLimitLogBuilder</code>.
+ * Tests for {@link RateLimitLogBuilder}.
  *
- * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot io)
  */
 public class RateLimitLogBuilderTest {
 

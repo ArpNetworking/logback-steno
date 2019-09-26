@@ -23,9 +23,9 @@ import org.mockito.Mockito;
 import java.util.Collections;
 
 /**
- * Tests for <code>LogLevel</code>.
+ * Tests for {@link LogLevel}.
  *
- * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot io)
  */
 public class LogLevelTest {
 

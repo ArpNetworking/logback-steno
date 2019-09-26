@@ -23,10 +23,10 @@ import java.util.Arrays;
 import java.util.Date;
 
 /**
- * This is a customization of the <code>SizeAndTimeBasedArchiveRemover</code>
+ * This is a customization of the {@link SizeAndTimeBasedArchiveRemover}
  * to enforce total size on each clean and to count all files not just periods.
  *
- * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot io)
  * @since 1.16.1
  */
 public class CustomSizeAndTimeBasedArchiveRemover extends SizeAndTimeBasedArchiveRemover {
@@ -34,8 +34,8 @@ public class CustomSizeAndTimeBasedArchiveRemover extends SizeAndTimeBasedArchiv
     /**
      * Public constructor.
      *
-     * @param fileNamePattern The <code>FileNamePattern</code> from the <code>TimeBasedRollingPolicy</code>.
-     * @param rollingCalendar The <code>RollingCalendar</code> from the <code>SizeAndTimeBasedFNATP</code>.
+     * @param fileNamePattern The {@link FileNamePattern} from the {@link ch.qos.logback.core.rolling.TimeBasedRollingPolicy}.
+     * @param rollingCalendar The {@link RollingCalendar} from the {@link ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP}.
      */
     public CustomSizeAndTimeBasedArchiveRemover(
             final FileNamePattern fileNamePattern,

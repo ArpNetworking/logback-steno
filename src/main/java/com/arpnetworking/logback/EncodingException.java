@@ -23,7 +23,7 @@ import java.util.Map;
  *
  * @since 1.7.0
  *
- * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot io)
  */
 /* package private */ class EncodingException extends Exception {
 

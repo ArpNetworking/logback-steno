@@ -21,7 +21,7 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 /**
  * Abstract Steno caller converter.
  *
- * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot io)
  * @since 1.14.0
  */
 public abstract class AbstractStenoCallerConverter extends ClassicConverter {
@@ -29,7 +29,7 @@ public abstract class AbstractStenoCallerConverter extends ClassicConverter {
     /**
      * Retrieve the relevant caller data adjusted for Steno logger wrapping.
      *
-     * @param loggingEvent The <code>ILoggingEvent</code> instance.
+     * @param loggingEvent The {@link ILoggingEvent} instance.
      * @return The relevant caller data adjusted for Steno logger wrapping.
      */
     protected StackTraceElement getCallerData(final ILoggingEvent loggingEvent) {

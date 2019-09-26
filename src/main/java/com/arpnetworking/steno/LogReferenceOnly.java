@@ -18,22 +18,22 @@ package com.arpnetworking.steno;
 import com.arpnetworking.logback.annotations.LogValue;
 
 /**
- * Log an <code>Object</code> only with its reference id and class. This is
+ * Log an {@link Object} only with its reference id and class. This is
  * useful for logging instances of classes that are not naturally serializable
  * by Jackson.
  *
  * @since 1.7.0
  *
- * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot io)
  */
 public final class LogReferenceOnly {
 
     /**
-     * Wrap an <code>Object</code> such that its Steno logged form is only its
+     * Wrap an {@link Object} such that its Steno logged form is only its
      * reference id and class.
      *
      * @since 1.7.0
-     * @param object The <code>Object</code> to wrap.
+     * @param object The {@link Object} to wrap.
      * @return Reference only wrapped instance.
      */
     public static LogReferenceOnly of(final Object object) {

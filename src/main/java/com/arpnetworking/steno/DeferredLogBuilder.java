@@ -19,7 +19,7 @@ package com.arpnetworking.steno;
  * Interface for classes which assemble log messages where the actual logging
  * is deferred.
  *
- * @author Ville Koskela (ville dot koskela at inscopemetrics dot com)
+ * @author Ville Koskela (ville dot koskela at inscopemetrics dot io)
  */
 public interface DeferredLogBuilder {
 
@@ -44,11 +44,11 @@ public interface DeferredLogBuilder {
     DeferredLogBuilder setMessage(String value);
 
     /**
-     * Set the exception (<code>Throwable</code>).
+     * Set the exception ({@link Throwable}).
      *
      * @since 1.3.0
      *
-     * @param value The exception (<code>Throwable</code>).
+     * @param value The exception ({@link Throwable}).
      * @return This instance as {@code <T>}.
      */
     DeferredLogBuilder setThrowable(Throwable value);
