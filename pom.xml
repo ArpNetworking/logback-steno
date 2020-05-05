@@ -106,7 +106,7 @@
     <apache.commons.lang3.version>3.9</apache.commons.lang3.version>
     <aspectjrt.version>1.9.4</aspectjrt.version>
     <aspectjtools.version>1.9.4</aspectjtools.version>
-    <jackson.version>2.9.10</jackson.version>
+    <jackson.version>2.11.0</jackson.version>
     <jackson-coreutils.version>1.10</jackson-coreutils.version>
     <json-schema-core.version>1.2.11</json-schema-core.version>
     <json-schema-validator.version>2.2.11</json-schema-validator.version>
