@@ -16,6 +16,7 @@
 package com.arpnetworking.logback.jackson;
 
 import com.arpnetworking.logback.annotations.LogRedact;
+import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -24,6 +25,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.BeanPropertyWriter;
 import com.fasterxml.jackson.databind.ser.PropertyWriter;
+import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import org.junit.Assert;
 import org.junit.Before;
@@ -59,7 +61,10 @@ public class RedactionFilterTest {
         // CHECKSTYLE.ON: IllegalInstantiation
         beanMap.put("foo", "bar");
         _redactedBean = new RedactedBean("string", 1234, 1.0d, new String[] {"string1", "string2"}, true, beanMap);
+        _redactedMapWithJsonFilter = new MapWithMapJsonFilter("string", "key", "value");
         _nonRedactedBean = new NonRedactedBean("string", 1234, 1.0d, new String[] {"string1", "string2"}, true, beanMap);
+        _fieldRedactOnlyBean = new FieldRedactOnlyBean("string");
+        _ignoredBean = new IgnoredOnlyBean("string", "ignored");
     }
 
     @Test
@@ -73,6 +78,38 @@ public class RedactionFilterTest {
     public void testRedactedBean() throws Exception {
         final JsonNode actualTree = _objectMapper.valueToTree(_redactedBean);
         final JsonNode expectedTree = readTree("testRedactedBean.json");
+        Assert.assertEquals(expectedTree, actualTree);
+    }
+
+    @Test
+    public void testBeanWithMapJsonFilter() throws Exception {
+        // WARNING: This test demonstrates how redaction does not work on maps!
+        // WARNING: Further, it appears to break the map filter functionality.
+        // (commenting out the redacted getter on our map class allows filter to work)
+        final SimpleFilterProvider simpleFilterProvider = new SimpleFilterProvider();
+        simpleFilterProvider.addFilter(
+                "filter-map-key",
+                SimpleBeanPropertyFilter.serializeAllExcept("key"));
+        simpleFilterProvider.addFilter(
+                RedactionFilter.REDACTION_FILTER_ID,
+                new RedactionFilter(false));
+        _objectMapper.setFilterProvider(simpleFilterProvider);
+        final JsonNode actualTree = _objectMapper.valueToTree(_redactedMapWithJsonFilter);
+        final JsonNode expectedTree = readTree("testBeanWithMapJsonFilter.json");
+        Assert.assertEquals(expectedTree, actualTree);
+    }
+
+    @Test
+    public void testFieldRedactOnlyBean() throws Exception {
+        final JsonNode actualTree = _objectMapper.valueToTree(_fieldRedactOnlyBean);
+        final JsonNode expectedTree = readTree("testFieldRedactOnlyBean.json");
+        Assert.assertEquals(expectedTree, actualTree);
+    }
+
+    @Test
+    public void testIgnoredOnlyBean() throws Exception {
+        final JsonNode actualTree = _objectMapper.valueToTree(_ignoredBean);
+        final JsonNode expectedTree = readTree("testIgnoredOnlyBean.json");
         Assert.assertEquals(expectedTree, actualTree);
     }
 
@@ -149,7 +186,10 @@ public class RedactionFilterTest {
 
     private ObjectMapper _objectMapper;
     private RedactedBean _redactedBean;
+    private MapWithMapJsonFilter _redactedMapWithJsonFilter;
     private NonRedactedBean _nonRedactedBean;
+    private FieldRedactOnlyBean _fieldRedactOnlyBean;
+    private IgnoredOnlyBean _ignoredBean;
 
     private static final String CLASS_NAME = RedactionFilterTest.class.getSimpleName();
 
@@ -285,6 +325,70 @@ public class RedactionFilterTest {
     }
     // CHECKSTYLE.ON: HiddenField
     // CHECKSTYLE.ON: MemberName
+
+    // CHECKSTYLE.OFF: MemberName - Testing field annotations requires same name as getter.
+    // CHECKSTYLE.OFF: HiddenField - Testing field annotations requires same name as getter.
+    @JsonFilter("filter-map-key")
+    private static final class MapWithMapJsonFilter extends HashMap<String, String> {
+
+        private static final long serialVersionUID = -2709877197022617079L;
+
+        private MapWithMapJsonFilter(final String string, final String key, final String value) {
+            this.string = string;
+            this.put(key, value);
+        }
+
+        @LogRedact
+        public String getString() {
+            return string;
+        }
+
+        private final String string;
+    }
+    // CHECKSTYLE.ON: HiddenField
+    // CHECKSTYLE.ON: MemberName
+
+    // CHECKSTYLE.OFF: MemberName - Testing field annotations requires same name as getter.
+    // CHECKSTYLE.OFF: HiddenField - Testing field annotations requires same name as getter.
+    private static final class FieldRedactOnlyBean {
+
+        private FieldRedactOnlyBean(final String stringValue) {
+            this.stringValue = stringValue;
+        }
+
+        @JsonProperty("string")
+        public String getStringValue() {
+            return stringValue;
+        }
+
+        @LogRedact
+        private final String stringValue;
+    }
+    // CHECKSTYLE.ON: HiddenField
+    // CHECKSTYLE.ON: MemberName
+
+    private static final class IgnoredOnlyBean {
+
+        private IgnoredOnlyBean(
+                final String stringValue,
+                final String ignoredValue) {
+            _stringValue = stringValue;
+            _ignoredValue = ignoredValue;
+        }
+
+        @JsonProperty("string")
+        public String getStringValue() {
+            return _stringValue;
+        }
+
+        @JsonIgnore
+        public String getIgnoredValue() {
+            return _ignoredValue;
+        }
+
+        private final String _stringValue;
+        private final String _ignoredValue;
+    }
 
     /**
      * @deprecated Provided for test compatibility with deprecated method in Jackson.

@@ -106,6 +106,7 @@
     <apache.commons.lang3.version>3.9</apache.commons.lang3.version>
     <aspectjrt.version>1.9.4</aspectjrt.version>
     <aspectjtools.version>1.9.4</aspectjtools.version>
+    <guava.version>25.1-jre</guava.version>
     <jackson.version>2.9.10</jackson.version>
     <jackson-coreutils.version>1.10</jackson-coreutils.version>
     <json-schema-core.version>1.2.11</json-schema-core.version>
@@ -423,6 +424,27 @@
     <dependency>
       <groupId>com.fasterxml.jackson.datatype</groupId>
       <artifactId>jackson-datatype-jsr310</artifactId>
+      <version>${jackson.version}</version>
+      <scope>test</scope>
+      <exclusions>
+        <!-- TODO(ville): Remove this exclusion once the annotations package is consistently depended upon:
+            https://github.com/FasterXML/jackson-bom/issues/15
+        -->
+        <exclusion>
+          <groupId>com.fasterxml.jackson.core</groupId>
+          <artifactId>jackson-annotations</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>${guava.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.datatype</groupId>
+      <artifactId>jackson-datatype-guava</artifactId>
       <version>${jackson.version}</version>
       <scope>test</scope>
       <exclusions>
