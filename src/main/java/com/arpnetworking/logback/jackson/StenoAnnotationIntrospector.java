@@ -15,6 +15,7 @@
  */
 package com.arpnetworking.logback.jackson;
 
+import com.arpnetworking.logback.annotations.LogRedact;
 import com.arpnetworking.logback.annotations.LogValue;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.introspect.Annotated;
@@ -50,7 +51,28 @@ public class StenoAnnotationIntrospector extends JacksonAnnotationIntrospector {
 
     @Override
     public Object findFilterId(final Annotated annotated) {
-        return RedactionFilter.REDACTION_FILTER_ID;
+        if (annotated instanceof AnnotatedClass) {
+            final AnnotatedClass annotatedClass = (AnnotatedClass) annotated;
+
+            // Check methods
+            for (final AnnotatedMethod annotatedMethod : annotatedClass.memberMethods()) {
+                @Nullable final LogRedact methodAnnotation = _findAnnotation(annotatedMethod, LogRedact.class);
+                if (methodAnnotation != null) {
+                    return RedactionFilter.REDACTION_FILTER_ID;
+                }
+            }
+
+            // Check fields
+            for (final AnnotatedField annotatedField : annotatedClass.fields()) {
+                @Nullable final LogRedact fieldAnnotation = _findAnnotation(annotatedField, LogRedact.class);
+                if (fieldAnnotation != null) {
+                    return RedactionFilter.REDACTION_FILTER_ID;
+                }
+            }
+        }
+        // Do we need to consider a case where we are called only for the method or field?
+
+        return super.findFilterId(annotated);
     }
 
     @Override

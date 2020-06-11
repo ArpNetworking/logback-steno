@@ -1,0 +1,3 @@
+{"time":"<TIME>","name":"IT","level":"crit","data":{"message":"1. This is an empty multimap","MAP1":{}},"context":{"host":"<HOST>","processId":"<PROCESS_ID>","threadId":"<THREAD_ID>","logger":"ROOT"},"id":"<ID>","version":"0"}
+{"time":"<TIME>","name":"IT","level":"crit","data":{"message":"2. This is an single-entry multimap","MAP2":{"MAPKEY1": ["MAPVALUE1"]}},"context":{"host":"<HOST>","processId":"<PROCESS_ID>","threadId":"<THREAD_ID>","logger":"ROOT"},"id":"<ID>","version":"0"}
+{"time":"<TIME>","name":"IT","level":"crit","data":{"message":"3. This is an multi-entry multimap","MAP3":{"MAPKEY1": ["MAPVALUE1"], "MAPKEY2": ["MAPVALUE2", "MAPVALUE3"]}},"context":{"host":"<HOST>","processId":"<PROCESS_ID>","threadId":"<THREAD_ID>","logger":"ROOT"},"id":"<ID>","version":"0"}

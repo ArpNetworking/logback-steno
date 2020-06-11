@@ -19,13 +19,13 @@
 
 log_err() {
   l_prefix=$(date  +'%H:%M:%S')
-  printf "[%s] %s\n" "${l_prefix}" "$@" 1>&2;
+  printf "[%s] %s\\n" "${l_prefix}" "$@" 1>&2;
 }
 
 log_out() {
   if [ -n "${JDKW_VERBOSE}" ]; then
     l_prefix=$(date  +'%H:%M:%S')
-    printf "[%s] %s\n" "${l_prefix}" "$@"
+    printf "[%s] %s\\n" "${l_prefix}" "$@"
   fi
 }
 
@@ -43,10 +43,12 @@ safe_command() {
 checksum() {
   l_file="$1"
   checksum_exec=""
+  checksum_args=""
   if command -v sha256sum > /dev/null; then
     checksum_exec="sha256sum"
   elif command -v shasum > /dev/null; then
-    checksum_exec="shasum -a 256"
+    checksum_exec="shasum"
+    checksum_args="-a 256"
   elif command -v sha1sum > /dev/null; then
     checksum_exec="sha1sum"
   elif command -v md5 > /dev/null; then
@@ -56,7 +58,7 @@ checksum() {
     log_err "ERROR: No supported checksum command found!"
     exit 1
   fi
-  cat "${l_file}" | ${checksum_exec}
+  ${checksum_exec} ${checksum_args} < "${l_file}"
 }
 
 rand() {
@@ -109,7 +111,7 @@ for arg in "$@"; do
   fi
   case "${arg}" in
     *\'*)
-       arg=`printf "%s" "$arg" | sed "s/'/'\"'\"'/g"`
+       arg=$(printf "%s" "$arg" | sed "s/'/'\"'\"'/g")
        ;;
     *) : ;;
   esac
@@ -157,7 +159,7 @@ fi
 if [ "${JDKW_RELEASE}" = "latest" ]; then
   latest_version_json="${TMPDIR:-/tmp}/jdkw-latest-version-$$.$(rand)"
   safe_command "curl ${curl_options} -f -k -L -o \"${latest_version_json}\" -H 'Accept: application/json' \"${JDKW_BASE_URI}/releases/latest\""
-  JDKW_RELEASE=$(cat "${latest_version_json}" | sed -e 's/.*"tag_name":"\([^"]*\)".*/\1/')
+  JDKW_RELEASE=$(sed -e 's/.*"tag_name":"\([^"]*\)".*/\1/' < "${latest_version_json}")
   rm -f "${latest_version_json}"
   log_out "Resolved latest version to ${JDKW_RELEASE}"
 fi
@@ -175,10 +177,6 @@ jdkw_wrapper="jdk-wrapper.sh"
 download_if_needed "${jdkw_impl}" "${jdkw_path}"
 download_if_needed "${jdkw_wrapper}" "${jdkw_path}"
 
-# Execute the provided command
-eval ${jdkw_path}/${jdkw_impl} ${command}
-result=$?
-
 # Check whether this wrapper is the one specified for this version
 jdkw_download="${jdkw_path}/${jdkw_wrapper}"
 jdkw_current="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)/$(basename "$0")"
@@ -186,6 +184,13 @@ if [ "$(checksum "${jdkw_download}")" != "$(checksum "${jdkw_current}")" ]; then
   printf "\e[0;31m[WARNING]\e[0m Your jdk-wrapper.sh file does not match the one in your JDKW_RELEASE.\n"
   printf "\e[0;32mUpdate your jdk-wrapper.sh to match by running:\e[0m\n"
   printf "cp \"%s\" \"%s\"\n" "${jdkw_download}" "${jdkw_current}"
+  sleep 3
 fi
 
-exit ${result}
+# Execute the provided command
+# NOTE: The requirements proved quite difficult to run this without exec.
+# 1) Exit with the exit status of the child process
+# 2) Allow running the wrapper in the background and terminating the child process
+# 3) Allow the child process to read from standard input when not running in the background
+exec "${jdkw_path}/${jdkw_impl}" "$@"
+
