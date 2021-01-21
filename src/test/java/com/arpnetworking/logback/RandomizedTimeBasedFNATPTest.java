@@ -19,6 +19,7 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.LoggingEvent;
 import ch.qos.logback.core.rolling.RollingFileAppender;
 import ch.qos.logback.core.rolling.TimeBasedRollingPolicy;
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
@@ -54,10 +55,10 @@ public class RandomizedTimeBasedFNATPTest {
 
         // This should set the nextCheck to 2014-0505T01:00:00Z + random offset
         triggeringPolicy.computeNextCheck();
-        Assert.assertThat(
+        MatcherAssert.assertThat(
                 triggeringPolicy.getNextCheck(),
                 Matchers.greaterThanOrEqualTo(dateTime.toInstant().toEpochMilli()));
-        Assert.assertThat(
+        MatcherAssert.assertThat(
                 triggeringPolicy.getNextCheck(),
                 Matchers.lessThanOrEqualTo(dateTime.toInstant().toEpochMilli() + triggeringPolicy.getMaxOffsetInMillis()));
         final LoggingEvent event = new LoggingEvent();
