@@ -27,6 +27,7 @@ pipeline {
         script {
           target = "install deploy -P release  --settings settings.xml"
         }
+        sh 'gpg --batch --import arpnetworking.key'
       }
     }
     stage('Build') {
