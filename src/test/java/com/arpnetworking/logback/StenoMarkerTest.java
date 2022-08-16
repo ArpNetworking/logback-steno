@@ -15,7 +15,8 @@
  */
 package com.arpnetworking.logback;
 
-import org.junit.Assert;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 
 import java.lang.reflect.Constructor;
@@ -35,7 +36,7 @@ public class StenoMarkerTest {
             constructor.setAccessible(true);
             constructor.newInstance();
         } catch (final InvocationTargetException ite) {
-            Assert.assertTrue(ite.getTargetException() instanceof UnsupportedOperationException);
+            MatcherAssert.assertThat(ite.getTargetException(), Matchers.instanceOf(UnsupportedOperationException.class));
             throw ite;
         }
     }

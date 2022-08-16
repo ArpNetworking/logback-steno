@@ -18,7 +18,7 @@
   <parent>
     <groupId>com.arpnetworking.build</groupId>
     <artifactId>arpnetworking-parent-pom</artifactId>
-    <version>2.0.10</version>
+    <version>3.0.9</version>
     <relativePath />
   </parent>
 
@@ -102,29 +102,31 @@
 
   <properties>
     <!--Dependency versions-->
-    <afterburner.version>2.9.10</afterburner.version>
-    <apache.commons.lang3.version>3.9</apache.commons.lang3.version>
-    <aspectjrt.version>1.9.4</aspectjrt.version>
-    <aspectjtools.version>1.9.4</aspectjtools.version>
-    <guava.version>25.1-jre</guava.version>
-    <jackson.version>2.9.10</jackson.version>
+    <afterburner.version>2.13.3</afterburner.version>
+    <apache.commons.lang3.version>3.12.0</apache.commons.lang3.version>
+    <aspectjrt.version>1.9.9.1</aspectjrt.version>
+    <aspectjtools.version>1.9.9.1</aspectjtools.version>
+    <guava.version>31.1-jre</guava.version>
+    <jackson.version>2.13.3</jackson.version>
     <jackson-coreutils.version>1.10</jackson-coreutils.version>
-    <json-schema-core.version>1.2.11</json-schema-core.version>
-    <json-schema-validator.version>2.2.11</json-schema-validator.version>
+    <json-schema-validator.version>1.0.72</json-schema-validator.version>
     <jsr305.version>3.0.2</jsr305.version>
-    <hamcrest.version>2.1</hamcrest.version>
-    <junit.version>4.13.1</junit.version>
-    <logback.version>1.2.3</logback.version>
-    <mockito.version>2.23.4</mockito.version>
-    <slf4j.version>1.7.25</slf4j.version>
-    <spotbugs.annotations.version>3.1.12</spotbugs.annotations.version>
+    <hamcrest.version>2.2</hamcrest.version>
+    <junit.version>4.13.2</junit.version>
+    <logback.version>1.2.11</logback.version>
+    <mockito.version>4.7.0</mockito.version>
+    <slf4j.version>1.7.36</slf4j.version>
+    <spotbugs.annotations.version>4.7.1</spotbugs.annotations.version>
 
     <!--Plugin versions-->
-    <aspectj.maven.plugin.version>1.11</aspectj.maven.plugin.version>
+    <aspectj.maven.plugin.version>1.14.0</aspectj.maven.plugin.version>
 
     <!-- Code Coverage -->
     <jacoco.check.line.coverage>1.0</jacoco.check.line.coverage>
     <jacoco.check.branch.coverage>1.0</jacoco.check.branch.coverage>
+
+    <!-- Spotbugs -->
+    <spotbugs.exclude>${project.basedir}/spotbugs.exclude.xml</spotbugs.exclude>
   </properties>
 
   <build>
@@ -175,7 +177,7 @@
         <configuration>
           <source>${maven.compiler.source}</source>
           <target>${maven.compiler.target}</target>
-          <complianceLevel>1.8</complianceLevel>
+          <complianceLevel>17</complianceLevel>
           <showWeaveInfo>true</showWeaveInfo>
           <testSources>
             <scanner implementation="org.codehaus.plexus.util.DirectoryScanner">
@@ -379,47 +381,10 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>com.github.java-json-tools</groupId>
+      <groupId>com.networknt</groupId>
       <artifactId>json-schema-validator</artifactId>
       <version>${json-schema-validator.version}</version>
       <scope>test</scope>
-      <exclusions>
-        <!-- TODO(ville): Dependency needs to be updated.
-            https://github.com/java-json-tools/json-schema-validator/blob/master/build.gradle#L43
-        -->
-        <exclusion>
-          <groupId>com.github.java-json-tools</groupId>
-          <artifactId>json-schema-core</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>com.github.java-json-tools</groupId>
-      <artifactId>json-schema-core</artifactId>
-      <version>${json-schema-core.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.github.java-json-tools</groupId>
-      <artifactId>jackson-coreutils</artifactId>
-      <version>${jackson-coreutils.version}</version>
-      <scope>test</scope>
-      <exclusions>
-        <!-- TODO(ville): Via unmaintained transitive:
-            https://github.com/fge/msg-simple
-        -->
-        <exclusion>
-          <groupId>com.google.code.findbugs</groupId>
-          <artifactId>jsr305</artifactId>
-        </exclusion>
-        <!-- TODO(ville): Pending external upgrade:
-            https://github.com/java-json-tools/jackson-coreutils/pull/4
-        -->
-        <exclusion>
-          <groupId>com.fasterxml.jackson.core</groupId>
-          <artifactId>jackson-databind</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.datatype</groupId>

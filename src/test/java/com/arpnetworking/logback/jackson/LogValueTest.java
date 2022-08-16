@@ -16,6 +16,7 @@
 package com.arpnetworking.logback.jackson;
 
 import com.arpnetworking.logback.StenoEncoder;
+import com.arpnetworking.logback.annotations.LogValue;
 import com.arpnetworking.logback.widgets.WidgetWithLogValue;
 import com.arpnetworking.logback.widgets.WidgetWithLogValueAndJsonValue;
 import com.arpnetworking.logback.widgets.WidgetWithLogValueDisabled;
@@ -25,6 +26,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -41,7 +43,7 @@ public class LogValueTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        _mocks = MockitoAnnotations.openMocks(this);
         Mockito.doReturn(Boolean.FALSE).when(_encoder).isInjectBeanIdentifier();
         _objectMapper = new ObjectMapper();
         _objectMapper.setAnnotationIntrospector(new StenoAnnotationIntrospector(_objectMapper));
@@ -51,6 +53,11 @@ public class LogValueTest {
         final SimpleModule module = new SimpleModule();
         module.setSerializerModifier(new StenoBeanSerializerModifier(_encoder));
         _objectMapper.registerModule(module);
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        _mocks.close();
     }
 
     @Test
@@ -86,4 +93,5 @@ public class LogValueTest {
     private ObjectMapper _objectMapper;
     @Mock
     private StenoEncoder _encoder;
+    private AutoCloseable _mocks;
 }
