@@ -1501,8 +1501,11 @@ public class StenoEncoderTest {
     private static final JsonSchema STENO_SCHEMA;
 
     static {
-        final InputStream schemaStream = StenoMarker.class.getResourceAsStream("/steno.schema.json");
-        STENO_SCHEMA = JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V4).getSchema(schemaStream);
+        try (InputStream schemaStream = StenoMarker.class.getResourceAsStream("/steno.schema.json")) {
+            STENO_SCHEMA = JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V4).getSchema(schemaStream);
+        } catch (final IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     // CHECKSTYLE.OFF: MemberName - Testing field annotations requires same name as getter.

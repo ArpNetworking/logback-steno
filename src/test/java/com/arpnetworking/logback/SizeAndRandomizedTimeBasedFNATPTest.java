@@ -21,6 +21,8 @@ import ch.qos.logback.core.rolling.RollingFileAppender;
 import ch.qos.logback.core.rolling.TimeBasedRollingPolicy;
 import ch.qos.logback.core.rolling.helper.ArchiveRemover;
 import ch.qos.logback.core.rolling.helper.CustomSizeAndTimeBasedArchiveRemover;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -167,7 +169,7 @@ public class SizeAndRandomizedTimeBasedFNATPTest {
     @Test
     public void testCreateArchiveRemover() {
         final ArchiveRemover archiveRemover = _triggeringPolicy.createArchiveRemover();
-        Assert.assertTrue(archiveRemover instanceof CustomSizeAndTimeBasedArchiveRemover);
+        MatcherAssert.assertThat(archiveRemover, Matchers.instanceOf(CustomSizeAndTimeBasedArchiveRemover.class));
     }
 
     private void resetMock(final Object mock) {
