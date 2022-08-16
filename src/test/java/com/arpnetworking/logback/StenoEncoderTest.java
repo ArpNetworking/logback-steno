@@ -31,16 +31,14 @@ import com.arpnetworking.steno.LogValueMapFactory;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.github.fge.jackson.JsonLoader;
-import com.github.fge.jsonschema.core.exceptions.ProcessingException;
-import com.github.fge.jsonschema.core.report.ProcessingReport;
-import com.github.fge.jsonschema.main.JsonSchemaFactory;
-import com.github.fge.jsonschema.main.JsonValidator;
+import com.networknt.schema.JsonSchema;
+import com.networknt.schema.JsonSchemaFactory;
+import com.networknt.schema.SpecVersion;
+import com.networknt.schema.ValidationMessage;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.junit.Assert;
 import org.junit.Before;
@@ -50,6 +48,7 @@ import org.slf4j.MDC;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Writer;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -64,6 +63,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Tests for {@link StenoEncoder}.
@@ -1473,7 +1473,7 @@ public class StenoEncoderTest {
 
     private void assertMatchesJsonSchema(final String json) {
         try {
-            final ObjectNode rootNode = (ObjectNode) JsonLoader.fromString(json);
+            final ObjectNode rootNode = (ObjectNode) OBJECT_MAPPER.readTree(json);
             final ObjectNode contextNode = (ObjectNode) rootNode.get("context");
             if (contextNode != null) {
                 contextNode.remove("logger");
@@ -1485,9 +1485,9 @@ public class StenoEncoderTest {
                 contextNode.remove("CONTEXT_KEY5");
                 contextNode.remove("CONTEXT_KEY6");
             }
-            final ProcessingReport report = _validator.validate(STENO_SCHEMA, rootNode);
-            Assert.assertTrue(report.toString(), report.isSuccess());
-        } catch (final IOException | ProcessingException e) {
+            final Set<ValidationMessage> report = STENO_SCHEMA.validate(rootNode);
+            Assert.assertEquals(report.toString(), 0, report.size());
+        } catch (final IOException e) {
             Assert.fail("Failed with exception: " + e);
         }
     }
@@ -1497,19 +1497,12 @@ public class StenoEncoderTest {
     private ByteArrayOutputStream _baos;
     private LoggerContext _context;
 
-    private final JsonValidator _validator = JsonSchemaFactory.byDefault().getValidator();
-
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
-    private static final JsonNode STENO_SCHEMA;
+    private static final JsonSchema STENO_SCHEMA;
 
     static {
-        JsonNode jsonNode = null;
-        try {
-            jsonNode = JsonLoader.fromResource("/steno.schema.json");
-        } catch (final IOException e) {
-            throw new RuntimeException(e);
-        }
-        STENO_SCHEMA = jsonNode;
+        final InputStream schemaStream = StenoMarker.class.getResourceAsStream("/steno.schema.json");
+        STENO_SCHEMA = JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V4).getSchema(schemaStream);
     }
 
     // CHECKSTYLE.OFF: MemberName - Testing field annotations requires same name as getter.

@@ -17,6 +17,12 @@
 # For documentation please refer to:
 # https://github.com/KoskiLabs/jdk-wrapper/blob/master/README.md
 
+HTTP_PROTOCOL="http"
+FILE_PROTOCOL="file"
+
+LATEST_RELEASE="latest"
+SNAPSHOT_RELEASE="snapshot"
+
 log_err() {
   l_prefix=$(date  +'%H:%M:%S')
   printf "[%s] %s\\n" "${l_prefix}" "$@" 1>&2;
@@ -42,37 +48,63 @@ safe_command() {
 
 checksum() {
   l_file="$1"
-  checksum_exec=""
-  checksum_args=""
+  l_checksum_exec=""
+  l_checksum_args=""
   if command -v sha256sum > /dev/null; then
-    checksum_exec="sha256sum"
+    l_checksum_exec="sha256sum"
   elif command -v shasum > /dev/null; then
-    checksum_exec="shasum"
-    checksum_args="-a 256"
+    l_checksum_exec="shasum"
+    l_checksum_args="-a 256"
   elif command -v sha1sum > /dev/null; then
-    checksum_exec="sha1sum"
+    l_checksum_exec="sha1sum"
   elif command -v md5 > /dev/null; then
-    checksum_exec="md5"
+    l_checksum_exec="md5"
   fi
-  if [ -z "${checksum_exec}" ]; then
+  if [ -z "${l_checksum_exec}" ]; then
     log_err "ERROR: No supported checksum command found!"
     exit 1
   fi
-  ${checksum_exec} ${checksum_args} < "${l_file}"
+  ${l_checksum_exec} ${l_checksum_args} < "${l_file}"
 }
 
 rand() {
   awk 'BEGIN {srand();printf "%d\n", (rand() * 10^8);}'
 }
 
-download_if_needed() {
-  file="$1"
-  path="$2"
-  if [ ! -f "${path}/${file}" ]; then
-    jdkw_url="${JDKW_BASE_URI}/releases/download/${JDKW_RELEASE}/${file}"
-    log_out "Downloading ${file} from ${jdkw_url}"
-    safe_command "curl ${curl_options} -f -k -L -o \"${path}/${file}\" \"${jdkw_url}\""
-    safe_command "chmod +x \"${path}/${file}\""
+get_protocol() {
+  case "${JDKW_BASE_URI}" in
+  http://*|https://*)
+    printf "%s" "${HTTP_PROTOCOL}"
+    ;;
+  file://*)
+    printf "%s" "${FILE_PROTOCOL}"
+    ;;
+  *)
+    log_err "ERROR: Unsupported protocol in JDKW_BASE_URI: ${JDKW_BASE_URI}"
+    exit 1
+  esac
+}
+
+obtain_if_needed() {
+  l_file="$1"
+  l_target_path="$2"
+  if [ ! -f "${l_target_path}/${l_file}" ]; then
+    case "${JDKW_BASE_URI}" in
+    http://*|https://*)
+      l_jdkw_url="${JDKW_BASE_URI}/releases/download/${JDKW_RELEASE}/${l_file}"
+      log_out "Downloading ${l_file} from ${l_jdkw_url}"
+      safe_command "curl ${curl_options} -f -k -L -o \"${l_target_path}/${l_file}\" \"${l_jdkw_url}\""
+      ;;
+    file://*)
+      l_jdkw_path="${JDKW_BASE_URI#file://}/${l_file}"
+      log_out "Copying ${l_file} from ${l_jdkw_path}"
+      safe_command "cp \"${l_jdkw_path}\" \"${l_target_path}/${l_file}\""
+      ;;
+    *)
+      log_err "ERROR: Unsupported protocol in JDKW_BASE_URI: ${JDKW_BASE_URI}"
+      exit 1
+    esac
+    safe_command "chmod +x \"${l_target_path}/${l_file}\""
   fi
 }
 
@@ -98,7 +130,6 @@ done < "${l_fifo}"
 safe_command "rm \"${l_fifo}\""
 
 # Process (but do not load) properties from command line arguments
-command=
 cmd_configuration=
 for arg in "$@"; do
   jdkw_arg=$(echo "${arg}" | grep '^JDKW_.*')
@@ -109,13 +140,6 @@ for arg in "$@"; do
   if [ -n "${jdkw_arg}" ]; then
     cmd_configuration="${cmd_configuration}${arg} "
   fi
-  case "${arg}" in
-    *\'*)
-       arg=$(printf "%s" "$arg" | sed "s/'/'\"'\"'/g")
-       ;;
-    *) : ;;
-  esac
-  command="${command} '${arg}'"
 done
 
 # Default base directory to current working directory
@@ -144,7 +168,10 @@ if [ -z "${JDKW_BASE_URI}" ]; then
     JDKW_BASE_URI="https://github.com/KoskiLabs/jdk-wrapper"
 fi
 if [ -z "${JDKW_RELEASE}" ]; then
-  JDKW_RELEASE="latest"
+  JDKW_RELEASE="${LATEST_RELEASE}"
+  if [ $(get_protocol) = "${FILE_PROTOCOL}" ]; then
+    JDKW_RELEASE="${SNAPSHOT_RELEASE}"
+  fi
   log_out "Defaulted to version ${JDKW_RELEASE}"
 fi
 if [ -z "${JDKW_TARGET}" ]; then
@@ -156,7 +183,7 @@ if [ -z "${JDKW_VERBOSE}" ]; then
 fi
 
 # Resolve latest version
-if [ "${JDKW_RELEASE}" = "latest" ]; then
+if [ "${JDKW_RELEASE}" = "${LATEST_RELEASE}" ]; then
   latest_version_json="${TMPDIR:-/tmp}/jdkw-latest-version-$$.$(rand)"
   safe_command "curl ${curl_options} -f -k -L -o \"${latest_version_json}\" -H 'Accept: application/json' \"${JDKW_BASE_URI}/releases/latest\""
   JDKW_RELEASE=$(sed -e 's/.*"tag_name":"\([^"]*\)".*/\1/' < "${latest_version_json}")
@@ -166,6 +193,10 @@ fi
 
 # Ensure target directory exists
 jdkw_path="${JDKW_TARGET}/jdkw/${JDKW_RELEASE}"
+if [ -d "${jdkw_path}" ] && [ "${JDKW_RELEASE}" = "${SNAPSHOT_RELEASE}" ]; then
+  log_out "Removing target snapshot directory ${jdkw_path}"
+  safe_command "rm -rf \"${jdkw_path}\""
+fi
 if [ ! -d "${jdkw_path}" ]; then
   log_out "Creating target directory ${jdkw_path}"
   safe_command "mkdir -p \"${jdkw_path}\""
@@ -174,8 +205,8 @@ fi
 # Download the jdk wrapper version
 jdkw_impl="jdkw-impl.sh"
 jdkw_wrapper="jdk-wrapper.sh"
-download_if_needed "${jdkw_impl}" "${jdkw_path}"
-download_if_needed "${jdkw_wrapper}" "${jdkw_path}"
+obtain_if_needed "${jdkw_impl}" "${jdkw_path}"
+obtain_if_needed "${jdkw_wrapper}" "${jdkw_path}"
 
 # Check whether this wrapper is the one specified for this version
 jdkw_download="${jdkw_path}/${jdkw_wrapper}"

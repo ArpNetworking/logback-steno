@@ -20,6 +20,7 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 import org.hamcrest.TypeSafeMatcher;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -45,9 +46,14 @@ public class RateLimitLoggerTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        _mocks = MockitoAnnotations.openMocks(this);
         Mockito.doReturn(Boolean.FALSE).when(_slf4jLogger).isDebugEnabled();
         Mockito.doReturn(Boolean.TRUE).when(_slf4jLogger).isInfoEnabled();
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        _mocks.close();
     }
 
     @Test
@@ -223,4 +229,5 @@ public class RateLimitLoggerTest {
     private ArgumentCaptor<List<Object>> _dataValuesArgument;
     @Captor
     private ArgumentCaptor<Instant> _lastLogTimeArgument;
+    private AutoCloseable _mocks;
 }

@@ -15,17 +15,19 @@
  */
 package com.arpnetworking;
 
+import com.arpnetworking.logback.StenoMarker;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.github.fge.jackson.JsonLoader;
-import com.github.fge.jsonschema.core.exceptions.ProcessingException;
-import com.github.fge.jsonschema.core.report.ProcessingReport;
-import com.github.fge.jsonschema.main.JsonSchemaFactory;
-import com.github.fge.jsonschema.main.JsonValidator;
+import com.networknt.schema.JsonSchema;
+import com.networknt.schema.JsonSchemaFactory;
+import com.networknt.schema.SpecVersion;
+import com.networknt.schema.ValidationMessage;
 import org.junit.Assert;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Set;
 
 /**
  * Base integration test for {@link com.arpnetworking.logback.StenoEncoder}.
@@ -51,16 +53,16 @@ public abstract class BaseStenoIntegrationTest extends BaseIntegrationTest {
 
             // Validate actual against JSON schema
             try {
-                final ObjectNode rootNode = (ObjectNode) JsonLoader.fromString(actualLine);
+                final ObjectNode rootNode = (ObjectNode) OBJECT_MAPPER.readTree(actualLine);
                 final ObjectNode contextNode = (ObjectNode) rootNode.get("context");
                 if (contextNode != null) {
                     contextNode.remove("logger");
                     contextNode.remove("MDC_KEY1");
                     contextNode.remove("MDC_KEY2");
                 }
-                final ProcessingReport report = VALIDATOR.validate(STENO_SCHEMA, rootNode);
-                Assert.assertTrue("Line: " + (i + 1) + " " + report.toString(), report.isSuccess());
-            } catch (final IOException | ProcessingException e) {
+                final Set<ValidationMessage> report = STENO_SCHEMA.validate(rootNode);
+                Assert.assertEquals("Line: " + (i + 1) + " " + report.toString(), 0, report.size());
+            } catch (final IOException e) {
                 Assert.fail("Failed with exception: " + e);
             }
 
@@ -87,16 +89,11 @@ public abstract class BaseStenoIntegrationTest extends BaseIntegrationTest {
     }
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
-    private static final JsonValidator VALIDATOR = JsonSchemaFactory.byDefault().getValidator();
-    private static final JsonNode STENO_SCHEMA;
+    private static final JsonSchema STENO_SCHEMA;
 
     static {
-        JsonNode jsonNode = null;
-        try {
-            jsonNode = JsonLoader.fromResource("/steno.schema.json");
-        } catch (final IOException e) {
-            throw new RuntimeException(e);
-        }
-        STENO_SCHEMA = jsonNode;
+        final InputStream schemaStream = StenoMarker.class.getResourceAsStream("/steno.schema.json");
+        STENO_SCHEMA = JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V4).getSchema(schemaStream);
     }
+
 }

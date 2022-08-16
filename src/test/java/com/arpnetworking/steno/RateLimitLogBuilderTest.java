@@ -15,6 +15,7 @@
  */
 package com.arpnetworking.steno;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,8 +38,13 @@ public class RateLimitLogBuilderTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        _mocks = MockitoAnnotations.openMocks(this);
         setupLogBuilder(_logBuilder);
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        _mocks.close();
     }
 
     @Test
@@ -141,4 +147,5 @@ public class RateLimitLogBuilderTest {
     private LogBuilder _logBuilder;
     @Captor
     private ArgumentCaptor<Optional<Instant>> _dataArgument;
+    private AutoCloseable _mocks;
 }

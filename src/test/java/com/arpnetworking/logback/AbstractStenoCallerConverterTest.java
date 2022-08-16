@@ -16,6 +16,7 @@
 package com.arpnetworking.logback;
 
 import ch.qos.logback.classic.spi.ILoggingEvent;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,7 +33,12 @@ public class AbstractStenoCallerConverterTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        _mocks = MockitoAnnotations.openMocks(this);
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        _mocks.close();
     }
 
     @Test
@@ -48,6 +54,7 @@ public class AbstractStenoCallerConverterTest {
     }
 
     @Mock private ILoggingEvent _loggingEvent;
+    private AutoCloseable _mocks;
 
     private static final class FakeAbstractStenoCallerConverter extends AbstractStenoCallerConverter {
         @Override

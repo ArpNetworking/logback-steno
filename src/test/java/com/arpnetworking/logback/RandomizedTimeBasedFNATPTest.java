@@ -73,7 +73,7 @@ public class RandomizedTimeBasedFNATPTest {
         final ZonedDateTime dateTime = ZonedDateTime.parse("2014-05-05T00:00:00Z");
         final RollingFileAppender<LoggingEvent> fileAppender = new RollingFileAppender<>();
         fileAppender.setFile("application.log");
-        final SecureRandom secureRandom = Mockito.mock(SecureRandom.class);
+        final SecureRandom secureRandom = Mockito.mock(SecureRandom.class, Mockito.withSettings().withoutAnnotations());
         Mockito.doReturn(Double.valueOf(0.1)).when(secureRandom).nextDouble();
         final SecureRandomProvider secureRandomProvider = Mockito.mock(SecureRandomProvider.class);
         Mockito.when(secureRandomProvider.get(Mockito.any(byte[].class))).thenReturn(secureRandom);
@@ -108,7 +108,7 @@ public class RandomizedTimeBasedFNATPTest {
         final ZonedDateTime dateTime = ZonedDateTime.parse("2014-05-05T00:00:00Z");
         final RollingFileAppender<LoggingEvent> fileAppender = new RollingFileAppender<>();
         fileAppender.setFile("application.log");
-        final SecureRandom secureRandom = Mockito.mock(SecureRandom.class);
+        final SecureRandom secureRandom = Mockito.mock(SecureRandom.class, Mockito.withSettings().withoutAnnotations());
         Mockito.doReturn(Double.valueOf(0.1)).when(secureRandom).nextDouble();
         final SecureRandomProvider secureRandomProvider = Mockito.mock(SecureRandomProvider.class);
         Mockito.when(secureRandomProvider.get()).thenReturn(secureRandom);

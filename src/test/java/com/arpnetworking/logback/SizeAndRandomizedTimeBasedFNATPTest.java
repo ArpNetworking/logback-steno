@@ -21,6 +21,7 @@ import ch.qos.logback.core.rolling.RollingFileAppender;
 import ch.qos.logback.core.rolling.TimeBasedRollingPolicy;
 import ch.qos.logback.core.rolling.helper.ArchiveRemover;
 import ch.qos.logback.core.rolling.helper.CustomSizeAndTimeBasedArchiveRemover;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,7 +40,7 @@ public class SizeAndRandomizedTimeBasedFNATPTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        _mocks = MockitoAnnotations.openMocks(this);
 
         final RollingFileAppender<LoggingEvent> fileAppender = new RollingFileAppender<>();
         fileAppender.setFile("application.log");
@@ -53,6 +54,11 @@ public class SizeAndRandomizedTimeBasedFNATPTest {
         rollingPolicy.setParent(fileAppender);
         rollingPolicy.setTimeBasedFileNamingAndTriggeringPolicy(_triggeringPolicy);
         rollingPolicy.start();
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        _mocks.close();
     }
 
     @Test
@@ -174,4 +180,5 @@ public class SizeAndRandomizedTimeBasedFNATPTest {
     private RandomizedTimeBasedFNATP<LoggingEvent> _wrappedPolicy;
     private LoggerContext _context;
     private SizeAndRandomizedTimeBasedFNATP<LoggingEvent> _triggeringPolicy;
+    private AutoCloseable _mocks;
 }

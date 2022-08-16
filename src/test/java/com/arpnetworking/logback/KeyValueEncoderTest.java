@@ -22,6 +22,7 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.LoggingEvent;
 import ch.qos.logback.core.Layout;
 import com.arpnetworking.logback.widgets.Widget;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -50,7 +51,7 @@ public class KeyValueEncoderTest {
 
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
+        _mocks = MockitoAnnotations.openMocks(this);
         _context = new LoggerContext();
         _context.start();
         _baos = new ByteArrayOutputStream();
@@ -64,6 +65,11 @@ public class KeyValueEncoderTest {
         _encoder.setLayout(layout);
         _encoder.setContext(_context);
         Mockito.doThrow(new RuntimeException("Mocked Failure")).when(_throwingLayout).doLayout(Mockito.any(ILoggingEvent.class));
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        _mocks.close();
     }
 
     @Test
@@ -654,4 +660,5 @@ public class KeyValueEncoderTest {
     private LoggerContext _context;
     @Mock
     private Layout<ILoggingEvent> _throwingLayout;
+    private AutoCloseable _mocks;
 }
