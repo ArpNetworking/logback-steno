@@ -43,13 +43,13 @@ public abstract class BaseLoggingEncoder extends LayoutWrappingEncoder<ILoggingE
      */
     @Override
     public byte[] encode(final ILoggingEvent event) {
-        final Marker marker = event.getMarker();
+        final List<Marker> markers = event.getMarkerList();
         final String name = event.getMessage();
         final Object[] argumentArray = event.getArgumentArray();
 
         String output;
         try {
-            output = encodeAsString(event, marker, name, argumentArray);
+            output = encodeAsString(event, markers, name, argumentArray);
         } catch (final EncodingException ee) {
             output = encodeAsString(event, ee);
         }
@@ -212,75 +212,69 @@ public abstract class BaseLoggingEncoder extends LayoutWrappingEncoder<ILoggingE
     protected abstract String buildStandardMessage(ILoggingEvent event) throws EncodingException;
 
     /**
-     * Determine whether the {@code marker} represents an array event.
+     * Determine whether the {@code markers} represents an array event.
      *
-     * @since 1.0.0
-     *
-     * @param marker The {@link Marker} instance to evaluate.
+     * @param markers The {@link Marker} instance to evaluate.
      * @return True if and only if {@code marker} represents an array event.
+     * @since 1.0.0
      */
-    protected boolean isArrayStenoEvent(@Nullable final Marker marker) {
-        return marker != null && marker.contains(StenoMarker.ARRAY_MARKER);
+    protected boolean isArrayStenoEvent(@Nullable final List<Marker> markers) {
+        return markers != null && markers.stream().anyMatch(marker -> marker.contains(StenoMarker.ARRAY_MARKER));
     }
 
     /**
      * Determine whether the {@code marker} represents a JSON array event.
      *
-     * @since 1.0.4
-     *
-     * @param marker The {@link Marker} instance to evaluate.
+     * @param markers The {@link Marker} instance to evaluate.
      * @return True if and only if {@code marker} represents a JSON array event.
+     * @since 1.0.4
      */
-    protected boolean isArrayJsonStenoEvent(@Nullable final Marker marker) {
-        return marker != null && marker.contains(StenoMarker.ARRAY_JSON_MARKER);
+    protected boolean isArrayJsonStenoEvent(@Nullable final List<Marker> markers) {
+        return markers != null && markers.contains(StenoMarker.ARRAY_JSON_MARKER);
     }
 
     /**
      * Determine whether the {@code marker} represents a map event.
      *
-     * @since 1.0.4
-     *
-     * @param marker The {@link Marker} instance to evaluate.
+     * @param markers The {@link Marker} instance to evaluate.
      * @return True if and only if {@code marker} represents an array event.
+     * @since 1.0.4
      */
-    protected boolean isMapStenoEvent(@Nullable final Marker marker) {
-        return marker != null && marker.contains(StenoMarker.MAP_MARKER);
+    protected boolean isMapStenoEvent(@Nullable final List<Marker> markers) {
+        return markers != null && markers.contains(StenoMarker.MAP_MARKER);
     }
 
     /**
      * Determine whether the {@code marker} represents a JSON map event.
      *
-     * @since 1.0.4
-     *
-     * @param marker The {@link Marker} instance to evaluate.
+     * @param markers The {@link Marker} instance to evaluate.
      * @return True if and only if {@code marker} represents a JSON map event.
+     * @since 1.0.4
      */
-    protected boolean isMapJsonStenoEvent(@Nullable final Marker marker) {
-        return marker != null && marker.contains(StenoMarker.MAP_JSON_MARKER);
+    protected boolean isMapJsonStenoEvent(@Nullable final List<Marker> markers) {
+        return markers != null && markers.contains(StenoMarker.MAP_JSON_MARKER);
     }
 
     /**
      * Determine whether the {@code marker} represents an object event.
      *
-     * @since 1.1.0
-     *
-     * @param marker The {@link Marker} instance to evaluate.
+     * @param markers The {@link Marker} instance to evaluate.
      * @return True if and only if {@code marker} represents an object event.
+     * @since 1.1.0
      */
-    protected boolean isObjectStenoEvent(@Nullable final Marker marker) {
-        return marker != null && marker.contains(StenoMarker.OBJECT_MARKER);
+    protected boolean isObjectStenoEvent(@Nullable final List<Marker> markers) {
+        return markers != null && markers.contains(StenoMarker.OBJECT_MARKER);
     }
 
     /**
      * Determine whether the {@code marker} represents a JSON object event.
      *
-     * @since 1.1.0
-     *
-     * @param marker The {@link Marker} instance to evaluate.
+     * @param markers The {@link Marker} instance to evaluate.
      * @return True if and only if {@code marker} represents a JSON object event.
+     * @since 1.1.0
      */
-    protected boolean isObjectJsonStenoEvent(@Nullable final Marker marker) {
-        return marker != null && marker.contains(StenoMarker.OBJECT_JSON_MARKER);
+    protected boolean isObjectJsonStenoEvent(@Nullable final List<Marker> markers) {
+        return markers != null && markers.contains(StenoMarker.OBJECT_JSON_MARKER);
     }
 
     /**
@@ -295,15 +289,27 @@ public abstract class BaseLoggingEncoder extends LayoutWrappingEncoder<ILoggingE
         return marker != null && marker.contains(StenoMarker.LISTS_MARKER);
     }
 
+    /**
+     * Determine whether the {@code markers} represents a lists event.
+     *
+     * @since 1.4.0
+     *
+     * @param markers The {@link Marker} instance to evaluate.
+     * @return True if and only if {@code marker} represents a lists event.
+     */
+    protected boolean isListsStenoEvent(@Nullable final List<Marker> markers) {
+        return markers != null && markers.contains(StenoMarker.LISTS_MARKER);
+    }
+
     @SuppressWarnings("unchecked")
     private String encodeAsString(
             final ILoggingEvent event,
-            final Marker marker,
+            final List<Marker> markers,
             final String name,
             final Object[] argumentArray)
             throws EncodingException {
         final String output;
-        if (isListsStenoEvent(marker)) {
+        if (isListsStenoEvent(markers)) {
             output = buildListsMessage(
                     event,
                     name,
@@ -311,34 +317,34 @@ public abstract class BaseLoggingEncoder extends LayoutWrappingEncoder<ILoggingE
                     (List<Object>) argumentArray[1],  // data object values
                     (List<String>) argumentArray[2],  // context keys
                     (List<Object>) argumentArray[3]); // context object values
-        } else if (isArrayStenoEvent(marker)) {
+        } else if (isArrayStenoEvent(markers)) {
             output = buildArrayMessage(
                     event,
                     name,
                     (String[]) argumentArray[0],  // keys
                     (Object[]) argumentArray[1]); // object values
-        } else if (isArrayJsonStenoEvent(marker)) {
+        } else if (isArrayJsonStenoEvent(markers)) {
             output = buildArrayJsonMessage(
                     event,
                     name,
                     (String[]) argumentArray[0],  // keys
                     (String[]) argumentArray[1]); // json values
-        } else if (isMapStenoEvent(marker)) {
+        } else if (isMapStenoEvent(markers)) {
             output = buildMapMessage(
                     event,
                     name,
                     (Map<String, Object>) argumentArray[0]); // key to object value map
-        } else if (isMapJsonStenoEvent(marker)) {
+        } else if (isMapJsonStenoEvent(markers)) {
             output = buildMapJsonMessage(
                     event,
                     name,
                     (Map<String, String>) argumentArray[0]); // key to json value map
-        } else if (isObjectStenoEvent(marker)) {
+        } else if (isObjectStenoEvent(markers)) {
             output = buildObjectMessage(
                     event,
                     name,
                     argumentArray[0]); // data object value
-        } else if (isObjectJsonStenoEvent(marker)) {
+        } else if (isObjectJsonStenoEvent(markers)) {
             output = buildObjectJsonMessage(
                     event,
                     name,
