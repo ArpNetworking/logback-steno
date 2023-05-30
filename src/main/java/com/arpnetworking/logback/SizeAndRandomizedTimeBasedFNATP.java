@@ -133,9 +133,5 @@ public class SizeAndRandomizedTimeBasedFNATP<E> extends SizeAndTimeBasedFNATP<E>
                 this.rc);
     }
 
-    /* package private */ long getNextCheck() {
-        return atomicNextCheck.get();
-    }
-
     private final RandomizedTimeBasedFNATP<E> _randomizedTimeBasedFNATP;
 }
