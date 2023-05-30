@@ -31,6 +31,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+import java.time.Instant;
 import java.util.Date;
 
 /**
@@ -113,9 +114,9 @@ public class SizeAndRandomizedTimeBasedFNATPTest {
     public void testDelegateSetDateInCurrentPeriod() {
         resetMock(_wrappedPolicy);
 
-        final Date date = new Date();
-        _triggeringPolicy.setDateInCurrentPeriod(date);
-        Mockito.verify(_wrappedPolicy).setDateInCurrentPeriod(Mockito.same(date));
+        final Instant date = new Date().toInstant();
+        _triggeringPolicy.setDateInCurrentPeriod(date.toEpochMilli());
+        Mockito.verify(_wrappedPolicy).setDateInCurrentPeriod(Mockito.eq(date));
     }
 
     @Test
@@ -123,12 +124,11 @@ public class SizeAndRandomizedTimeBasedFNATPTest {
         resetMock(_wrappedPolicy);
 
         final Date date = new Date();
-        Mockito.doReturn(date).when(_wrappedPolicy).getDateInCurrentPeriod();
+        Mockito.doReturn(date.toInstant()).when(_wrappedPolicy).getDateInCurrentPeriod();
 
         final long dateAsTime = 1234;
         _triggeringPolicy.setDateInCurrentPeriod(dateAsTime);
-        Mockito.verify(_wrappedPolicy).getDateInCurrentPeriod();
-        Assert.assertEquals(dateAsTime, date.getTime());
+        Mockito.verify(_wrappedPolicy).setDateInCurrentPeriod(Instant.ofEpochMilli(dateAsTime));
     }
 
     @Test
@@ -158,12 +158,11 @@ public class SizeAndRandomizedTimeBasedFNATPTest {
     @Test
     public void testDelegateComputeNextCheck() {
         resetMock(_wrappedPolicy);
-        Mockito.doReturn(123L).when(_wrappedPolicy).getNextCheck();
+        Mockito.doReturn(123L).when(_wrappedPolicy).computeNextCheck(0);
 
-        _triggeringPolicy.computeNextCheck();
-        Mockito.verify(_wrappedPolicy).computeNextCheck();
-        Mockito.verify(_wrappedPolicy).getNextCheck();
-        Assert.assertEquals(123L, _triggeringPolicy.getNextCheck());
+        final long nextCheck = _triggeringPolicy.computeNextCheck(0);
+        Mockito.verify(_wrappedPolicy).computeNextCheck(0);
+        Assert.assertEquals(123L, nextCheck);
     }
 
     @Test

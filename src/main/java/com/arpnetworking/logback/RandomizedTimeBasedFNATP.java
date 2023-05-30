@@ -21,7 +21,7 @@ import ch.qos.logback.core.rolling.DefaultTimeBasedFileNamingAndTriggeringPolicy
 import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
-import java.util.Date;
+import java.time.Instant;
 
 /**
  * An alternative triggering policy that adds a random offset (calculated once on startup) to the rolling time of a
@@ -86,16 +86,20 @@ public class RandomizedTimeBasedFNATP<E> extends DefaultTimeBasedFileNamingAndTr
     }
 
     @Override
-    protected void computeNextCheck() {
-        nextCheck = rc.getNextTriggeringDate(dateInCurrentPeriod).getTime() + _randomOffsetInMillis;
+    protected long computeNextCheck(final long timestamp) {
+        return rc.getNextTriggeringDate(Instant.ofEpochMilli(timestamp)).toEpochMilli() + _randomOffsetInMillis;
     }
 
     /* package private */ long getNextCheck() {
-        return nextCheck;
+        return atomicNextCheck.get();
     }
 
-    /* package private */ Date getDateInCurrentPeriod() {
+    /* package private */ Instant getDateInCurrentPeriod() {
         return dateInCurrentPeriod;
+    }
+
+    /* package private */ void setDateInCurrentPeriod(final Instant timestamp) {
+        super.setDateInCurrentPeriod(timestamp.toEpochMilli());
     }
 
     private final double _randomNumber;

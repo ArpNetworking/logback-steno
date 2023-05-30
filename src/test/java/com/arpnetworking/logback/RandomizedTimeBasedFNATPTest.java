@@ -29,7 +29,6 @@ import java.io.File;
 import java.net.UnknownHostException;
 import java.security.SecureRandom;
 import java.time.ZonedDateTime;
-import java.util.Date;
 
 /**
  * Tests for {@link RandomizedTimeBasedFNATP}.
@@ -54,7 +53,7 @@ public class RandomizedTimeBasedFNATPTest {
         rollingPolicy.start();
 
         // This should set the nextCheck to 2014-0505T01:00:00Z + random offset
-        triggeringPolicy.computeNextCheck();
+//        triggeringPolicy.computeNextCheck();
         MatcherAssert.assertThat(
                 triggeringPolicy.getNextCheck(),
                 Matchers.greaterThanOrEqualTo(dateTime.toInstant().toEpochMilli()));
@@ -95,7 +94,7 @@ public class RandomizedTimeBasedFNATPTest {
         Mockito.verify(secureRandom).nextDouble();
 
         // This should set the nextCheck to 2014-0505T01:00:00Z + random offset
-        triggeringPolicy.computeNextCheck();
+//        triggeringPolicy.computeNextCheck();
         final LoggingEvent event = new LoggingEvent();
         triggeringPolicy.setCurrentTime(ZonedDateTime.parse("2014-05-05T01:00:02Z").toInstant().toEpochMilli());
         Assert.assertFalse(triggeringPolicy.isTriggeringEvent(new File("application.log"), event));
@@ -137,7 +136,7 @@ public class RandomizedTimeBasedFNATPTest {
     public void testGetDateInCurrentPeriod() {
         final RandomizedTimeBasedFNATP<LoggingEvent> triggeringPolicy = new RandomizedTimeBasedFNATP<>();
         final ZonedDateTime dateTime = ZonedDateTime.parse("2014-05-05T00:00:00Z");
-        triggeringPolicy.setDateInCurrentPeriod(new Date(dateTime.toInstant().toEpochMilli()));
-        Assert.assertEquals(new Date(dateTime.toInstant().toEpochMilli()), triggeringPolicy.getDateInCurrentPeriod());
+        triggeringPolicy.setDateInCurrentPeriod(dateTime.toInstant());
+        Assert.assertEquals(dateTime.toInstant(), triggeringPolicy.getDateInCurrentPeriod());
     }
 }

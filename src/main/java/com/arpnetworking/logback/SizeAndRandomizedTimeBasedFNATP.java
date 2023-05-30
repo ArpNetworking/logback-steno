@@ -23,7 +23,7 @@ import ch.qos.logback.core.rolling.helper.ArchiveRemover;
 import ch.qos.logback.core.rolling.helper.CustomSizeAndTimeBasedArchiveRemover;
 import ch.qos.logback.core.rolling.helper.FileNamePattern;
 
-import java.util.Date;
+import java.time.Instant;
 
 /**
  * Extends {@link RandomizedTimeBasedFNATP} to also support file rolling
@@ -96,8 +96,8 @@ public class SizeAndRandomizedTimeBasedFNATP<E> extends SizeAndTimeBasedFNATP<E>
     }
 
     @Override
-    public void setDateInCurrentPeriod(final Date dateInCurrentPeriod) {
-        _randomizedTimeBasedFNATP.setDateInCurrentPeriod(dateInCurrentPeriod);
+    public void setDateInCurrentPeriod(final long dateInCurrentPeriod) {
+        _randomizedTimeBasedFNATP.setDateInCurrentPeriod(Instant.ofEpochMilli(dateInCurrentPeriod));
         super.setDateInCurrentPeriod(dateInCurrentPeriod);
     }
 
@@ -119,18 +119,11 @@ public class SizeAndRandomizedTimeBasedFNATP<E> extends SizeAndTimeBasedFNATP<E>
     }
 
     @Override
-    protected void computeNextCheck() {
+    protected long computeNextCheck(final long timestamp) {
         // This is the important override. It is invoked by isTriggerEvent from SizeAndTimeBasedFNATP
         // to set the next roll over time based on the time part of the rolling policy. It must be
         // delegated entirely and only to the encapsulated randomized time based policy instance.
-        _randomizedTimeBasedFNATP.computeNextCheck();
-        nextCheck = _randomizedTimeBasedFNATP.getNextCheck();
-    }
-
-    @Override
-    protected void setDateInCurrentPeriod(final long now) {
-        _randomizedTimeBasedFNATP.getDateInCurrentPeriod().setTime(now);
-        super.setDateInCurrentPeriod(now);
+        return _randomizedTimeBasedFNATP.computeNextCheck(timestamp);
     }
 
     @Override
@@ -138,10 +131,6 @@ public class SizeAndRandomizedTimeBasedFNATP<E> extends SizeAndTimeBasedFNATP<E>
         return new CustomSizeAndTimeBasedArchiveRemover(
                 new FileNamePattern(this.tbrp.getFileNamePattern(), this.context),
                 this.rc);
-    }
-
-    /* package private */ long getNextCheck() {
-        return nextCheck;
     }
 
     private final RandomizedTimeBasedFNATP<E> _randomizedTimeBasedFNATP;
