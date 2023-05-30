@@ -52,7 +52,7 @@ public class KeyValueSerializationHelperTest {
     public void testCreateContext() {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.OBJECT_MARKER);
+        event.addMarker(StenoMarker.OBJECT_MARKER);
         event.setMessage("logEvent");
         event.setTimeStamp(0);
         event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
@@ -73,7 +73,7 @@ public class KeyValueSerializationHelperTest {
     public void testCreateContextEmpty() {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.OBJECT_MARKER);
+        event.addMarker(StenoMarker.OBJECT_MARKER);
         event.setMessage("logEvent");
         event.setTimeStamp(0);
         event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
@@ -92,7 +92,7 @@ public class KeyValueSerializationHelperTest {
     public void testCreateContextKeysNull() {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.OBJECT_MARKER);
+        event.addMarker(StenoMarker.OBJECT_MARKER);
         event.setMessage("logEvent");
         event.setTimeStamp(0);
         event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
@@ -111,7 +111,7 @@ public class KeyValueSerializationHelperTest {
     public void testCreateContextValuesNull() {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.OBJECT_MARKER);
+        event.addMarker(StenoMarker.OBJECT_MARKER);
         event.setMessage("logEvent");
         event.setTimeStamp(0);
         event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
@@ -130,7 +130,7 @@ public class KeyValueSerializationHelperTest {
     public void testCreateContextTooManyKeys() {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.OBJECT_MARKER);
+        event.addMarker(StenoMarker.OBJECT_MARKER);
         event.setMessage("logEvent");
         event.setTimeStamp(0);
         event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
@@ -151,7 +151,7 @@ public class KeyValueSerializationHelperTest {
     public void testCreateContextTooManyValues() {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.OBJECT_MARKER);
+        event.addMarker(StenoMarker.OBJECT_MARKER);
         event.setMessage("logEvent");
         event.setTimeStamp(0);
         event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());

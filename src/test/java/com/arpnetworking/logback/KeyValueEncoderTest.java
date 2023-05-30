@@ -76,7 +76,7 @@ public class KeyValueEncoderTest {
     public void testEncodeArray() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.ARRAY_MARKER);
+        event.addMarker(StenoMarker.ARRAY_MARKER);
         event.setMessage("logEvent");
         event.setThreadName("thread");
         event.setTimeStamp(0);
@@ -95,7 +95,7 @@ public class KeyValueEncoderTest {
     public void testEncodeArrayThrowsException() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.ARRAY_MARKER);
+        event.addMarker(StenoMarker.ARRAY_MARKER);
         event.setMessage("logEvent");
         event.setThreadName("thread");
         event.setTimeStamp(0);
@@ -115,7 +115,7 @@ public class KeyValueEncoderTest {
     public void testEncodeArrayDefaultName() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.ARRAY_MARKER);
+        event.addMarker(StenoMarker.ARRAY_MARKER);
         event.setThreadName("thread");
         event.setTimeStamp(0);
         event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
@@ -135,7 +135,7 @@ public class KeyValueEncoderTest {
         Assert.assertEquals("FooBar", _encoder.getLogEventName());
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.ARRAY_MARKER);
+        event.addMarker(StenoMarker.ARRAY_MARKER);
         event.setThreadName("thread");
         event.setTimeStamp(0);
         event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
@@ -153,7 +153,7 @@ public class KeyValueEncoderTest {
     public void testEncodeArrayJson() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.ARRAY_JSON_MARKER);
+        event.addMarker(StenoMarker.ARRAY_JSON_MARKER);
         event.setMessage("logEvent");
         event.setThreadName("thread");
         event.setTimeStamp(0);
@@ -172,7 +172,7 @@ public class KeyValueEncoderTest {
     public void testEncodeArrayJsonThrowsException() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.ARRAY_JSON_MARKER);
+        event.addMarker(StenoMarker.ARRAY_JSON_MARKER);
         event.setMessage("logEvent");
         event.setThreadName("thread");
         event.setTimeStamp(0);
@@ -192,7 +192,7 @@ public class KeyValueEncoderTest {
     public void testEncodeArrayJsonNullValues() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.ARRAY_JSON_MARKER);
+        event.addMarker(StenoMarker.ARRAY_JSON_MARKER);
         event.setMessage("logEvent");
         event.setThreadName("thread");
         event.setTimeStamp(0);
@@ -211,7 +211,7 @@ public class KeyValueEncoderTest {
     public void testEncodeMap() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.MAP_MARKER);
+        event.addMarker(StenoMarker.MAP_MARKER);
         event.setMessage("logEvent");
         event.setThreadName("thread");
         event.setTimeStamp(0);
@@ -232,7 +232,7 @@ public class KeyValueEncoderTest {
     public void testEncodeMapThrowsException() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.MAP_MARKER);
+        event.addMarker(StenoMarker.MAP_MARKER);
         event.setMessage("logEvent");
         event.setThreadName("thread");
         event.setTimeStamp(0);
@@ -254,7 +254,7 @@ public class KeyValueEncoderTest {
     public void testEncodeMapNullMap() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.MAP_MARKER);
+        event.addMarker(StenoMarker.MAP_MARKER);
         event.setMessage("logEvent");
         event.setThreadName("thread");
         event.setTimeStamp(0);
@@ -272,7 +272,7 @@ public class KeyValueEncoderTest {
     public void testEncodeMapJson() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.MAP_JSON_MARKER);
+        event.addMarker(StenoMarker.MAP_JSON_MARKER);
         event.setMessage("logEvent");
         event.setThreadName("thread");
         event.setTimeStamp(0);
@@ -293,7 +293,7 @@ public class KeyValueEncoderTest {
     public void testEncodeMapJsonThrowsException() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.MAP_JSON_MARKER);
+        event.addMarker(StenoMarker.MAP_JSON_MARKER);
         event.setMessage("logEvent");
         event.setThreadName("thread");
         event.setTimeStamp(0);
@@ -315,7 +315,7 @@ public class KeyValueEncoderTest {
     public void testEncodeMapJsonNullMap() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.MAP_JSON_MARKER);
+        event.addMarker(StenoMarker.MAP_JSON_MARKER);
         event.setMessage("logEvent");
         event.setThreadName("thread");
         event.setTimeStamp(0);
@@ -333,7 +333,7 @@ public class KeyValueEncoderTest {
     public void testEncodeObject() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.OBJECT_MARKER);
+        event.addMarker(StenoMarker.OBJECT_MARKER);
         event.setMessage("logEvent");
         event.setThreadName("thread");
         event.setTimeStamp(0);
@@ -351,7 +351,7 @@ public class KeyValueEncoderTest {
     public void testEncodeObjectThrowsException() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.OBJECT_MARKER);
+        event.addMarker(StenoMarker.OBJECT_MARKER);
         event.setMessage("logEvent");
         event.setThreadName("thread");
         event.setTimeStamp(0);
@@ -370,7 +370,7 @@ public class KeyValueEncoderTest {
     public void testEncodeObjectNull() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.OBJECT_MARKER);
+        event.addMarker(StenoMarker.OBJECT_MARKER);
         event.setMessage("logEvent");
         event.setThreadName("thread");
         event.setTimeStamp(0);
@@ -388,7 +388,7 @@ public class KeyValueEncoderTest {
     public void testEncodeObjectJson() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.OBJECT_JSON_MARKER);
+        event.addMarker(StenoMarker.OBJECT_JSON_MARKER);
         event.setMessage("logEvent");
         event.setThreadName("thread");
         event.setTimeStamp(0);
@@ -406,7 +406,7 @@ public class KeyValueEncoderTest {
     public void testEncodeObjectJsonThrowsException() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.OBJECT_JSON_MARKER);
+        event.addMarker(StenoMarker.OBJECT_JSON_MARKER);
         event.setMessage("logEvent");
         event.setThreadName("thread");
         event.setTimeStamp(0);
@@ -425,7 +425,7 @@ public class KeyValueEncoderTest {
     public void testEncodeObjectJsonNull() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.OBJECT_JSON_MARKER);
+        event.addMarker(StenoMarker.OBJECT_JSON_MARKER);
         event.setMessage("logEvent");
         event.setThreadName("thread");
         event.setTimeStamp(0);
@@ -443,7 +443,7 @@ public class KeyValueEncoderTest {
     public void testEncodeLists() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.LISTS_MARKER);
+        event.addMarker(StenoMarker.LISTS_MARKER);
         event.setMessage("logEvent");
         event.setThreadName("thread");
         event.setTimeStamp(0);
@@ -464,7 +464,7 @@ public class KeyValueEncoderTest {
     public void testEncodeListsThrowsException() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.LISTS_MARKER);
+        event.addMarker(StenoMarker.LISTS_MARKER);
         event.setMessage("logEvent");
         event.setThreadName("thread");
         event.setTimeStamp(0);
@@ -486,7 +486,7 @@ public class KeyValueEncoderTest {
     public void testEncodeListsEmpty() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.LISTS_MARKER);
+        event.addMarker(StenoMarker.LISTS_MARKER);
         event.setMessage("logEvent");
         event.setThreadName("thread");
         event.setTimeStamp(0);
@@ -507,7 +507,7 @@ public class KeyValueEncoderTest {
     public void testEncodeListsNull() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.LISTS_MARKER);
+        event.addMarker(StenoMarker.LISTS_MARKER);
         event.setMessage("logEvent");
         event.setThreadName("thread");
         event.setTimeStamp(0);
@@ -528,7 +528,7 @@ public class KeyValueEncoderTest {
     public void testEncodeListsNullValues() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.LISTS_MARKER);
+        event.addMarker(StenoMarker.LISTS_MARKER);
         event.setMessage("logEvent");
         event.setThreadName("thread");
         event.setTimeStamp(0);
@@ -549,7 +549,7 @@ public class KeyValueEncoderTest {
     public void testEncodeListsNullMismatch() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.LISTS_MARKER);
+        event.addMarker(StenoMarker.LISTS_MARKER);
         event.setMessage("logEvent");
         event.setThreadName("thread");
         event.setTimeStamp(0);
@@ -605,7 +605,7 @@ public class KeyValueEncoderTest {
     public void testEncodeArrayEmptyKeysAndValues() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.ARRAY_MARKER);
+        event.addMarker(StenoMarker.ARRAY_MARKER);
         event.setMessage("logEvent");
         event.setThreadName("thread");
         event.setTimeStamp(0);
@@ -624,7 +624,7 @@ public class KeyValueEncoderTest {
     public void testEncodeArrayStringNullKeys() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.ARRAY_MARKER);
+        event.addMarker(StenoMarker.ARRAY_MARKER);
         event.setMessage("logEvent");
         event.setThreadName("thread");
         event.setTimeStamp(0);

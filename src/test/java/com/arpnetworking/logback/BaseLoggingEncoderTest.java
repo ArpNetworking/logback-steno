@@ -16,6 +16,7 @@
 package com.arpnetworking.logback;
 
 import ch.qos.logback.classic.spi.ILoggingEvent;
+import com.google.common.collect.Lists;
 import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Marker;
@@ -35,78 +36,78 @@ public class BaseLoggingEncoderTest {
     public void testIsArrayStenoEvent() throws Exception {
         final Marker rootMarker = new BasicMarkerFactory().getMarker("foo");
         rootMarker.add(StenoMarker.ARRAY_MARKER);
-        Assert.assertTrue(_encoder.isArrayStenoEvent(StenoMarker.ARRAY_MARKER));
-        Assert.assertTrue(_encoder.isArrayStenoEvent(rootMarker));
-        Assert.assertFalse(_encoder.isArrayStenoEvent(StenoMarker.ARRAY_JSON_MARKER));
-        Assert.assertFalse(_encoder.isArrayStenoEvent(StenoMarker.MAP_MARKER));
-        Assert.assertFalse(_encoder.isArrayStenoEvent(StenoMarker.MAP_JSON_MARKER));
-        Assert.assertFalse(_encoder.isArrayStenoEvent(StenoMarker.OBJECT_MARKER));
-        Assert.assertFalse(_encoder.isArrayStenoEvent(StenoMarker.OBJECT_JSON_MARKER));
+        Assert.assertTrue(_encoder.isArrayStenoEvent(Lists.newArrayList(StenoMarker.ARRAY_MARKER)));
+        Assert.assertTrue(_encoder.isArrayStenoEvent(Lists.newArrayList(rootMarker)));
+        Assert.assertFalse(_encoder.isArrayStenoEvent(Lists.newArrayList(StenoMarker.ARRAY_JSON_MARKER)));
+        Assert.assertFalse(_encoder.isArrayStenoEvent(Lists.newArrayList(StenoMarker.MAP_MARKER)));
+        Assert.assertFalse(_encoder.isArrayStenoEvent(Lists.newArrayList(StenoMarker.MAP_JSON_MARKER)));
+        Assert.assertFalse(_encoder.isArrayStenoEvent(Lists.newArrayList(StenoMarker.OBJECT_MARKER)));
+        Assert.assertFalse(_encoder.isArrayStenoEvent(Lists.newArrayList(StenoMarker.OBJECT_JSON_MARKER)));
     }
 
     @Test
     public void testIsArrayJsonStenoEvent() throws Exception {
         final Marker rootMarker = new BasicMarkerFactory().getMarker("foo");
         rootMarker.add(StenoMarker.ARRAY_JSON_MARKER);
-        Assert.assertTrue(_encoder.isArrayJsonStenoEvent(StenoMarker.ARRAY_JSON_MARKER));
-        Assert.assertTrue(_encoder.isArrayJsonStenoEvent(rootMarker));
-        Assert.assertFalse(_encoder.isArrayJsonStenoEvent(StenoMarker.ARRAY_MARKER));
-        Assert.assertFalse(_encoder.isArrayJsonStenoEvent(StenoMarker.MAP_MARKER));
-        Assert.assertFalse(_encoder.isArrayJsonStenoEvent(StenoMarker.MAP_JSON_MARKER));
-        Assert.assertFalse(_encoder.isArrayJsonStenoEvent(StenoMarker.OBJECT_MARKER));
-        Assert.assertFalse(_encoder.isArrayJsonStenoEvent(StenoMarker.OBJECT_JSON_MARKER));
+        Assert.assertTrue(_encoder.isArrayJsonStenoEvent(Lists.newArrayList(StenoMarker.ARRAY_JSON_MARKER)));
+        Assert.assertTrue(_encoder.isArrayJsonStenoEvent(Lists.newArrayList(rootMarker)));
+        Assert.assertFalse(_encoder.isArrayJsonStenoEvent(Lists.newArrayList(StenoMarker.ARRAY_MARKER)));
+        Assert.assertFalse(_encoder.isArrayJsonStenoEvent(Lists.newArrayList(StenoMarker.MAP_MARKER)));
+        Assert.assertFalse(_encoder.isArrayJsonStenoEvent(Lists.newArrayList(StenoMarker.MAP_JSON_MARKER)));
+        Assert.assertFalse(_encoder.isArrayJsonStenoEvent(Lists.newArrayList(StenoMarker.OBJECT_MARKER)));
+        Assert.assertFalse(_encoder.isArrayJsonStenoEvent(Lists.newArrayList(StenoMarker.OBJECT_JSON_MARKER)));
     }
 
     @Test
     public void testIsMapStenoEvent() throws Exception {
         final Marker rootMarker = new BasicMarkerFactory().getMarker("foo");
         rootMarker.add(StenoMarker.MAP_MARKER);
-        Assert.assertTrue(_encoder.isMapStenoEvent(StenoMarker.MAP_MARKER));
-        Assert.assertTrue(_encoder.isMapStenoEvent(rootMarker));
-        Assert.assertFalse(_encoder.isMapStenoEvent(StenoMarker.MAP_JSON_MARKER));
-        Assert.assertFalse(_encoder.isMapStenoEvent(StenoMarker.ARRAY_MARKER));
-        Assert.assertFalse(_encoder.isMapStenoEvent(StenoMarker.ARRAY_JSON_MARKER));
-        Assert.assertFalse(_encoder.isMapStenoEvent(StenoMarker.OBJECT_MARKER));
-        Assert.assertFalse(_encoder.isMapStenoEvent(StenoMarker.OBJECT_JSON_MARKER));
+        Assert.assertTrue(_encoder.isMapStenoEvent(Lists.newArrayList(StenoMarker.MAP_MARKER)));
+        Assert.assertTrue(_encoder.isMapStenoEvent(Lists.newArrayList(rootMarker)));
+        Assert.assertFalse(_encoder.isMapStenoEvent(Lists.newArrayList(StenoMarker.MAP_JSON_MARKER)));
+        Assert.assertFalse(_encoder.isMapStenoEvent(Lists.newArrayList(StenoMarker.ARRAY_MARKER)));
+        Assert.assertFalse(_encoder.isMapStenoEvent(Lists.newArrayList(StenoMarker.ARRAY_JSON_MARKER)));
+        Assert.assertFalse(_encoder.isMapStenoEvent(Lists.newArrayList(StenoMarker.OBJECT_MARKER)));
+        Assert.assertFalse(_encoder.isMapStenoEvent(Lists.newArrayList(StenoMarker.OBJECT_JSON_MARKER)));
     }
 
     @Test
     public void testIsMapJsonStenoEvent() throws Exception {
         final Marker rootMarker = new BasicMarkerFactory().getMarker("foo");
         rootMarker.add(StenoMarker.MAP_JSON_MARKER);
-        Assert.assertTrue(_encoder.isMapJsonStenoEvent(StenoMarker.MAP_JSON_MARKER));
-        Assert.assertTrue(_encoder.isMapJsonStenoEvent(rootMarker));
-        Assert.assertFalse(_encoder.isMapJsonStenoEvent(StenoMarker.MAP_MARKER));
-        Assert.assertFalse(_encoder.isMapJsonStenoEvent(StenoMarker.ARRAY_MARKER));
-        Assert.assertFalse(_encoder.isMapJsonStenoEvent(StenoMarker.ARRAY_JSON_MARKER));
-        Assert.assertFalse(_encoder.isMapJsonStenoEvent(StenoMarker.OBJECT_MARKER));
-        Assert.assertFalse(_encoder.isMapJsonStenoEvent(StenoMarker.OBJECT_JSON_MARKER));
+        Assert.assertTrue(_encoder.isMapJsonStenoEvent(Lists.newArrayList(StenoMarker.MAP_JSON_MARKER)));
+        Assert.assertTrue(_encoder.isMapJsonStenoEvent(Lists.newArrayList(rootMarker)));
+        Assert.assertFalse(_encoder.isMapJsonStenoEvent(Lists.newArrayList(StenoMarker.MAP_MARKER)));
+        Assert.assertFalse(_encoder.isMapJsonStenoEvent(Lists.newArrayList(StenoMarker.ARRAY_MARKER)));
+        Assert.assertFalse(_encoder.isMapJsonStenoEvent(Lists.newArrayList(StenoMarker.ARRAY_JSON_MARKER)));
+        Assert.assertFalse(_encoder.isMapJsonStenoEvent(Lists.newArrayList(StenoMarker.OBJECT_MARKER)));
+        Assert.assertFalse(_encoder.isMapJsonStenoEvent(Lists.newArrayList(StenoMarker.OBJECT_JSON_MARKER)));
     }
 
     @Test
     public void testIsObjectStenoEvent() throws Exception {
         final Marker rootMarker = new BasicMarkerFactory().getMarker("foo");
         rootMarker.add(StenoMarker.OBJECT_MARKER);
-        Assert.assertTrue(_encoder.isObjectStenoEvent(StenoMarker.OBJECT_MARKER));
-        Assert.assertTrue(_encoder.isObjectStenoEvent(rootMarker));
-        Assert.assertFalse(_encoder.isObjectStenoEvent(StenoMarker.MAP_MARKER));
-        Assert.assertFalse(_encoder.isObjectStenoEvent(StenoMarker.MAP_JSON_MARKER));
-        Assert.assertFalse(_encoder.isObjectStenoEvent(StenoMarker.ARRAY_MARKER));
-        Assert.assertFalse(_encoder.isObjectStenoEvent(StenoMarker.ARRAY_JSON_MARKER));
-        Assert.assertFalse(_encoder.isObjectStenoEvent(StenoMarker.OBJECT_JSON_MARKER));
+        Assert.assertTrue(_encoder.isObjectStenoEvent(Lists.newArrayList(StenoMarker.OBJECT_MARKER)));
+        Assert.assertTrue(_encoder.isObjectStenoEvent(Lists.newArrayList(rootMarker)));
+        Assert.assertFalse(_encoder.isObjectStenoEvent(Lists.newArrayList(StenoMarker.MAP_MARKER)));
+        Assert.assertFalse(_encoder.isObjectStenoEvent(Lists.newArrayList(StenoMarker.MAP_JSON_MARKER)));
+        Assert.assertFalse(_encoder.isObjectStenoEvent(Lists.newArrayList(StenoMarker.ARRAY_MARKER)));
+        Assert.assertFalse(_encoder.isObjectStenoEvent(Lists.newArrayList(StenoMarker.ARRAY_JSON_MARKER)));
+        Assert.assertFalse(_encoder.isObjectStenoEvent(Lists.newArrayList(StenoMarker.OBJECT_JSON_MARKER)));
     }
 
     @Test
     public void testIsObjectJsonStenoEvent() throws Exception {
         final Marker rootMarker = new BasicMarkerFactory().getMarker("foo");
         rootMarker.add(StenoMarker.OBJECT_JSON_MARKER);
-        Assert.assertTrue(_encoder.isObjectJsonStenoEvent(StenoMarker.OBJECT_JSON_MARKER));
-        Assert.assertTrue(_encoder.isObjectJsonStenoEvent(rootMarker));
-        Assert.assertFalse(_encoder.isObjectJsonStenoEvent(StenoMarker.MAP_MARKER));
-        Assert.assertFalse(_encoder.isObjectJsonStenoEvent(StenoMarker.MAP_JSON_MARKER));
-        Assert.assertFalse(_encoder.isObjectJsonStenoEvent(StenoMarker.ARRAY_MARKER));
-        Assert.assertFalse(_encoder.isObjectJsonStenoEvent(StenoMarker.ARRAY_JSON_MARKER));
-        Assert.assertFalse(_encoder.isObjectJsonStenoEvent(StenoMarker.OBJECT_MARKER));
+        Assert.assertTrue(_encoder.isObjectJsonStenoEvent(Lists.newArrayList(StenoMarker.OBJECT_JSON_MARKER)));
+        Assert.assertTrue(_encoder.isObjectJsonStenoEvent(Lists.newArrayList(rootMarker)));
+        Assert.assertFalse(_encoder.isObjectJsonStenoEvent(Lists.newArrayList(StenoMarker.MAP_MARKER)));
+        Assert.assertFalse(_encoder.isObjectJsonStenoEvent(Lists.newArrayList(StenoMarker.MAP_JSON_MARKER)));
+        Assert.assertFalse(_encoder.isObjectJsonStenoEvent(Lists.newArrayList(StenoMarker.ARRAY_MARKER)));
+        Assert.assertFalse(_encoder.isObjectJsonStenoEvent(Lists.newArrayList(StenoMarker.ARRAY_JSON_MARKER)));
+        Assert.assertFalse(_encoder.isObjectJsonStenoEvent(Lists.newArrayList(StenoMarker.OBJECT_MARKER)));
     }
 
     private BaseLoggingEncoder _encoder = new TestLoggingEncoder();

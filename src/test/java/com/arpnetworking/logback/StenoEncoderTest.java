@@ -91,7 +91,7 @@ public class StenoEncoderTest {
     public void testEncodeArray() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.ARRAY_MARKER);
+        event.addMarker(StenoMarker.ARRAY_MARKER);
         event.setMessage("logEvent");
         event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         event.setTimeStamp(0);
@@ -110,7 +110,7 @@ public class StenoEncoderTest {
     public void testEncodeArrayWithException() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.ARRAY_MARKER);
+        event.addMarker(StenoMarker.ARRAY_MARKER);
         event.setMessage("logEvent");
         event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         event.setTimeStamp(0);
@@ -130,7 +130,7 @@ public class StenoEncoderTest {
     public void testEncodeArrayWithCausedException() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.ARRAY_MARKER);
+        event.addMarker(StenoMarker.ARRAY_MARKER);
         event.setMessage("logEvent");
         event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         event.setTimeStamp(0);
@@ -150,7 +150,7 @@ public class StenoEncoderTest {
     public void testEncodeArrayWithSuppressedException() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.ARRAY_MARKER);
+        event.addMarker(StenoMarker.ARRAY_MARKER);
         event.setMessage("logEvent");
         event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         event.setTimeStamp(0);
@@ -175,7 +175,7 @@ public class StenoEncoderTest {
     public void testEncodeArrayWithNullSuppressedException() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.ARRAY_MARKER);
+        event.addMarker(StenoMarker.ARRAY_MARKER);
         event.setMessage("logEvent");
         event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         event.setTimeStamp(0);
@@ -201,7 +201,7 @@ public class StenoEncoderTest {
     public void testEncodeArrayComplexValue() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.ARRAY_MARKER);
+        event.addMarker(StenoMarker.ARRAY_MARKER);
         event.setMessage("logEvent");
         event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         event.setTimeStamp(0);
@@ -222,7 +222,7 @@ public class StenoEncoderTest {
     public void testEncodeArrayNullValues() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.ARRAY_MARKER);
+        event.addMarker(StenoMarker.ARRAY_MARKER);
         event.setMessage("logEvent");
         event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         event.setTimeStamp(0);
@@ -241,7 +241,7 @@ public class StenoEncoderTest {
     public void testEncodeArrayNullKeys() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.ARRAY_MARKER);
+        event.addMarker(StenoMarker.ARRAY_MARKER);
         event.setMessage("logEvent");
         event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         event.setTimeStamp(0);
@@ -260,7 +260,7 @@ public class StenoEncoderTest {
     public void testEncodeArrayThrowsIOException() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.ARRAY_MARKER);
+        event.addMarker(StenoMarker.ARRAY_MARKER);
         event.setMessage("logEvent");
         event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         event.setTimeStamp(0);
@@ -283,7 +283,7 @@ public class StenoEncoderTest {
     public void testEncodeArrayJson() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.ARRAY_JSON_MARKER);
+        event.addMarker(StenoMarker.ARRAY_JSON_MARKER);
         event.setMessage("logEvent");
         event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         event.setTimeStamp(0);
@@ -302,7 +302,7 @@ public class StenoEncoderTest {
     public void testEncodeArrayJsonNullValues() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.ARRAY_JSON_MARKER);
+        event.addMarker(StenoMarker.ARRAY_JSON_MARKER);
         event.setMessage("logEvent");
         event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         event.setTimeStamp(0);
@@ -321,7 +321,7 @@ public class StenoEncoderTest {
     public void testEncodeArrayJsonNullKeys() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.ARRAY_JSON_MARKER);
+        event.addMarker(StenoMarker.ARRAY_JSON_MARKER);
         event.setMessage("logEvent");
         event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         event.setTimeStamp(0);
@@ -340,7 +340,7 @@ public class StenoEncoderTest {
     public void testEncodeArrayJsonThrowsIOException() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.ARRAY_JSON_MARKER);
+        event.addMarker(StenoMarker.ARRAY_JSON_MARKER);
         event.setMessage("logEvent");
         event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         event.setTimeStamp(0);
@@ -363,7 +363,7 @@ public class StenoEncoderTest {
     public void testEncodeMap() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.MAP_MARKER);
+        event.addMarker(StenoMarker.MAP_MARKER);
         event.setMessage("logEvent");
         event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         event.setTimeStamp(0);
@@ -384,7 +384,7 @@ public class StenoEncoderTest {
     public void testEncodeMapComplexValue() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.MAP_MARKER);
+        event.addMarker(StenoMarker.MAP_MARKER);
         event.setMessage("logEvent");
         event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         event.setTimeStamp(0);
@@ -405,7 +405,7 @@ public class StenoEncoderTest {
     public void testEncodeMapNullValues() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.MAP_MARKER);
+        event.addMarker(StenoMarker.MAP_MARKER);
         event.setMessage("logEvent");
         event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         event.setTimeStamp(0);
@@ -426,7 +426,7 @@ public class StenoEncoderTest {
     public void testEncodeMapNullMap() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.MAP_MARKER);
+        event.addMarker(StenoMarker.MAP_MARKER);
         event.setMessage("logEvent");
         event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         event.setTimeStamp(0);
@@ -444,7 +444,7 @@ public class StenoEncoderTest {
     public void testEncodeMapThrowsIOException() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.MAP_MARKER);
+        event.addMarker(StenoMarker.MAP_MARKER);
         event.setMessage("logEvent");
         event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         event.setTimeStamp(0);
@@ -469,7 +469,7 @@ public class StenoEncoderTest {
     public void testEncodeMapJson() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.MAP_JSON_MARKER);
+        event.addMarker(StenoMarker.MAP_JSON_MARKER);
         event.setMessage("logEvent");
         event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         event.setTimeStamp(0);
@@ -490,7 +490,7 @@ public class StenoEncoderTest {
     public void testEncodeMapJsonNullValues() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.MAP_JSON_MARKER);
+        event.addMarker(StenoMarker.MAP_JSON_MARKER);
         event.setMessage("logEvent");
         event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         event.setTimeStamp(0);
@@ -511,7 +511,7 @@ public class StenoEncoderTest {
     public void testEncodeMapJsonNullMap() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.MAP_JSON_MARKER);
+        event.addMarker(StenoMarker.MAP_JSON_MARKER);
         event.setMessage("logEvent");
         event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         event.setTimeStamp(0);
@@ -529,7 +529,7 @@ public class StenoEncoderTest {
     public void testEncodeMapJsonThrowsIOException() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.MAP_JSON_MARKER);
+        event.addMarker(StenoMarker.MAP_JSON_MARKER);
         event.setMessage("logEvent");
         event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         event.setTimeStamp(0);
@@ -554,7 +554,7 @@ public class StenoEncoderTest {
     public void testEncodeObject() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.OBJECT_MARKER);
+        event.addMarker(StenoMarker.OBJECT_MARKER);
         event.setMessage("logEvent");
         event.setTimeStamp(0);
         event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
@@ -572,7 +572,7 @@ public class StenoEncoderTest {
     public void testEncodeObjectUnsafe() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.OBJECT_MARKER);
+        event.addMarker(StenoMarker.OBJECT_MARKER);
         event.setMessage("logEvent");
         event.setTimeStamp(0);
         event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
@@ -593,7 +593,7 @@ public class StenoEncoderTest {
     public void testEncodeObjectWithInjectBeanIdentity() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.OBJECT_MARKER);
+        event.addMarker(StenoMarker.OBJECT_MARKER);
         event.setMessage("logEvent");
         event.setTimeStamp(0);
         event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
@@ -614,7 +614,7 @@ public class StenoEncoderTest {
     public void testEncodeObjectWithInjectBeanIdentityUnsafe() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.OBJECT_MARKER);
+        event.addMarker(StenoMarker.OBJECT_MARKER);
         event.setMessage("logEvent");
         event.setTimeStamp(0);
         event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
@@ -638,7 +638,7 @@ public class StenoEncoderTest {
     public void testEncodeLoggableObject() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.OBJECT_MARKER);
+        event.addMarker(StenoMarker.OBJECT_MARKER);
         event.setMessage("logEvent");
         event.setTimeStamp(0);
         event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
@@ -656,7 +656,7 @@ public class StenoEncoderTest {
     public void testEncodeLoggableObjectWithInjectBeanIdentity() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.OBJECT_MARKER);
+        event.addMarker(StenoMarker.OBJECT_MARKER);
         event.setMessage("logEvent");
         event.setTimeStamp(0);
         event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
@@ -677,7 +677,7 @@ public class StenoEncoderTest {
     public void testEncodeLogValueObject() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.OBJECT_MARKER);
+        event.addMarker(StenoMarker.OBJECT_MARKER);
         event.setMessage("logEvent");
         event.setTimeStamp(0);
         event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
@@ -695,7 +695,7 @@ public class StenoEncoderTest {
     public void testEncodeLogValueObjectWithInjectBeanIdentity() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.OBJECT_MARKER);
+        event.addMarker(StenoMarker.OBJECT_MARKER);
         event.setMessage("logEvent");
         event.setTimeStamp(0);
         event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
@@ -716,7 +716,7 @@ public class StenoEncoderTest {
     public void testEncodeObjectThrowsIOException() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.OBJECT_MARKER);
+        event.addMarker(StenoMarker.OBJECT_MARKER);
         event.setMessage("logEvent");
         event.setTimeStamp(0);
         event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
@@ -743,7 +743,7 @@ public class StenoEncoderTest {
     public void testEncodeObjectNull() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.OBJECT_MARKER);
+        event.addMarker(StenoMarker.OBJECT_MARKER);
         event.setMessage("logEvent");
         event.setTimeStamp(0);
         event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
@@ -761,7 +761,7 @@ public class StenoEncoderTest {
     public void testEncodeObjectJson() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.OBJECT_JSON_MARKER);
+        event.addMarker(StenoMarker.OBJECT_JSON_MARKER);
         event.setMessage("logEvent");
         event.setTimeStamp(0);
         event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
@@ -779,7 +779,7 @@ public class StenoEncoderTest {
     public void testEncodeObjectJsonThrowsIOException() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.OBJECT_JSON_MARKER);
+        event.addMarker(StenoMarker.OBJECT_JSON_MARKER);
         event.setMessage("logEvent");
         event.setTimeStamp(0);
         event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
@@ -801,7 +801,7 @@ public class StenoEncoderTest {
     public void testEncodeObjectJsonNull() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.OBJECT_JSON_MARKER);
+        event.addMarker(StenoMarker.OBJECT_JSON_MARKER);
         event.setMessage("logEvent");
         event.setTimeStamp(0);
         event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
@@ -819,7 +819,7 @@ public class StenoEncoderTest {
     public void testEncodeLists() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.LISTS_MARKER);
+        event.addMarker(StenoMarker.LISTS_MARKER);
         event.setMessage("logEvent");
         event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         event.setTimeStamp(0);
@@ -840,7 +840,7 @@ public class StenoEncoderTest {
     public void testEncodeListsThrowsIOException() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.LISTS_MARKER);
+        event.addMarker(StenoMarker.LISTS_MARKER);
         event.setMessage("logEvent");
         event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         event.setTimeStamp(0);
@@ -865,7 +865,7 @@ public class StenoEncoderTest {
     public void testEncodeListsEmpty() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.LISTS_MARKER);
+        event.addMarker(StenoMarker.LISTS_MARKER);
         event.setMessage("logEvent");
         event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         event.setTimeStamp(0);
@@ -886,7 +886,7 @@ public class StenoEncoderTest {
     public void testEncodeListsNull() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.LISTS_MARKER);
+        event.addMarker(StenoMarker.LISTS_MARKER);
         event.setMessage("logEvent");
         event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         event.setTimeStamp(0);
@@ -907,7 +907,7 @@ public class StenoEncoderTest {
     public void testEncodeListsValuesWithoutKeys() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.LISTS_MARKER);
+        event.addMarker(StenoMarker.LISTS_MARKER);
         event.setMessage("logEvent");
         event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         event.setTimeStamp(0);
@@ -928,7 +928,7 @@ public class StenoEncoderTest {
     public void testEncodeListsNullValues() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.LISTS_MARKER);
+        event.addMarker(StenoMarker.LISTS_MARKER);
         event.setMessage("logEvent");
         event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         event.setTimeStamp(0);
@@ -949,7 +949,7 @@ public class StenoEncoderTest {
     public void testEncodeListsComplexValue() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.LISTS_MARKER);
+        event.addMarker(StenoMarker.LISTS_MARKER);
         event.setMessage("logEvent");
         event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         event.setTimeStamp(0);
@@ -1148,7 +1148,7 @@ public class StenoEncoderTest {
     public void testRedactSettings() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.ARRAY_MARKER);
+        event.addMarker(StenoMarker.ARRAY_MARKER);
         event.setMessage("logEvent");
         event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         event.setTimeStamp(0);
@@ -1212,7 +1212,7 @@ public class StenoEncoderTest {
         Assert.assertEquals(_javaTimeModule, _encoder.iteratorForJacksonModule().next());
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.ARRAY_MARKER);
+        event.addMarker(StenoMarker.ARRAY_MARKER);
         event.setMessage("logEvent");
         event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         event.setTimeStamp(0);
@@ -1232,7 +1232,7 @@ public class StenoEncoderTest {
     public void testEncodeEnumeration() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.ARRAY_MARKER);
+        event.addMarker(StenoMarker.ARRAY_MARKER);
         event.setMessage("logEvent");
         event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         event.setTimeStamp(0);
@@ -1253,7 +1253,7 @@ public class StenoEncoderTest {
         jsonNode.put("foo", "bar");
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.ARRAY_MARKER);
+        event.addMarker(StenoMarker.ARRAY_MARKER);
         event.setMessage("logEvent");
         event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         event.setTimeStamp(0);
@@ -1286,7 +1286,7 @@ public class StenoEncoderTest {
     public void testSafeContextWithSuppressDefaultContext() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.ARRAY_MARKER);
+        event.addMarker(StenoMarker.ARRAY_MARKER);
         event.setMessage("logEvent");
         event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         event.setTimeStamp(0);
@@ -1313,7 +1313,7 @@ public class StenoEncoderTest {
     public void testSafeContextWithMdcProperties() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.ARRAY_MARKER);
+        event.addMarker(StenoMarker.ARRAY_MARKER);
         event.setMessage("logEvent");
         event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         event.setTimeStamp(0);
@@ -1380,7 +1380,7 @@ public class StenoEncoderTest {
     public void testSafeContextWithUserDefinedContext() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.LISTS_MARKER);
+        event.addMarker(StenoMarker.LISTS_MARKER);
         event.setMessage("logEvent");
         event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         event.setTimeStamp(0);
@@ -1424,7 +1424,7 @@ public class StenoEncoderTest {
     public void testSafeContextWithUserDefinedContextWithEncoding() throws Exception {
         final LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        event.setMarker(StenoMarker.LISTS_MARKER);
+        event.addMarker(StenoMarker.LISTS_MARKER);
         event.setMessage("logEvent");
         event.setLoggerContextRemoteView(_context.getLoggerContextRemoteView());
         event.setTimeStamp(0);

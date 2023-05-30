@@ -46,7 +46,7 @@ public class StenoLineOfCallerConverterTest {
     @Test
     public void testNullCallerData() {
         Mockito.doReturn(null).when(_loggingEvent).getCallerData();
-        Assert.assertEquals(CallerData.NA, _converter.convert(_loggingEvent));
+        Assert.assertEquals(CallerData.CALLER_DATA_NA, _converter.convert(_loggingEvent));
     }
 
     private AutoCloseable _mocks;
