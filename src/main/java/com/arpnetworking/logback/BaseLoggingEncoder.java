@@ -230,7 +230,7 @@ public abstract class BaseLoggingEncoder extends LayoutWrappingEncoder<ILoggingE
      * @since 1.0.4
      */
     protected boolean isArrayJsonStenoEvent(@Nullable final List<Marker> markers) {
-        return markers != null && markers.contains(StenoMarker.ARRAY_JSON_MARKER);
+        return markers != null && markers.stream().anyMatch(m -> m.contains(StenoMarker.ARRAY_JSON_MARKER));
     }
 
     /**
@@ -241,7 +241,7 @@ public abstract class BaseLoggingEncoder extends LayoutWrappingEncoder<ILoggingE
      * @since 1.0.4
      */
     protected boolean isMapStenoEvent(@Nullable final List<Marker> markers) {
-        return markers != null && markers.contains(StenoMarker.MAP_MARKER);
+        return markers != null && markers.stream().anyMatch(m -> m.contains(StenoMarker.MAP_MARKER));
     }
 
     /**
@@ -252,7 +252,7 @@ public abstract class BaseLoggingEncoder extends LayoutWrappingEncoder<ILoggingE
      * @since 1.0.4
      */
     protected boolean isMapJsonStenoEvent(@Nullable final List<Marker> markers) {
-        return markers != null && markers.contains(StenoMarker.MAP_JSON_MARKER);
+        return markers != null && markers.stream().anyMatch(m -> m.contains(StenoMarker.MAP_JSON_MARKER));
     }
 
     /**
@@ -263,7 +263,7 @@ public abstract class BaseLoggingEncoder extends LayoutWrappingEncoder<ILoggingE
      * @since 1.1.0
      */
     protected boolean isObjectStenoEvent(@Nullable final List<Marker> markers) {
-        return markers != null && markers.contains(StenoMarker.OBJECT_MARKER);
+        return markers != null && markers.stream().anyMatch(m -> m.contains(StenoMarker.OBJECT_MARKER));
     }
 
     /**
@@ -274,7 +274,7 @@ public abstract class BaseLoggingEncoder extends LayoutWrappingEncoder<ILoggingE
      * @since 1.1.0
      */
     protected boolean isObjectJsonStenoEvent(@Nullable final List<Marker> markers) {
-        return markers != null && markers.contains(StenoMarker.OBJECT_JSON_MARKER);
+        return markers != null && markers.stream().anyMatch(m -> m.contains(StenoMarker.OBJECT_JSON_MARKER));
     }
 
     /**
@@ -298,7 +298,7 @@ public abstract class BaseLoggingEncoder extends LayoutWrappingEncoder<ILoggingE
      * @return True if and only if {@code marker} represents a lists event.
      */
     protected boolean isListsStenoEvent(@Nullable final List<Marker> markers) {
-        return markers != null && markers.contains(StenoMarker.LISTS_MARKER);
+        return markers != null && markers.stream().anyMatch(m -> m.contains(StenoMarker.LISTS_MARKER));
     }
 
     @SuppressWarnings("unchecked")
