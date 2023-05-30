@@ -19,8 +19,8 @@ import ch.qos.logback.core.CoreConstants;
 import ch.qos.logback.core.util.FileSize;
 
 import java.io.File;
+import java.time.Instant;
 import java.util.Arrays;
-import java.util.Date;
 
 /**
  * This is a customization of the {@link SizeAndTimeBasedArchiveRemover}
@@ -44,7 +44,7 @@ public class CustomSizeAndTimeBasedArchiveRemover extends SizeAndTimeBasedArchiv
     }
 
     @Override
-    public void clean(final Date now) {
+    public void clean(final Instant now) {
         super.clean(now);
         if (_totalSizeCap != CoreConstants.UNBOUNDED_TOTAL_SIZE_CAP && _totalSizeCap > 0) {
             capTotalSize(now);
@@ -64,13 +64,13 @@ public class CustomSizeAndTimeBasedArchiveRemover extends SizeAndTimeBasedArchiv
     }
 
     @Override
-    void capTotalSize(final Date now) {
+    void capTotalSize(final Instant now) {
         int totalSize = 0;
         int totalFilesRemoved = 0;
         int totalBytesRemoved = 0;
         int fileIndex = 0;
         for (int offset = 0; offset < _maxHistory; ++offset) {
-            final Date date = rc.getEndOfNextNthPeriod(now, -offset);
+            final Instant date = rc.getEndOfNextNthPeriod(now, -offset);
             final File[] matchingFileArray = getFilesInPeriod(date);
             descendingSortByLastModified(matchingFileArray);
             for (final File file : matchingFileArray) {
