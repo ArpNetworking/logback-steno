@@ -49,6 +49,7 @@ import org.slf4j.MDC;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectStreamException;
 import java.io.Writer;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -901,6 +902,11 @@ public class StenoEncoderTest {
         // CHECKSTYLE.ON: IllegalInstantiation
         assertOutput("StenoEncoderTest.testEncodeListsEmpty.json", logOutput);
         assertMatchesJsonSchema(logOutput);
+    }
+
+    @Test
+    public void testSerialMethods() throws ObjectStreamException {
+        _encoder.readResolve();
     }
 
     @Test

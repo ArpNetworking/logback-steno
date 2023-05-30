@@ -823,7 +823,7 @@ public class StenoEncoder extends BaseLoggingEncoder implements Serializable {
     }
 
     @java.io.Serial
-    private Object readResolve() throws ObjectStreamException {
+    /* package private */ Object readResolve() throws ObjectStreamException {
         _objectMapper = new ObjectMapper();
         _jacksonModules = new LinkedHashSet<>();
         return this;
