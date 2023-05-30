@@ -278,18 +278,6 @@ public abstract class BaseLoggingEncoder extends LayoutWrappingEncoder<ILoggingE
     }
 
     /**
-     * Determine whether the {@code marker} represents a lists event.
-     *
-     * @since 1.3.0
-     *
-     * @param marker The {@link Marker} instance to evaluate.
-     * @return True if and only if {@code marker} represents a lists event.
-     */
-    protected boolean isListsStenoEvent(@Nullable final Marker marker) {
-        return marker != null && marker.contains(StenoMarker.LISTS_MARKER);
-    }
-
-    /**
      * Determine whether the {@code markers} represents a lists event.
      *
      * @since 1.4.0
