@@ -26,6 +26,7 @@ import org.slf4j.Marker;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -46,6 +47,7 @@ public class LoggingEventWrapperTest {
         final IThrowableProxy throwableProxy = Mockito.mock(IThrowableProxy.class);
         final StackTraceElement[] callerData = new StackTraceElement[]{};
         final Marker marker = Mockito.mock(Marker.class);
+        final List<Marker> markerList = Arrays.asList(marker);
 
         // CHECKSTYLE.OFF: IllegalInstantiation - No Guava dependency here.
         final Map<String, String> mdcPropertyMap = new HashMap<>();
@@ -64,6 +66,7 @@ public class LoggingEventWrapperTest {
         Mockito.doReturn(callerData).when(wrapped).getCallerData();
         Mockito.doReturn(Boolean.TRUE).when(wrapped).hasCallerData();
         Mockito.doReturn(marker).when(wrapped).getMarker();
+        Mockito.doReturn(markerList).when(wrapped).getMarkerList();
         Mockito.doReturn(mdcPropertyMap).when(wrapped).getMDCPropertyMap();
         Mockito.doReturn(mdc).when(wrapped).getMdc();
         Mockito.doReturn(1L).when(wrapped).getTimeStamp();
@@ -77,6 +80,7 @@ public class LoggingEventWrapperTest {
         Assert.assertSame(callerData, wrapper.getCallerData());
         Assert.assertTrue(wrapper.hasCallerData());
         Assert.assertSame(marker, wrapper.getMarker());
+        Assert.assertSame(markerList, wrapper.getMarkerList());
         Assert.assertEquals(mdcPropertyMap, wrapper.getMDCPropertyMap());
         Assert.assertEquals(mdc, wrapper.getMdc());
         Assert.assertEquals(1L, wrapped.getTimeStamp());

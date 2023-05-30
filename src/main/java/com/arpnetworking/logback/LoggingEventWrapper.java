@@ -24,6 +24,7 @@ import org.slf4j.Marker;
 import org.slf4j.helpers.MessageFormatter;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import javax.annotation.Nullable;
 
@@ -97,8 +98,14 @@ public class LoggingEventWrapper extends LoggingEvent {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public Marker getMarker() {
         return _wrappedEvent.getMarker();
+    }
+
+    @Override
+    public List<Marker> getMarkerList() {
+        return _wrappedEvent.getMarkerList();
     }
 
     @Override

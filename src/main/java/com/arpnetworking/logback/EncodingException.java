@@ -15,6 +15,7 @@
  */
 package com.arpnetworking.logback;
 
+import java.io.Serial;
 import java.util.Collections;
 import java.util.Map;
 
@@ -49,5 +50,6 @@ import java.util.Map;
 
     private final Map<String, Object> _context;
 
+    @Serial
     private static final long serialVersionUID = 1;
 }

@@ -40,6 +40,7 @@ import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.fasterxml.jackson.databind.util.StdDateFormat;
 import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
 
+import java.io.ObjectStreamException;
 import java.io.Serializable;
 import java.time.Instant;
 import java.time.ZoneId;
@@ -821,7 +822,14 @@ public class StenoEncoder extends BaseLoggingEncoder implements Serializable {
         throw new NullPointerException("Both arguments are null");
     }
 
-    private ObjectMapper _objectMapper;
+    @java.io.Serial
+    /* package private */ Object readResolve() throws ObjectStreamException {
+        _objectMapper = new ObjectMapper();
+        _jacksonModules = new LinkedHashSet<>();
+        return this;
+    }
+
+    private transient ObjectMapper _objectMapper;
     private final ListsSerialziationStrategy _listsSerialziationStrategy;
     private final ObjectAsJsonSerialziationStrategy _objectAsJsonSerialziationStrategy;
     private final ObjectSerialziationStrategy _objectSerialziationStrategy;
@@ -843,8 +851,8 @@ public class StenoEncoder extends BaseLoggingEncoder implements Serializable {
     private boolean _injectContextFile = false;
     private boolean _injectContextMethod = false;
     private boolean _injectContextLine = false;
-    private Set<String> _injectMdcProperties = new LinkedHashSet<>();
-    private Set<Module> _jacksonModules = new LinkedHashSet<>();
+    private final Set<String> _injectMdcProperties = new LinkedHashSet<>();
+    private transient Set<Module> _jacksonModules = new LinkedHashSet<>();
     private boolean _safe = true;
     private boolean _injectBeanIdentifier = false;
 

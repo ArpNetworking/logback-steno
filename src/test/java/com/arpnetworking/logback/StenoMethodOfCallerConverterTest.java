@@ -16,8 +16,8 @@
 package com.arpnetworking.logback;
 
 import ch.qos.logback.classic.pattern.ClassicConverter;
-import ch.qos.logback.classic.spi.CallerData;
 import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.CoreConstants;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -46,7 +46,7 @@ public class StenoMethodOfCallerConverterTest {
     @Test
     public void testNullCallerData() {
         Mockito.doReturn(null).when(_loggingEvent).getCallerData();
-        Assert.assertEquals(CallerData.NA, _converter.convert(_loggingEvent));
+        Assert.assertEquals(CoreConstants.NA, _converter.convert(_loggingEvent));
     }
 
     private AutoCloseable _mocks;

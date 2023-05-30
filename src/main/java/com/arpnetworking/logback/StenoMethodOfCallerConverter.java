@@ -15,8 +15,8 @@
  */
 package com.arpnetworking.logback;
 
-import ch.qos.logback.classic.spi.CallerData;
 import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.CoreConstants;
 
 /**
  * Steno specific caller method converter.
@@ -32,6 +32,6 @@ public class StenoMethodOfCallerConverter extends AbstractStenoCallerConverter {
         if (callerData != null) {
             return callerData.getMethodName();
         }
-        return CallerData.NA;
+        return CoreConstants.NA;
     }
 }
