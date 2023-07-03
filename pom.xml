@@ -105,7 +105,7 @@
     <apache.commons.lang3.version>3.12.0</apache.commons.lang3.version>
     <aspectjrt.version>1.9.19</aspectjrt.version>
     <aspectjtools.version>1.9.19</aspectjtools.version>
-    <guava.version>32.0.1-jre</guava.version>
+    <guava.version>32.1.1-jre</guava.version>
     <jackson.version>2.15.2</jackson.version>
     <json-schema-validator.version>1.0.85</json-schema-validator.version>
     <jsr305.version>3.0.2</jsr305.version>
