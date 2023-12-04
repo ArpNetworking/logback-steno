@@ -114,7 +114,7 @@
     <logback.version>1.4.7</logback.version>
     <mockito.version>5.7.0</mockito.version>
     <slf4j.version>2.0.9</slf4j.version>
-    <spotbugs.annotations.version>4.8.1</spotbugs.annotations.version>
+    <spotbugs.annotations.version>4.8.2</spotbugs.annotations.version>
 
     <!--Plugin versions-->
     <aspectj.maven.plugin.version>1.14.0</aspectj.maven.plugin.version>
