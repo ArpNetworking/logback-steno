@@ -117,7 +117,7 @@
     <spotbugs.annotations.version>4.8.2</spotbugs.annotations.version>
 
     <!--Plugin versions-->
-    <aspectj.maven.plugin.version>1.14.0</aspectj.maven.plugin.version>
+    <aspectj.maven.plugin.version>1.15.0</aspectj.maven.plugin.version>
 
     <!-- Code Coverage -->
     <jacoco.check.line.coverage>1.0</jacoco.check.line.coverage>
