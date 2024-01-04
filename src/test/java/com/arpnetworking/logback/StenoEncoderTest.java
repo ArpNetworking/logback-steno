@@ -21,6 +21,7 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.IThrowableProxy;
 import ch.qos.logback.classic.spi.LoggingEvent;
 import ch.qos.logback.classic.spi.ThrowableProxy;
+import ch.qos.logback.classic.util.LogbackMDCAdapter;
 import com.arpnetworking.logback.annotations.LogRedact;
 import com.arpnetworking.logback.annotations.Loggable;
 import com.arpnetworking.logback.widgets.Widget;
@@ -44,7 +45,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.slf4j.MDC;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -1090,6 +1090,10 @@ public class StenoEncoderTest {
     @Test
     public void testEncodeStandardEventWithMdcProperties() throws Exception {
         final LoggingEvent event = new LoggingEvent();
+        final LoggerContext context = new LoggerContext();
+        final LogbackMDCAdapter mdcAdapter = new LogbackMDCAdapter();
+        context.setMDCAdapter(mdcAdapter);
+        event.setLoggerContext(context);
         final ZonedDateTime eventTime = ZonedDateTime.parse("2011-11-11T11:11:11.000Z");
         event.setLevel(Level.TRACE);
         event.setMessage("logEvent - foo = {}");
@@ -1098,7 +1102,7 @@ public class StenoEncoderTest {
         final Object[] argArray = new Object[1];
         argArray[0] = "bar";
         event.setArgumentArray(argArray);
-        MDC.put("MDC_KEY", "MDC_VALUE");
+        mdcAdapter.put("MDC_KEY", "MDC_VALUE");
         _encoder.addInjectContextMdc("MDC_KEY");
         Assert.assertEquals("MDC_KEY", _encoder.iteratorForInjectContextMdc().next());
         Assert.assertTrue(_encoder.isInjectContextMdc("MDC_KEY"));
@@ -1317,7 +1321,11 @@ public class StenoEncoderTest {
 
     @Test
     public void testSafeContextWithMdcProperties() throws Exception {
+        final LoggerContext context = new LoggerContext();
+        final LogbackMDCAdapter mdcAdapter = new LogbackMDCAdapter();
+        context.setMDCAdapter(mdcAdapter);
         final LoggingEvent event = new LoggingEvent();
+        event.setLoggerContext(context);
         event.setLevel(Level.INFO);
         event.addMarker(StenoMarker.ARRAY_MARKER);
         event.setMessage("logEvent");
@@ -1335,7 +1343,7 @@ public class StenoEncoderTest {
         _encoder.setInjectContextHost(false);
         _encoder.setInjectContextProcess(false);
         _encoder.setInjectContextThread(false);
-        MDC.put("MDC_KEY", "MDC_VALUE");
+        mdcAdapter.put("MDC_KEY", "MDC_VALUE");
         _encoder.addInjectContextMdc("MDC_KEY");
         // CHECKSTYLE.OFF: IllegalInstantiation - This is valid case.
         final String logOutput = new String(_encoder.encode(event), _encoder.getCharset());

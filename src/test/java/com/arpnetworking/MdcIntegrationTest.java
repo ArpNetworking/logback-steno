@@ -17,7 +17,7 @@ package com.arpnetworking;
 
 import org.junit.Test;
 import org.slf4j.Logger;
-import org.slf4j.MDC;
+import org.slf4j.spi.MDCAdapter;
 
 /**
  * Integration test of MDC (Mapped Diagnostic Context) integration.
@@ -29,18 +29,19 @@ public class MdcIntegrationTest extends BaseStenoIntegrationTest {
     @Test
     public void test() {
         final Logger logger = getLogger();
-        MDC.clear();
-        MDC.put("MDC_KEY2", "Easy");
+        final MDCAdapter mdcAdapter = getMdcAdapter();
+        mdcAdapter.clear();
+        mdcAdapter.put("MDC_KEY2", "Easy");
         logger.trace("Trace level events will be suppressed");
         logger.debug("Debug level events will be suppressed");
         logger.info("This is informative");
-        MDC.put("MDC_KEY1", "As");
-        MDC.put("MDC_KEY2", "ABC");
+        mdcAdapter.put("MDC_KEY1", "As");
+        mdcAdapter.put("MDC_KEY2", "ABC");
         logger.warn("This is a warning");
-        MDC.put("MDC_KEY1", "123");
-        MDC.remove("MDC_KEY2");
+        mdcAdapter.put("MDC_KEY1", "123");
+        mdcAdapter.remove("MDC_KEY2");
         logger.error("This is an error");
-        MDC.clear();
+        mdcAdapter.clear();
         assertOutput();
     }
 }

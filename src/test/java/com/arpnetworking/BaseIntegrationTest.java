@@ -17,11 +17,13 @@ package com.arpnetworking;
 
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;
+import ch.qos.logback.classic.util.LogbackMDCAdapter;
 import ch.qos.logback.core.joran.spi.JoranException;
 import com.arpnetworking.steno.TestLoggerFactory;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.slf4j.spi.MDCAdapter;
 
 import java.io.File;
 import java.io.IOException;
@@ -46,6 +48,8 @@ public abstract class BaseIntegrationTest {
         final JoranConfigurator configurator = new JoranConfigurator();
         configurator.setContext(_loggerContext);
         _loggerContext.reset();
+        final LogbackMDCAdapter mdcAdapter = new LogbackMDCAdapter();
+        _loggerContext.setMDCAdapter(mdcAdapter);
         try {
             configurator.doConfigure(configuration);
         } catch (final JoranException e) {
@@ -65,6 +69,10 @@ public abstract class BaseIntegrationTest {
 
     protected com.arpnetworking.steno.Logger getStenoLogger() {
         return TestLoggerFactory.getLogger(_loggerContext.getLogger(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME));
+    }
+
+    protected MDCAdapter getMdcAdapter() {
+        return _loggerContext.getMDCAdapter();
     }
 
     protected void assertOutput() {
