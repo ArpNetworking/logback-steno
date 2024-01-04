@@ -43,7 +43,7 @@ pipeline {
   post('Analysis') {
     always {
       recordIssues(
-          enabledForFailure: true, aggregatingResults: true,
+          enabledForFailure: true, aggregatingResults: false,
           tools: [java(), checkStyle(reportEncoding: 'UTF-8'), spotBugs()])
       jacoco()
     }
