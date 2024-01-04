@@ -93,7 +93,7 @@ public class StenoSerializationHelperTest {
         }
     }
 
-    private static class AlternateIThrowableProxy implements IThrowableProxy {
+    private static final class AlternateIThrowableProxy implements IThrowableProxy {
         @Override
         public String getMessage() {
             return null;
