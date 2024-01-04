@@ -29,6 +29,14 @@
          </Or>
      </Match>
 
+     <!-- Match PA_PUBLIC_PRIMITIVE_ATTRIBUTE violations in AspectJ generated
+        classes.
+     -->
+     <Match>
+         <Bug pattern="PA_PUBLIC_PRIMITIVE_ATTRIBUTE" />
+         <Class name="~.*\.[^\.]+Aspect" />
+     </Match>
+
      <!-- Match all RV_RETURN_VALUE_IGNORED_BAD_PRACTICE violations on all unit
         test files since Mockito usage can cause this violation when stating
         expectations.
