@@ -103,7 +103,7 @@
   <properties>
     <!--Dependency versions-->
     <apache.commons.lang3.version>3.14.0</apache.commons.lang3.version>
-    <aspectjrt.version>1.9.21</aspectjrt.version>
+    <aspectjrt.version>1.9.21.1</aspectjrt.version>
     <aspectjtools.version>1.9.21.1</aspectjtools.version>
     <guava.version>33.0.0-jre</guava.version>
     <jackson.version>2.16.1</jackson.version>
