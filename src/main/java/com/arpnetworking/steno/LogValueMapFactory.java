@@ -210,7 +210,7 @@ public final class LogValueMapFactory {
          */
         public LogValueMap(final Optional<Object> target, final Map<String, Object> data) {
             _target = target;
-            _data = data;
+            _data = new LinkedHashMap<>(data);
         }
 
         @JsonIgnore
@@ -253,7 +253,7 @@ public final class LogValueMapFactory {
         }
 
         private transient Optional<Object> _target = Optional.empty();
-        private final Map<String, Object> _data;
+        private final LinkedHashMap<String, Object> _data;
 
         private static final long serialVersionUID = -2817278417438085513L;
     }

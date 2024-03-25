@@ -17,6 +17,7 @@ package com.arpnetworking.logback;
 
 import java.io.Serial;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -36,7 +37,7 @@ import java.util.Map;
      */
     /* package private */ EncodingException(final Map<String, Object> context, final Throwable cause) {
         super("Encoding Exception", cause);
-        _context = context;
+        _context = new LinkedHashMap<>(context);
     }
 
     public Map<String, Object> getContext() {
@@ -48,7 +49,7 @@ import java.util.Map;
         return "EncodingException context=" + _context + " cause=" + getCause();
     }
 
-    private final Map<String, Object> _context;
+    private final LinkedHashMap<String, Object> _context;
 
     @Serial
     private static final long serialVersionUID = 1;
