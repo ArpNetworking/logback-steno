@@ -155,6 +155,7 @@ public class StenoEncoder extends BaseLoggingEncoder implements Serializable {
         this(objectMapper.getFactory(), objectMapper);
     }
 
+    @SuppressWarnings("this-escape")
     /* package private */ StenoEncoder(final JsonFactory jsonFactory, final ObjectMapper objectMapper) {
 
         // Initialize object mapper;
@@ -851,7 +852,7 @@ public class StenoEncoder extends BaseLoggingEncoder implements Serializable {
     private boolean _injectContextFile = false;
     private boolean _injectContextMethod = false;
     private boolean _injectContextLine = false;
-    private final Set<String> _injectMdcProperties = new LinkedHashSet<>();
+    private final LinkedHashSet<String> _injectMdcProperties = new LinkedHashSet<>();
     private transient Set<Module> _jacksonModules = new LinkedHashSet<>();
     private boolean _safe = true;
     private boolean _injectBeanIdentifier = false;

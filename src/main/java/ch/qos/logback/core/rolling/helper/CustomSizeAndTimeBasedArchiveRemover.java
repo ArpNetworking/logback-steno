@@ -65,9 +65,9 @@ public class CustomSizeAndTimeBasedArchiveRemover extends SizeAndTimeBasedArchiv
 
     @Override
     void capTotalSize(final Instant now) {
-        int totalSize = 0;
+        long totalSize = 0;
         int totalFilesRemoved = 0;
-        int totalBytesRemoved = 0;
+        long totalBytesRemoved = 0;
         int fileIndex = 0;
         for (int offset = 0; offset < _maxHistory; ++offset) {
             final Instant date = rc.getEndOfNextNthPeriod(now, -offset);
