@@ -107,6 +107,7 @@ public final class StenoBeanSerializerModifier extends BeanSerializerModifier {
     private static final Map<Class<?>, Boolean> LOGGABLE_CLASSES = new ConcurrentHashMap<>();
     private static final Annotations EMPTY_ANNOTATION_MAP = new AnnotationMap();
     private static final JavaType STRING_JAVA_TYPE = TypeFactory.defaultInstance().constructType(String.class);
+    private static final long serialVersionUID = 1L;
 
     /* package private */ static class BeanIdentifierPropertyWriter extends VirtualBeanPropertyWriter {
 
