@@ -113,7 +113,7 @@
     <junit.version>4.13.2</junit.version>
     <logback.version>1.5.17</logback.version>
     <mockito.version>5.13.0</mockito.version>
-    <slf4j.version>2.0.16</slf4j.version>
+    <slf4j.version>2.0.17</slf4j.version>
     <spotbugs.annotations.version>4.8.6</spotbugs.annotations.version>
 
     <!--Plugin versions-->
