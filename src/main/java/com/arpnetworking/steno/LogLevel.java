@@ -28,6 +28,9 @@ import javax.annotation.Nullable;
  * @author Ville Koskela (ville dot koskela at inscopemetrics dot io)
  */
 /* package private */ enum LogLevel {
+    /**
+     * Tracing level.
+     */
     TRACE {
         @Override
         public void log(
@@ -68,6 +71,9 @@ import javax.annotation.Nullable;
             return logger.isTraceEnabled();
         }
     },
+    /**
+     * Debug level.
+     */
     DEBUG {
         @Override
         public void log(
@@ -108,6 +114,9 @@ import javax.annotation.Nullable;
             return logger.isDebugEnabled();
         }
     },
+    /**
+     * Informational level.
+     */
     INFO {
         @Override
         public void log(
@@ -148,6 +157,9 @@ import javax.annotation.Nullable;
             return logger.isInfoEnabled();
         }
     },
+    /**
+     * Warning level.
+     */
     WARN {
         @Override
         public void log(
@@ -188,6 +200,9 @@ import javax.annotation.Nullable;
             return logger.isWarnEnabled();
         }
     },
+    /**
+     * Error level.
+     */
     ERROR {
         @Override
         public void log(
