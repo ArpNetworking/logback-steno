@@ -5,10 +5,21 @@ pipeline {
       activeDeadlineSeconds 3600
     }
   }
+  options {
+    ansiColor('xterm')
+  }
   stages {
     stage('Init') {
       steps {
         checkout scm
+	script {
+	  def m = (env.GIT_URL =~ /(\/|:)(([^\/]+)\/)?(([^\/]+?)(\.git)?)$/)
+	  if (m) {
+	    org = m.group(3)
+	    repo = m.group(5)
+	  }
+	}
+        discoverReferenceBuild()
       }
     }
     stage('Setup build') {
@@ -34,7 +45,7 @@ pipeline {
             usernamePassword(credentialsId: 'jenkins-ossrh', usernameVariable: 'OSSRH_USER', passwordVariable: 'OSSRH_PASS'),
             string(credentialsId: 'jenkins-gpg', variable: 'GPG_PASS')]) {
           withMaven {
-            sh "./jdk-wrapper.sh ./mvnw $target -U -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn"
+            sh "./jdk-wrapper.sh ./mvnw $target -U -B -Dstyle.color=always -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn"
           }
         }
       }
@@ -42,10 +53,10 @@ pipeline {
   }
   post('Analysis') {
     always {
+      recordCoverage(tools: [[parser: 'JACOCO']])
       recordIssues(
           enabledForFailure: true, aggregatingResults: true, unhealthy: 0,
           tools: [java(), checkStyle(reportEncoding: 'UTF-8'), spotBugs()])
-      jacoco()
     }
   }
 }
