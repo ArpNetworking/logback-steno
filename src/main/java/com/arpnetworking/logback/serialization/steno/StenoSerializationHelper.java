@@ -238,8 +238,7 @@ public final class StenoSerializationHelper {
         jsonGenerator.writeObjectFieldStart("data");
         if (throwableProxy instanceof ThrowableProxy) {
             final JsonNode jsonNode = objectMapper.valueToTree(((ThrowableProxy) throwableProxy).getThrowable());
-            for (final Iterator<Map.Entry<String, JsonNode>> iterator = jsonNode.fields(); iterator.hasNext();) {
-                final Map.Entry<String, JsonNode> field = iterator.next();
+            for (final Map.Entry<String, JsonNode> field : jsonNode.properties()) {
                 jsonGenerator.writeFieldName(field.getKey());
                 objectMapper.writeValue(
                         jsonGenerator,
