@@ -18,9 +18,11 @@ package com.arpnetworking.logback.jackson;
 import com.arpnetworking.logback.StenoEncoder;
 import com.arpnetworking.logback.annotations.Loggable;
 import com.arpnetworking.steno.LogValueMapFactory;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.BeanDescription;
 import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.PropertyMetadata;
 import com.fasterxml.jackson.databind.PropertyName;
 import com.fasterxml.jackson.databind.SerializationConfig;
 import com.fasterxml.jackson.databind.SerializerProvider;
@@ -28,6 +30,8 @@ import com.fasterxml.jackson.databind.cfg.MapperConfig;
 import com.fasterxml.jackson.databind.introspect.AnnotatedClass;
 import com.fasterxml.jackson.databind.introspect.AnnotationMap;
 import com.fasterxml.jackson.databind.introspect.BeanPropertyDefinition;
+import com.fasterxml.jackson.databind.introspect.TypeResolutionContext;
+import com.fasterxml.jackson.databind.introspect.VirtualAnnotatedMember;
 import com.fasterxml.jackson.databind.ser.BeanPropertyWriter;
 import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
 import com.fasterxml.jackson.databind.ser.VirtualBeanPropertyWriter;
@@ -41,10 +45,10 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Modified for Jackson's BeanSerializer.
- *
+ * <p>
  * First, allows injection of bean identifying properties, namely its instance and class, either when configured to
  * do so by the {@link StenoEncoder} or when the bean is not annotated with {@link Loggable}.
- *
+ * <p>
  * Second, if the bean is not annotated with {@link Loggable} any fields discovered by Jackson should be
  * suppressed. Since this acts only on the {@link com.fasterxml.jackson.databind.ser.BeanSerializer} it is already
  * ensured that:
@@ -65,9 +69,8 @@ public final class StenoBeanSerializerModifier extends BeanSerializerModifier {
     /**
      * Public constructor.
      *
-     * @since 1.9.0
-     *
      * @param stenoEncoder The instance of {@link StenoEncoder}.
+     * @since 1.9.0
      */
     public StenoBeanSerializerModifier(final StenoEncoder stenoEncoder) {
         _stenoEncoder = stenoEncoder;
@@ -108,6 +111,16 @@ public final class StenoBeanSerializerModifier extends BeanSerializerModifier {
     private static final Annotations EMPTY_ANNOTATION_MAP = new AnnotationMap();
     private static final JavaType STRING_JAVA_TYPE = TypeFactory.defaultInstance().constructType(String.class);
     private static final long serialVersionUID = 1L;
+    private static final VirtualAnnotatedMember BEAN_ID_MEMBER = new VirtualAnnotatedMember(
+            new TypeResolutionContext.Empty(TypeFactory.defaultInstance()),
+            StenoEncoder.class,
+            "id",
+            null);
+    private static final VirtualAnnotatedMember BEAN_CLASS_MEMBER = new VirtualAnnotatedMember(
+            new TypeResolutionContext.Empty(TypeFactory.defaultInstance()),
+            StenoEncoder.class,
+            "class",
+            null);
 
     /* package private */ static class BeanIdentifierPropertyWriter extends VirtualBeanPropertyWriter {
 
@@ -115,8 +128,14 @@ public final class StenoBeanSerializerModifier extends BeanSerializerModifier {
             super(
                     SimpleBeanPropertyDefinition.construct(
                             config,
-                            null,
-                            PROPERTY_NAME),
+                            BEAN_ID_MEMBER,
+                            PROPERTY_NAME,
+                            PropertyMetadata.construct(Boolean.TRUE,
+                                    "id",
+                                    null,
+                                    null),
+                            JsonInclude.Include.ALWAYS),
+
                     EMPTY_ANNOTATION_MAP,
                     STRING_JAVA_TYPE);
         }
@@ -185,8 +204,13 @@ public final class StenoBeanSerializerModifier extends BeanSerializerModifier {
             super(
                     SimpleBeanPropertyDefinition.construct(
                             config,
-                            null,
-                            PROPERTY_NAME),
+                            BEAN_CLASS_MEMBER,
+                            PROPERTY_NAME,
+                            PropertyMetadata.construct(Boolean.TRUE,
+                                    "id",
+                                    null,
+                                    null),
+                            JsonInclude.Include.ALWAYS),
                     EMPTY_ANNOTATION_MAP,
                     STRING_JAVA_TYPE);
         }
