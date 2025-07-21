@@ -21,6 +21,7 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.io.StringWriter;
 import java.util.Map;
@@ -57,13 +58,13 @@ public class MapOfJsonSerialziationStrategy implements Serializable {
      * @param eventName The event name.
      * @param map The message key to json-value pairs.
      * @return Serialization of message as a {@link String}.
-     * @throws Exception Serialization may throw any {@link Exception}.
+     * @throws IOException Serialization may throw any {@link IOException}.
      */
     public String serialize(
             final ILoggingEvent event,
             final String eventName,
             @Nullable final Map<String, String> map)
-            throws Exception {
+            throws IOException {
         final StringWriter jsonWriter = new StringWriter();
         final JsonGenerator jsonGenerator = _jsonFactory.createGenerator(jsonWriter);
 

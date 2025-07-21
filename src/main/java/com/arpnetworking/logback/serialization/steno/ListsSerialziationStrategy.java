@@ -21,6 +21,7 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.io.StringWriter;
 import java.util.List;
@@ -60,7 +61,7 @@ public class ListsSerialziationStrategy implements Serializable {
      * @param contextKeys The message context keys.
      * @param contextValues The message context values.
      * @return Serialization of message as a {@link String}.
-     * @throws Exception Serialization may throw any {@link Exception}.
+     * @throws IOException Serialization may throw any {@link IOException}.
      */
     public String serialize(
             final ILoggingEvent event,
@@ -69,7 +70,7 @@ public class ListsSerialziationStrategy implements Serializable {
             @Nullable final List<Object> dataValues,
             @Nullable final List<String> contextKeys,
             @Nullable final List<Object> contextValues)
-            throws Exception {
+            throws IOException {
 
         final StringWriter jsonWriter = new StringWriter();
         final JsonGenerator jsonGenerator = _jsonFactory.createGenerator(jsonWriter);

@@ -21,6 +21,7 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.io.StringWriter;
 import javax.annotation.Nullable;
@@ -57,14 +58,14 @@ public class ArraySerialziationStrategy implements Serializable {
      * @param keys The message keys.
      * @param values The message values.
      * @return Serialization of message as a {@link String}.
-     * @throws Exception Serialization may throw any {@link Exception}.
+     * @throws IOException Serialization may throw any {@link IOException}.
      */
     public String serialize(
             final ILoggingEvent event,
             final String eventName,
             @Nullable final String[] keys,
             @Nullable final Object[] values)
-            throws Exception {
+            throws IOException {
 
         final StringWriter jsonWriter = new StringWriter();
         final JsonGenerator jsonGenerator = _jsonFactory.createGenerator(jsonWriter);

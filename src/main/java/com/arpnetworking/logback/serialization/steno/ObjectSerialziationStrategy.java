@@ -20,6 +20,7 @@ import com.arpnetworking.logback.StenoEncoder;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.io.IOException;
 import java.io.Serializable;
 import javax.annotation.Nullable;
 
@@ -53,13 +54,13 @@ public class ObjectSerialziationStrategy implements Serializable {
      * @param eventName The event name.
      * @param data The message data {@link Object}.
      * @return Serialization of message as a {@link String}.
-     * @throws Exception Serialization may throw any {@link Exception}.
+     * @throws IOException Serialization may throw any {@link IOException}.
      */
     public String serialize(
             final ILoggingEvent event,
             final String eventName,
             @Nullable final Object data)
-            throws Exception {
+            throws IOException {
         final String jsonData = _objectMapper.writeValueAsString(data);
         return _objectAsJsonStrategy.serialize(
                 event,

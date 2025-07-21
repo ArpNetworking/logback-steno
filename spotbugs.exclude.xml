@@ -54,4 +54,25 @@
          </Or>
      </Match>
 
+     <!-- Match exception declaration violations in test files -->
+     <Match>
+         <Or>
+            <Bug pattern="THROWS_METHOD_THROWS_RUNTIMEEXCEPTION" />
+            <Bug pattern="THROWS_METHOD_THROWS_CLAUSE_BASIC_EXCEPTION" />
+            <Bug pattern="THROWS_METHOD_THROWS_CLAUSE_THROWABLE" />
+         </Or>
+         <Or>
+            <Class name="~.*\.[^\.]+Test" />
+            <Class name="~.*\.[^\.]+Test\$.*" />
+            <Class name="~.*\.Base.*Test" />
+         </Or>
+     </Match>
+
+
+     <!-- Match intentional RuntimeException throws in performance benchmark -->
+     <Match>
+         <Bug pattern="THROWS_METHOD_THROWS_RUNTIMEEXCEPTION" />
+         <Class name="com.arpnetworking.steno.BasicPerformanceBenchmark" />
+     </Match>
+
 </FindBugsFilter>
