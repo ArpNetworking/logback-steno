@@ -106,7 +106,7 @@
     <aspectjrt.version>1.9.24</aspectjrt.version>
     <aspectjtools.version>1.9.24</aspectjtools.version>
     <guava.version>33.5.0-jre</guava.version>
-    <jackson.version>2.19.2</jackson.version>
+    <jackson.version>2.20.0</jackson.version>
     <json-schema-validator.version>1.5.9</json-schema-validator.version>
     <jsr305.version>3.0.2</jsr305.version>
     <hamcrest.version>3.0</hamcrest.version>
