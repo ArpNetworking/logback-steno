@@ -177,7 +177,7 @@ public class RedactionFilterTest {
     private JsonNode readTree(final String resourceSuffix) {
         try {
             return _objectMapper.readTree(getClass().getClassLoader().getResource(
-                    "com/arpnetworking/logback/jackson/" + CLASS_NAME + "." + resourceSuffix));
+                    "com/arpnetworking/logback/jackson/" + CLASS_NAME + "." + resourceSuffix).openStream());
         } catch (final IOException e) {
             Assert.fail("Failed with exception: " + e);
             return null;

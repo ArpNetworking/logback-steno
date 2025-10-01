@@ -106,7 +106,7 @@
     <aspectjrt.version>1.9.24</aspectjrt.version>
     <aspectjtools.version>1.9.24</aspectjtools.version>
     <guava.version>33.5.0-jre</guava.version>
-    <jackson.version>2.19.2</jackson.version>
+    <jackson.version>2.20.0</jackson.version>
     <json-schema-validator.version>1.5.9</json-schema-validator.version>
     <jsr305.version>3.0.2</jsr305.version>
     <hamcrest.version>3.0</hamcrest.version>
@@ -309,17 +309,14 @@
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-core</artifactId>
-      <version>${jackson.version}</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-annotations</artifactId>
-      <version>${jackson.version}</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
-      <version>${jackson.version}</version>
       <exclusions>
         <!-- TODO(ville): Remove this exclusion once the annotations package is consistently depended upon:
             https://github.com/FasterXML/jackson-bom/issues/15
@@ -333,7 +330,6 @@
     <dependency>
       <groupId>com.fasterxml.jackson.module</groupId>
       <artifactId>jackson-module-afterburner</artifactId>
-      <version>${jackson.version}</version>
     </dependency>
     <dependency>
       <groupId>org.aspectj</groupId>
@@ -388,7 +384,6 @@
     <dependency>
       <groupId>com.fasterxml.jackson.datatype</groupId>
       <artifactId>jackson-datatype-jsr310</artifactId>
-      <version>${jackson.version}</version>
       <scope>test</scope>
       <exclusions>
         <!-- TODO(ville): Remove this exclusion once the annotations package is consistently depended upon:
@@ -409,7 +404,6 @@
     <dependency>
       <groupId>com.fasterxml.jackson.datatype</groupId>
       <artifactId>jackson-datatype-guava</artifactId>
-      <version>${jackson.version}</version>
       <scope>test</scope>
       <exclusions>
         <!-- TODO(ville): Remove this exclusion once the annotations package is consistently depended upon:
@@ -435,4 +429,15 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>com.fasterxml.jackson</groupId>
+        <artifactId>jackson-bom</artifactId>
+        <version>${jackson.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 </project>
