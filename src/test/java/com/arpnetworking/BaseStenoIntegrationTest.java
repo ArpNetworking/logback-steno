@@ -19,15 +19,17 @@ import com.arpnetworking.logback.StenoMarker;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.networknt.schema.JsonSchema;
-import com.networknt.schema.JsonSchemaFactory;
-import com.networknt.schema.SpecVersion;
-import com.networknt.schema.ValidationMessage;
+import com.networknt.schema.Error;
+import com.networknt.schema.InputFormat;
+import com.networknt.schema.Schema;
+import com.networknt.schema.SchemaLocation;
+import com.networknt.schema.SchemaRegistry;
+import com.networknt.schema.SpecificationVersion;
 import org.junit.Assert;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Set;
+import java.util.List;
 
 /**
  * Base integration test for {@link com.arpnetworking.logback.StenoEncoder}.
@@ -60,7 +62,7 @@ public abstract class BaseStenoIntegrationTest extends BaseIntegrationTest {
                     contextNode.remove("MDC_KEY1");
                     contextNode.remove("MDC_KEY2");
                 }
-                final Set<ValidationMessage> report = STENO_SCHEMA.validate(rootNode);
+                final List<Error> report = STENO_SCHEMA.validate(rootNode);
                 Assert.assertEquals("Line: " + (i + 1) + " " + report.toString(), 0, report.size());
             } catch (final IOException e) {
                 Assert.fail("Failed with exception: " + e);
@@ -89,11 +91,12 @@ public abstract class BaseStenoIntegrationTest extends BaseIntegrationTest {
     }
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
-    private static final JsonSchema STENO_SCHEMA;
+    private static final Schema STENO_SCHEMA;
 
     static {
         try (InputStream schemaStream = StenoMarker.class.getResourceAsStream("/steno.schema.json")) {
-            STENO_SCHEMA = JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V4).getSchema(schemaStream);
+            final SchemaRegistry schemaRegistry = SchemaRegistry.withDefaultDialect(SpecificationVersion.DRAFT_4);
+            STENO_SCHEMA = schemaRegistry.getSchema(SchemaLocation.DOCUMENT, schemaStream, InputFormat.JSON);
         } catch (final IOException e) {
             throw new RuntimeException(e);
         }
