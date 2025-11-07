@@ -118,7 +118,7 @@
 
     <!--Plugin versions-->
     <aspectj.maven.plugin.version>1.15.0</aspectj.maven.plugin.version>
-    <jacoco.maven.plugin.version>0.8.13</jacoco.maven.plugin.version>
+    <jacoco.maven.plugin.version>0.8.14</jacoco.maven.plugin.version>
 
     <!-- Code Coverage -->
     <jacoco.check.line.coverage>1.0</jacoco.check.line.coverage>
@@ -218,15 +218,10 @@
               <parallel />
               <threadCount>1</threadCount>
               <perCoreThreadCount>false</perCoreThreadCount>
-              <argLine>-Xms512m -ea -Duser.timezone="UTC" -XX:+EnableDynamicAgentLoading</argLine>
+              <argLine>@{argLine} -Xms512m -ea -Duser.timezone="UTC" -XX:+EnableDynamicAgentLoading</argLine>
             </configuration>
           </execution>
         </executions>
-        <configuration>
-          <systemPropertyVariables>
-            <jacoco-agent.destfile>target/jacoco.exec</jacoco-agent.destfile>
-          </systemPropertyVariables>
-        </configuration>
       </plugin>
       <plugin>
         <groupId>org.jacoco</groupId>
@@ -234,24 +229,8 @@
         <executions>
           <execution>
             <id>default-prepare-agent</id>
-            <phase />
-            <configuration>
-              <skip>true</skip>
-            </configuration>
-          </execution>
-          <execution>
-            <id>default-instrument</id>
             <goals>
-              <goal>instrument</goal>
-            </goals>
-            <configuration>
-              <skip>${skipCoverage}</skip>
-            </configuration>
-          </execution>
-          <execution>
-            <id>default-restore-instrumented-classes</id>
-            <goals>
-              <goal>restore-instrumented-classes</goal>
+              <goal>prepare-agent</goal>
             </goals>
             <configuration>
               <skip>${skipCoverage}</skip>
