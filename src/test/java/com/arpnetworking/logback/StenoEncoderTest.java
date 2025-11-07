@@ -36,10 +36,12 @@ import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.networknt.schema.JsonSchema;
-import com.networknt.schema.JsonSchemaFactory;
-import com.networknt.schema.SpecVersion;
-import com.networknt.schema.ValidationMessage;
+import com.networknt.schema.Error;
+import com.networknt.schema.InputFormat;
+import com.networknt.schema.Schema;
+import com.networknt.schema.SchemaLocation;
+import com.networknt.schema.SchemaRegistry;
+import com.networknt.schema.SpecificationVersion;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.junit.Assert;
 import org.junit.Before;
@@ -63,8 +65,8 @@ import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Tests for {@link StenoEncoder}.
@@ -1499,7 +1501,7 @@ public class StenoEncoderTest {
                 contextNode.remove("CONTEXT_KEY5");
                 contextNode.remove("CONTEXT_KEY6");
             }
-            final Set<ValidationMessage> report = STENO_SCHEMA.validate(rootNode);
+            final List<Error> report = STENO_SCHEMA.validate(rootNode);
             Assert.assertEquals(report.toString(), 0, report.size());
         } catch (final IOException e) {
             Assert.fail("Failed with exception: " + e);
@@ -1512,11 +1514,12 @@ public class StenoEncoderTest {
     private LoggerContext _context;
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
-    private static final JsonSchema STENO_SCHEMA;
+    private static final Schema STENO_SCHEMA;
 
     static {
         try (InputStream schemaStream = StenoMarker.class.getResourceAsStream("/steno.schema.json")) {
-            STENO_SCHEMA = JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V4).getSchema(schemaStream);
+            final SchemaRegistry schemaRegistry = SchemaRegistry.withDefaultDialect(SpecificationVersion.DRAFT_4);
+            STENO_SCHEMA = schemaRegistry.getSchema(SchemaLocation.DOCUMENT, schemaStream, InputFormat.JSON);
         } catch (final IOException e) {
             throw new RuntimeException(e);
         }
